@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta charset="UTF-8" />
+	<link REL="SHORTCUT ICON" HREF="favicon.ico">
+	<title>WriteMao</title>
+	<script src="lib/jquery.min.js"></script>
+	<script src="lib/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
+	<style type="text/css">
+		 body { 		font-family:Verdana,Geneva,sans-serif;font-size:12px;
+						padding:0px;margin:0px
+						}
+		.wm-pullDown {	position:absolute;background-color:#fff;width:170px; 
+						padding:8px 16px 8px 8px;
+						border:1px solid #999;
+						}
+		.wm-pullDownItem { padding:3px;
+						}
+		.wm-pullDownItem:hover{ background-color:#eee;
+						}
+		.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix { border:none }
+		.ui-dialog { border-radius:12px;box-shadow:2px 2px 6px #ccc }
+		.ui-button { border-radius:30px;outline:none }
+		.ui-dialog-titlebar { display:none }
+		 table {    	border-spacing: 0px;  }
+	</style>
+</head>
+<body>
+	<div id="headerDiv" class="wm-menu"></div>
+	<div id="bodyDiv"  class="wm-view"></div>
+	<div id="timeDiv"  class="wm-time"></div>
+<script>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// MAIN 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+var mw=null;
+
+$(window).resize(function() {                                         	// ON WINDOW RESIZE
+	mw.stage.Draw();														// Redraw
+	});
+			
+$(document).ready(function() {								           	// ON PAGE LOADED
+	var url=window.location.search.substring(1);						    // Get query string
+	mw=new mwMain();                                                      	// Alloc app
+    });									
+		
+function mwMain()														// MAIN CONSTRUCTOR
+{
+    mp=this;                                                                // Set global pointer to app
+}	
+
+			
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	function DialogBox(title, content, width, callback, callback2) 			// DIALOG BOX
+	{
+		$("#dialogDiv").remove();												
+		$("body").append("<div class='unselectable' id='dialogDiv'></div>");														
+		var str="<p><img src='img/logo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span id='gtBoxTi'style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>"+title+"</b></span><p>";
+		str+="<div style='font-size:14px;margin:14px'>"+content+"</div>";
+		$("#dialogDiv").append(str);	
+		$("#dialogDiv").dialog({ width:Math.abs(width), buttons: {
+					            	"OK": 		function() { if (callback)
+					            								callback(); 
+					            								$(this).remove();  
+					            								},
+					            	"Cancel":  	function() { if (callback2)	            		
+					            								callback2();
+					            								$(this).remove(); }
+									}});	
+		if (width < 0)
+			$("#dialogDiv").dialog("option","position",{ my:"left top", at:"left top", of:this.parent });
+		else
+			$("#dialogDiv").dialog("option","position",{ my:"center", at:"center", of:this.parent });
+	}
+
+
+
+	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
+	{
+		if (p4 != undefined)
+			console.log(msg,p1,p2,p3,p4);
+		else if (p3 != undefined)
+			console.log(msg,p1,p2,p3);
+		else if (p2 != undefined)
+			console.log(msg,p1,p2);
+		else if (p1 != undefined)
+			console.log(msg,p1);
+		else
+			console.log(msg);
+	}
+
+</script>
+</body>
+</html>
