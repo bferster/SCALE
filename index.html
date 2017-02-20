@@ -9,13 +9,25 @@
 	<script src="lib/jquery-ui.min.js"></script>
 	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
 	<style type="text/css">
-		 body { 		font-family:Verdana,Geneva,sans-serif;font-size:12px;
-						padding:0px;margin:0px
-						}
-		.wm-pullDown {	position:absolute;background-color:#fff;width:170px; 
-						padding:8px 16px 8px 8px;
-						border:1px solid #999;
-						}
+		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
+							padding:0px;margin:0px
+							}
+		.wm-header { 		background-color: #ccc;width:100%;color:#fff;
+							}
+		.wm-lessonTitle { 	font-size: 32px; font-weight: bold;padding:8px 16px 8px 16px;
+							}
+		.wm-lessonSub { 	font-size: 16px; 
+							}
+		.wm-step { 			font-size: 16px; text-align:right; 
+							}
+		.wm-stepLabel { 	font-size: 16px;padding-top:-200px;display:inline-block;
+							}
+
+
+		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
+							padding:8px 16px 8px 8px;
+							border:1px solid #999;
+							}
 		.wm-pullDownItem { padding:3px;
 						}
 		.wm-pullDownItem:hover{ background-color:#eee;
@@ -28,7 +40,18 @@
 	</style>
 </head>
 <body>
-	<div id="headerDiv" class="wm-menu"></div>
+	<div id="headerDiv" class="wm-header">
+		<table style='width:100%;vertical-align: top;'><tr>
+			<td id='lessonTitle' class='wm-lessonTitle' style='vertical-align: middle'>Using semicolons
+			<span id='lessonSub' class='wm-lessonSub' style='vertical-align: middle;'>- Separating clauses</span></td>
+			<td id='stepDiv' class='wm-step'>
+			<div id='stepLabel' class='wm-stepLabel'>Tell</div>
+	<!--		&nbsp;<img src='img/tell.png'></img>&nbsp;&nbsp;->
+			</td>
+		</tr></table>
+
+
+	</div>
 	<div id="bodyDiv"  class="wm-view"></div>
 	<div id="timeDiv"  class="wm-time"></div>
 <script>
@@ -40,7 +63,6 @@
 var mw=null;
 
 $(window).resize(function() {                                         	// ON WINDOW RESIZE
-	mw.stage.Draw();														// Redraw
 	});
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
