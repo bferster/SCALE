@@ -1,0 +1,19 @@
+{
+  "name": "writemao",
+  "version": "1.0.0",
+  "description": "Writing instruction",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bferster/WriteMao.git"
+  },
+  "author": "Bill Ferster",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bferster/WriteMao/issues"
+  },
+  "homepage": "https://github.com/bferster/WriteMao#readme"
+}

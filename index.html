@@ -16,21 +16,20 @@
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
 							padding:0px;margin:0px
 							}
-		.wm-header { 		background-color: #ccc;width:100%;color:#fff;
+		.wm-header { 		background-color: #ccc;width:calc(100% -32px);color:#fff;;padding:8px 16px 8px 16px;
 							}
-		.wm-lessonTitle { 	font-size: 32px; font-weight: bold;padding:8px 16px 8px 16px;
+		.wm-lessonTitle { 	font-size: 32px; font-weight: bold;
 							}
 		.wm-lessonSub { 	font-size: 16px; 
 							}
-		.wm-step { 			font-size: 16px; text-align:right; cursor:pointer
+		.wm-step { 			font-size: 16px; text-align:right;
 							}
-		.wm-stepLabel { 	vertical-align: middle;
+		.wm-stepTitle { 	vertical-align: middle;
 							}
-
-
+		.wm-userName { 		font-size: 12px;padding-right:32px; cursor:pointer
+							}
 		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
-							padding:8px 16px 8px 8px;
-							border:1px solid #999;
+							padding:8px 16px 8px 8px; border:1px solid #999;
 							}
 		.wm-pullDownItem { padding:3px;
 						}
@@ -46,10 +45,11 @@
 <body>
 	<div id="headerDiv" class="wm-header">
 		<table style='width:100%;vertical-align: top;'><tr>
-			<td id='lessonTitle' class='wm-lessonTitle' style='vertical-align: middle'>Clauses
-			<span id='lessonSub' class='wm-lessonSub' style='vertical-align: middle;'>- Separating clauses</span></td>
+			<td style='vertical-align: middle'><span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+			<span id='topicTitle' class='wm-lessonSub'>Topic</span></td>
 			<td id='stepDiv' class='wm-step'>
-			<span id='stepLabel' class='wm-stepLabel'>TELL</span>&nbsp;&nbsp;<img src='img/tell.png' style='vertical-align:middle'></img>&nbsp;&nbsp;
+			<span id='userName' class='wm-userName'>User Name</span>
+			<span id='stepTitle' class='wm-stepTitle'>STEP</span>&nbsp;&nbsp;&nbsp;<img id='stepImg' src='img/tell.png' style='vertical-align:middle'></img>
 			</td>
 		</tr></table>
 
