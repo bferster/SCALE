@@ -3,10 +3,14 @@
 <head>
 	
 	<meta charset="UTF-8" />
-	<link REL="SHORTCUT ICON" HREF="favicon.ico">
+	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
 	<title>WriteMao</title>
 	<script src="lib/jquery.min.js"></script>
 	<script src="lib/jquery-ui.min.js"></script>
+	<script src="app.js"></script>
+	<script src="doc.js"></script>
+	<script src="content.js"></script>
+	<script src="navigation.js"></script>
 	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
 	<style type="text/css">
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -18,9 +22,9 @@
 							}
 		.wm-lessonSub { 	font-size: 16px; 
 							}
-		.wm-step { 			font-size: 16px; text-align:right; 
+		.wm-step { 			font-size: 16px; text-align:right; cursor:pointer
 							}
-		.wm-stepLabel { 	font-size: 16px;padding-top:-200px;display:inline-block;
+		.wm-stepLabel { 	vertical-align: middle;
 							}
 
 
@@ -42,11 +46,10 @@
 <body>
 	<div id="headerDiv" class="wm-header">
 		<table style='width:100%;vertical-align: top;'><tr>
-			<td id='lessonTitle' class='wm-lessonTitle' style='vertical-align: middle'>Using semicolons
+			<td id='lessonTitle' class='wm-lessonTitle' style='vertical-align: middle'>Clauses
 			<span id='lessonSub' class='wm-lessonSub' style='vertical-align: middle;'>- Separating clauses</span></td>
 			<td id='stepDiv' class='wm-step'>
-			<div id='stepLabel' class='wm-stepLabel'>Tell</div>
-	<!--		&nbsp;<img src='img/tell.png'></img>&nbsp;&nbsp;->
+			<span id='stepLabel' class='wm-stepLabel'>TELL</span>&nbsp;&nbsp;<img src='img/tell.png' style='vertical-align:middle'></img>&nbsp;&nbsp;
 			</td>
 		</tr></table>
 
@@ -60,20 +63,16 @@
 // MAIN 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-var mw=null;
+var app=null;
 
 $(window).resize(function() {                                         	// ON WINDOW RESIZE
 	});
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
-	var url=window.location.search.substring(1);						    // Get query string
-	mw=new mwMain();                                                      	// Alloc app
+	var url=window.location.search.substring(1);						   	// Get query string
+	app=new App();                                                      	// Alloc app
     });									
 		
-function mwMain()														// MAIN CONSTRUCTOR
-{
-    mp=this;                                                                // Set global pointer to app
-}	
 
 			
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +101,6 @@ function mwMain()														// MAIN CONSTRUCTOR
 		else
 			$("#dialogDiv").dialog("option","position",{ my:"center", at:"center", of:this.parent });
 	}
-
 
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
