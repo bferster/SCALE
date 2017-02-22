@@ -15,9 +15,10 @@
 	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
 	<style type="text/css">
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
-							padding:0px;margin:0px
+							padding:0px;margin:0px;background-image:url("img/texture.png");
 							}
-		.wm-header { 		background-color: #ccc;width:calc(100% -32px);color:#fff;;padding:8px 16px 8px 16px;
+		.wm-header { 		background-color: #bbb;width:calc(100% -32px);color:#fff;
+							padding:8px 16px 8px 16px;margin-bottom:8px;
 							}
 		.wm-lessonTitle { 	font-size: 32px; font-weight: bold;
 							}
@@ -27,6 +28,16 @@
 							}
 		.wm-stepTitle { 	vertical-align: middle;
 							}
+		.wm-content { 		height:600px;max-width:1024px;width:100%;  margin: 0 auto;
+							border: 1px solid #ccc;background-color: #eee;padding:8px;
+							border-radius: 16px;
+							}
+		.wm-navigation { 	position: absolute; left:0; height:100px;
+							padding:8px 16px 8px 16px; background-color: #bbb;
+							}
+
+
+
 		.wm-userName { 		font-size: 12px;padding-right:32px; cursor:pointer;color:#000;
 							}
 		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
@@ -53,11 +64,11 @@
 			<span id='stepTitle' class='wm-stepTitle'>STEP</span>&nbsp;&nbsp;&nbsp;<img id='stepImg' src='img/tell.png' style='vertical-align:middle'></img>
 			</td>
 		</tr></table>
-
-
 	</div>
-	<div id="bodyDiv"  class="wm-view"></div>
-	<div id="timeDiv"  class="wm-time"></div>
+	<div style='text-align:center'>
+		<div id="contentDiv"  class="wm-content"></div>
+	</div>
+	<div id="navDiv"  class="wm-navigation"></div>
 <script>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +78,8 @@
 var app=null;
 
 $(window).resize(function() {                                         	// ON WINDOW RESIZE
+	if (app)																// If app loaded
+		app.Draw("resize");													// Redraw to fit screen
 	});
 			
 $(document).ready(function() {								           	// ON PAGE LOADED

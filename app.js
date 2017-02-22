@@ -1,4 +1,8 @@
-class App  {
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// APP
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class App  {                                                                                                            // APP
     constructor()   {
         app=this;
         this.curLesson=this.curTopic=this.curConcept=this.curStep=0;
@@ -9,8 +13,10 @@ class App  {
         this.Draw(); 
      }
      
-     Draw() {
-        this.con.Draw();
-        this.nav.Draw();
+    Draw() {                                                                                                            // REDRAW
+        this.wid=$(window).width();                                                                                         // Get window width
+        this.hgt=$(window).height();                                                                                        // Height
+        this.con.Draw();                                                                                                    // Draw container & header
+        this.nav.Draw();                                                                                                    // Draw navigator
      }
 }

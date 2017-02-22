@@ -1,9 +1,17 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// CONTENT
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class Content  {
     constructor()   {
         }
-    Draw() {
-        this.UpdateHeader()    
-    }
+    
+    Draw() {                                                                                                            // REDRAW
+        var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height();
+        this.UpdateHeader();
+        $("#contentDiv").height(h-66);
+
+        }
     
     UpdateHeader() {
         var o=app.doc.lessons;
@@ -17,10 +25,7 @@ class Content  {
         if (s.name)
             $("#stepImg").prop("src","img/"+s.name+".png");  
 
-
-
-
-    }
+      }
 
 }
 
