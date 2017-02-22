@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/bferster/WriteMao/issues"
   },
+  "devDependencies": {
+     "babel-cli": "^6.0.0"
+  },
+  "babel": {
+      "presets": ["es2015"]
+  },
   "homepage": "https://github.com/bferster/WriteMao#readme"
+  
 }
