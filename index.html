@@ -30,14 +30,14 @@
 							}
 		.wm-content { 		height:600px;max-width:1024px;width:100%;  margin: 0 auto;
 							border: 1px solid #ccc;background-color: #eee;padding:8px;
-							border-radius: 16px;
+							border-radius: 16px; box-shadow: 2px 4px 8px #999;cursor:pointer;
+							}
+		.wm-nextBut { 		position: absolute;left:calc(50% - 32px);border-radius: 128px;
+							box-shadow: 2px 4px 8px #999;cursor:pointer;width: 64px;
 							}
 		.wm-navigation { 	position: absolute; left:0; height:100px;
 							padding:8px 16px 8px 16px; background-color: #bbb;
 							}
-
-
-
 		.wm-userName { 		font-size: 12px;padding-right:32px; cursor:pointer;color:#000;
 							}
 		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
@@ -129,6 +129,28 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			console.log(msg,p1);
 		else
 			console.log(msg);
+	}
+
+	function Sound(sound, mute)												// PLAY SOUND
+	{
+		var snd=new Audio();													// Init audio object
+		if (!snd.canPlayType("audio/mpeg") || (snd.canPlayType("audio/mpeg") == "maybe")) 
+			snd=new Audio("img/"+sound+".ogg");									// Use ogg
+		else	
+			snd=new Audio("img/"+sound+".mp3");									// Use mp3
+		if (!mute)	{															// If not initing or muting	
+			snd.volume=50/100;											// Set volume
+			snd.play();															// Play it
+			}
+		}
+		
+	function ButtonPress(id)												// WIGGLE BUTTON
+	{
+		Sound("click");
+		var p=$("#"+id).position();
+		$("#"+id).animate( { left: p.left+1+"px", top: p.top+3+"px"}, 50, 
+			function() {$("#"+id).css( { left: p.left+"px", top: p.top+"px"})} 
+			);
 	}
 
 </script>

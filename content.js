@@ -7,11 +7,14 @@ class Content  {
         }
     
     Draw() {                                                                                                            // REDRAW
-        var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height();
-        this.UpdateHeader();
-        $("#contentDiv").height(h-66);
-
-        }
+        var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height();                                                       // Get top
+        this.UpdateHeader();                                                                                                // Update header
+        $("#contentDiv").height(h-66);                                                                                      // Position nav box
+        var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>";                                                 // Add next button
+        $("#contentDiv").html(str);                                                                                         // Set content
+        $("#nextBut").css({"top":h-64+"px"});                                                                              // Pos next button
+        $("#nextBut").on("click",()=> { app.nav.Forward(); ButtonPress("nextBut")} );                                               // On button click, navigate forward   
+    }
     
     UpdateHeader() {
         var o=app.doc.lessons;

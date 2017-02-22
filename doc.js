@@ -3,10 +3,10 @@ var demoCur={
     lessons:    [ { name: "Clauses", depends:[0], id:1,
         topics:     [ { name: "Separating clauses", depends:[0], id:1,
             concepts:   [ { name: "Using semicolons", depends:[0], id:1,
-                steps:      [ { name: "tell", depends:[0], id:1 },
-                            { name: "show", depends:[0], id:2 }, 
-                            { name: "find", depends:[0], id:3 },
-                            { name: "do", depends:[0], id:4 } ] 
+                steps:      [ { name: "tell", depends:[0], id:1, pages: [ { name:"Page1",id:1 } ] },
+                            { name: "show", depends:[0], id:2, pages: [ { name:"Page1", id:1 } ] }, 
+                            { name: "find", depends:[0], id:3, pages: [ { name:"Page1" ,id:1 } ] },
+                            { name: "do", depends:[0], id:4, pages: [ { name:"Page1",id:1 } ] } ] 
                 }]
              }]
         }]
@@ -19,6 +19,6 @@ class Doc  {
         this.lessons=o.lessons ? o.lessons : [];
         this.firstName="Jerry";
         this.lastName="Bruner";
-        app.c=this.lessons;    
+        app.l=this.lessons;    
     }
   }
