@@ -20,30 +20,34 @@
 		.wm-header { 		background-color: #bbb;width:calc(100% -32px);color:#fff;
 							padding:8px 16px 8px 16px;margin-bottom:8px;
 							}
-		.wm-lessonTitle { 	font-size: 32px; font-weight: bold;
+		.wm-lessonTitle { 	font-size: 32px; font-weight: bold; margin-right:32px;
 							}
-		.wm-lessonSub { 	font-size: 16px; 
+		.wm-topicTitle { 	font-size: 16px ;margin-right:32px;
 							}
-		.wm-step { 			font-size: 16px; text-align:right;
+		.wm-StepTitle { 	font-size: 12px; 
 							}
-		.wm-stepTitle { 	vertical-align: middle;
-							}
-		.wm-content { 		height:600px;max-width:1024px;width:100%;  margin: 0 auto;
+		.wm-content { 		height:600px;max-width:1024px;  margin: 0 auto;
 							border: 1px solid #ccc;background-color: #eee;padding:8px;
-							border-radius: 16px; box-shadow: 2px 4px 8px #999;cursor:pointer;
+							border-radius: 16px; box-shadow: 2px 4px 8px #999;
 							}
-		.wm-nextBut { 		position: absolute;left:calc(50% - 32px);border-radius: 128px;
-							box-shadow: 2px 4px 8px #999;cursor:pointer;width: 64px;
+		.wm-nextBut { 		position: absolute;left:calc(50% - 32px); border-radius: 128px;
+							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 64px;
 							}
-		.wm-navigation { 	position: absolute; left:0; height:100px;
-							padding:8px 16px 8px 16px; background-color: #bbb;
+		.wm-navigation { 	position: absolute; height:64px;;
 							}
-		.wm-userName { 		font-size: 12px;padding-right:32px; cursor:pointer;color:#000;
+		.wm-topicBar { 		width:calc(100% -32px); height:3px; border-radius:4px; margin:16px;
+							background-color: #999;
+							}
+		.wm-topicDot { 		position:absolute; width:14px; height:14px; border-radius:16px; 
+							background-color: #009900; border:1px solid #999;
+							}
+
+		.wm-userName { 		font-size: 12px; cursor:pointer;color:#000;text-align: right;
 							}
 		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
 							padding:8px 16px 8px 8px; border:1px solid #999;
 							}
-		.wm-pullDownItem { padding:3px;
+		.wm-pullDownItem { 	padding:3px;
 						}
 		.wm-pullDownItem:hover{ background-color:#eee;
 						}
@@ -51,24 +55,23 @@
 		.ui-dialog { border-radius:12px;box-shadow:2px 2px 6px #ccc }
 		.ui-button { border-radius:30px;outline:none }
 		.ui-dialog-titlebar { display:none }
-		 table {    	border-spacing: 0px;  }
+		 table {			border-spacing: 0px;  }
 	</style>
 </head>
 <body>
 	<div id="headerDiv" class="wm-header">
 		<table style='width:100%;vertical-align: top;'><tr>
-			<td style='vertical-align: middle'><span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
-			<span id='topicTitle' class='wm-lessonSub'>Topic</span></td>
-			<td id='stepDiv' class='wm-step'>
-			<span id='userName' class='wm-userName'>User Name</span>
-			<span id='stepTitle' class='wm-stepTitle'>STEP</span>&nbsp;&nbsp;&nbsp;<img id='stepImg' src='img/tell.png' style='vertical-align:middle'></img>
-			</td>
+			<td width="100%"style='vertical-align: middle'><span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
+			<span id='topicTitle'class='wm-topicTitle'>Topic</span>
+			<span id='stepTitle' class='wm-stepTitle'>Step</span></td>
+			<td id='stepDiv' class='wm-step'><span id='userName' class='wm-userName'>User&nbsp;Name</span></td>
 		</tr></table>
 	</div>
 	<div style='text-align:center'>
-		<div id="contentDiv"  class="wm-content"></div>
+		<div id="contentDiv" class="wm-content"></div>
+		<div id="navDiv" class="wm-navigation"></div>
 	</div>
-	<div id="navDiv"  class="wm-navigation"></div>
+
 <script>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////

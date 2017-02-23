@@ -9,16 +9,26 @@ var demoCur={
                             { name: "do", depends:[0], id:4, pages: [ { name:"Page1",id:1 } ] } ] 
                 }]
              }]
-        }]
+        }]	
     };
 
 class Doc  {
-    constructor(o)   {
-        o=demoCur;  // demo //
-        this.name=o.name ? o.name : "";
-        this.lessons=o.lessons ? o.lessons : [];
-        this.firstName="Jerry";
-        this.lastName="Bruner";
-        app.l=this.lessons;    
-    }
+
+	constructor(o)	{
+		o=demoCur;  // demo //
+		this.name=o.name ? o.name : "";
+		this.lessons=o.lessons ? o.lessons : [];
+		this.firstName="Jerry";
+		this.lastName="Bruner";
+		app.l=this.lessons;
+		}
+
+	GetCurriculumPointers() {																					// GET POINTERS TO CURRICULUM PARTS
+		app.pl=this.lessons[app.cl]; 																				// Point at current lesson
+		app.pt=app.pl.topics[app.ct];																				// Topic
+		app.pc=app.pt.concepts[app.cc];																				// Concept
+		app.ps=app.pc.steps[app.cs];																				// Step
+		app.pp=app.ps.pages[app.cp]; 																				// Page
+		}
+
   }
