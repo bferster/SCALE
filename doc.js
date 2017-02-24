@@ -1,19 +1,37 @@
-var demoLobs=[ 
-{ type:"course", name:"WriteMao", id:1, subs:[2] }, 
-{ type:"lesson", name:"Clauses", id:2, subs:[3,4,14] }, 
-{ type:"topic", name:"Kinds of clauses", id:3, subs:[] }, 
-{ type:"topic", name:"Separating clauses", id:4, subs:[5,6,7,13] }, 
-{ type:"concept", name:"Using commas", id:5, subs:[] }, 
-{ type:"concept", name:"Using joiners", id:6, subs:[] }, 
-{ type:"concept", name:"Using semicolons", id:7, subs:[8,9,11,12] }, 
-{ type:"step", name:"tell", id:8, subs:[] }, 
-{ type:"step", name:"show", id:9, subs:[10] }, 
-{ type:"page", name:"show", id:10, subs:[] }, 
-{ type:"step", name:"find", id:11, subs:[] }, 
-{ type:"step", name:"do", id:12, subs:[] }, 
-{ type:"concept", name:"Using periods", id:13, subs:[] }, 
-{ type:"topic", name:"Ordering clauses", id:14, subs:[] }
-];
+var demo={
+	lobs:[	{ name:"WriteMao", id:1 }, 
+			{ name:"Clauses", id:2 }, 
+			{ name:"Kinds of clauses", id:3 }, 
+			{ name:"Separating clauses", id:4 }, 
+			{ name:"Using commas", id:5 }, 
+			{ name:"Using joiners", id:6 }, 
+			{ name:"Using semicolons", id:7 }, 
+			{ name:"tell", id:8 }, 
+			{ name:"show", id:9 }, 
+			{ name:"show", id:10 }, 
+			{ name:"find", id:11 }, 
+			{ name:"do", id:12 }, 
+			{ name:"Using periods", id:13 }, 
+			{ name:"Ordering clauses", id:14 }
+			],
+	levels:["course","lesson","topic","concept","step","page"],
+	map:[	{ level:0, id:1 }, 
+			{ level:1, id:2 }, 
+			{ level:2, id:3 }, 
+			{ level:2, id:4 }, 
+			{ level:3, id:5 }, 
+			{ level:3, id:6 }, 
+			{ level:3, id:7 }, 
+			{ level:4, id:8 }, 
+			{ level:4, id:9 }, 
+			{ level:5, id:10 }, 
+			{ level:4, id:11 }, 
+			{ level:4, id:12 }, 
+			{ level:3, id:13 }, 
+			{ level:2, id:14 } 
+			]
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DOC
@@ -22,26 +40,18 @@ var demoLobs=[
 class Doc  {
 
 	constructor(o)	{																							// CONSTRUCTOR
-		o=demoLobs;
-		this.lobs=[];																								// Holds learning objectas
-		if (o)  this.lobs=demoLobs;																					// If default lobs set, use them
-		else 	this.AddLob(0,new Lob("course"));																	// Add root
-		this.curLob=this.lobs[0].id;																				// Set current lob
+		o=demo;
+		this.lobs=this.map=[];																						// Holds learning objects/map
+		if (o)  {																									// If default data
+			this.lobs=o.lobs;																						// Add lobs
+			this.map=o.map;																							// Add map
+			this.levels=o.levels;																					// Add map
+			}
+		this.curPos=0;																								// Set current lob
 		this.firstName="Jerry";		this.lastName="Bruner";
-		
+
+trace(this.GetLevels(13))
 	}
-
-
-	AddLob(parentId,lob) {																						// ADD NEW LOB
-		this.lobs.push(lob);																						// Add to collection
-		if (!parentId)																								// If root
-			return lob.id;																							// Quit and return id
-		var l=this.FindLobById(parentId);																			// Get pointer to subs array
-		if (l)																										// If subs member found
-			l.subs.push(lob.id);																					// Add to subs array																							
-		return lob.id;																								// Return id
-		}
-
 
 	RemoveLob() {																								// REMOVE LOB AND ALL REFERENCES TO IT
 		}
@@ -56,31 +66,6 @@ class Doc  {
 		return null;																								// Not found
 		}
 
-
-	FindLobParent(id) {																							// FIND PTR TO LOB PARENT
-		var i,j,n=this.lobs.length
-		for (i=0;i<n;++i) {																							// For each lob
-				for (j=0;j<this.lobs[i].subs.length;++j) {															// For each sub
-					if (id == this.lobs[i].subs[j])																	// A match
-						return this.lobs[i];																		// Return ptr to lob's parent
-					}
-			}
-		return null;																								// Not found
-		}
-
-
-	NextLob(clob) {
-		var par=this.FindLobParent(clob);																			// Get parent lob
-		if (!par)																									// If no parent
-			return null;																							// Quit with error
-		for (i=0;i<par.subs.length;++i) {																			// Look thru subs
-			if (this.curLob == par.subs[i]) {																		// If it's here
-				if (i < subs.length-1) 																				// Not last sub
-					return par.subs[i+1];																			// Return next sub
-				}
-			}
-		NextLob(par.id);																							// Recurse																					
-	}	
 
 
 	UniqueId() {																								// MAKE UNIQUE ID
@@ -97,6 +82,39 @@ class Doc  {
 		return ""+id;																								// Return unique id	as string													
 		}
 			
+		GetLevels(mapIndex)
+		{
+			var i;
+			var levels=[0,0,0,0];
+			var curLevel=-1;
+			var o=this.map[mapIndex];
+			
+			var curLevel=o.level;
+			for (i=mapIndex;i>=0;--i) {																				// Work upwards
+				var o=this.map[i];																					// Get map entry
+				if (curLevel != o.level) {																			// A different level than previous
+					trace(curLevel,o.level)
+					curLevel=o.level;																				// Then is now
+					if (!levels[curLevel])																			// Not set yet
+						levels[curLevel]=o.id;																		// Save
+					if (curLevel == 0)																				// If last one
+						return levels;																				// Return levels array
+					}
+				}
+			return levels;																							// Return levels array
+		}
+
+
+
+
+
+			
+				
+
+
+
+
+
 
 }
 

@@ -10,9 +10,9 @@ class App  {																									 // APP
 		this.cl=this.ct=this.cc=this.cs=this.cp=0;																	// Current spont in curriculum
 		this.name="WriteMao";
 		this.doc=new Doc();
-//		this.con=new Content();
-//		this.nav=new Navigation();
-//		this.Draw(); 
+		this.con=new Content();
+		this.nav=new Navigation();
+		this.Draw(); 
 		}
  
 	Draw() {																									// REDRAW

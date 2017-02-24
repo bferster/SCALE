@@ -24,7 +24,7 @@ class Content  {
  }
 		
 	UpdateHeader() {
-		$("#lessonTitle").html(app.pl.name);
+/*		$("#lessonTitle").html(app.pl.name);
 		$("#topicTitle").html(app.pt ? app.pt.name : "");
 		if (app.ps.name) {																							// If a named step
 			var str=app.ps.name.charAt(0).toUpperCase()+app.ps.name.substr(1);										// Add step name
@@ -34,7 +34,7 @@ class Content  {
 			}
 
 		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);
-	}
+*/	}
 
 }
 
