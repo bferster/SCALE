@@ -10,13 +10,12 @@ class App  {																									 // APP
 		this.cl=this.ct=this.cc=this.cs=this.cp=0;																	// Current spont in curriculum
 		this.name="WriteMao";
 		this.doc=new Doc();
-		this.con=new Content();
-		this.nav=new Navigation();
-		this.Draw(); 
+//		this.con=new Content();
+//		this.nav=new Navigation();
+//		this.Draw(); 
 		}
  
 	Draw() {																									// REDRAW
-		this.doc.GetCurriculumPointers();																			// Get curriculum pointers
 		this.wid=$(window).width();																					// Get window width			
 		this.hgt=$(window).height();																				// Height
 		this.con.Draw();																							// Draw container & header
