@@ -29,11 +29,7 @@ class Doc  {
 		this.curLob=this.lobs[0].id;																				// Set current lob
 		this.firstName="Jerry";		this.lastName="Bruner";
 		
-	trace(this.FindLobById(this.curLob))
-
-		this.curLob=this.NextLob(this.curLob)
-	trace(this.FindLobById(this.curLob))
-}
+	}
 
 
 	AddLob(parentId,lob) {																						// ADD NEW LOB
@@ -74,24 +70,13 @@ class Doc  {
 
 
 	NextLob(clob) {
-		var p=this.FindLobById(clob);																				// Point at lob
-		if (!p)																										// If no parent
+		var par=this.FindLobParent(clob);																			// Get parent lob
+		if (!par)																									// If no parent
 			return null;																							// Quit with error
-		// Am I at head
-			// Go to 1st sub
-		// Am I in a sub of parent
-			// if not last
-				// Advance in sub
-			// If last
-			
-
-
-
-	
-		for (i=0;i<p.subs.length;++i) {																			// Look thru subs
-			if (this.curLob == p.subs[i]) {																		// If it's here
+		for (i=0;i<par.subs.length;++i) {																			// Look thru subs
+			if (this.curLob == par.subs[i]) {																		// If it's here
 				if (i < subs.length-1) 																				// Not last sub
-					return par.l[i+1];																			// Return next sub
+					return par.subs[i+1];																			// Return next sub
 				}
 			}
 		NextLob(par.id);																							// Recurse																					
