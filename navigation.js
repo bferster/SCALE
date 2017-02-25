@@ -33,7 +33,7 @@ class Navigation {
 			else if (i == app.doc.concepts.length-1)	str+= " style='border-top-right-radius:16px;border-bottom-right-radius:16px'";
 			str+=`<>${name}</div>`;
 			}
-		if ((app.doc.steps.length) && (app.doc.map[app.doc.curMapPos].level == 4)) 									// If it has steps and this one is a step
+		if ((app.doc.steps.length) && (app.doc.map[app.doc.curMapPos].level == 3)) 									// If it has steps and this one is a step
 			str+="<div id='stepIndicator' class='wm-stepIndicator'></div>";											// Step triangle
 		$("#navDiv").html(str);																						// Add content	
 
@@ -49,8 +49,8 @@ class Navigation {
 			$("#conceptBar-"+i).css({top:"32px",left:l+"px",width:ww-4+"px"});										// Position concept bar
 			l+=ww;
 			}
-		if ((app.doc.steps.length) && (app.doc.map[app.doc.curMapPos].level == 4)) {								// If it has steps and this one is a step
-			i=app.doc.levelPos[4];																					// Get index within level
+		if ((app.doc.steps.length) && (app.doc.map[app.doc.curMapPos].level == 3)) {								// If it has steps and this one is a step
+			i=app.doc.levelPos[3];																					// Get index within level
 			trace(i)
 			l=22+(ww/app.doc.steps.length)*(app.doc.steps.length/i);
 			$("#stepIndicator").css({top:"52px",left:l+"px"});														// Position step bar

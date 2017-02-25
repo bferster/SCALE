@@ -69,14 +69,15 @@ class Doc  {
 		if (this.lessons.length)																					// If lessons
 			this.levelPos[0]=this.lessons.findIndex(x => x == id);													// Get index of matching member in lessons
 		if (this.topics.length)																						// If topics
-			this.levelPos[1]=this.topics.findIndex(x => x == id);													// Get index of matching members
+			this.levelPos[1]=this.topics.findIndex(x => x == id);													// Get index 
 		if (this.concepts.length)																					// If Concepts
-			this.levelPos[2]=this.concepts.findIndex(x => x == id);													// Get index of matching members
+			this.levelPos[2]=this.concepts.findIndex(x => x == id);													// Get index 
 		if (this.steps.length)																						// If steps
-			this.levelPos[4]=this.steps.findIndex(x => x == id);													// Get index of matching members
+			this.levelPos[3]=this.steps.findIndex(x => x == id);													// Get index 
 		if (this.pages.length)																						// If pages
-			this.levelPos[5]=this.pages.findIndex(x => x == id);													// Get index of matching members
-	}
+			this.levelPos[4]=this.pages.findIndex(x => x == id);													// Get index 
+trace(this.levelPos[4],this.pages)
+}
 	
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
