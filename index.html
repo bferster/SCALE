@@ -4,7 +4,7 @@
 	
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
-	<title>WriteMao</title>
+	<title>S C A L E</title>
 	<script src="lib/jquery.min.js"></script>
 	<script src="lib/jquery-ui.min.js"></script>
 	<script src="app.js"></script>
@@ -22,7 +22,9 @@
 							}
 		.wm-lessonTitle { 	font-size: 32px; font-weight: bold; margin-right:32px;
 							}
-		.wm-topicTitle { 	font-size: 16px ;margin-right:32px;
+		.wm-topicTitle { 	font-size: 24px ;margin-right:32px;
+							}
+		.wm-conceptTitle { 	font-size: 16px ;margin-right:32px;
 							}
 		.wm-StepTitle { 	font-size: 12px; 
 							}
@@ -33,14 +35,24 @@
 		.wm-nextBut { 		position: absolute;left:calc(50% - 32px); border-radius: 128px;
 							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 64px;
 							}
-		.wm-navigation { 	position: absolute; height:64px;;
+		.wm-navigation { 	position: absolute; height:80px;;
 							}
 		.wm-topicBar { 		width:calc(100% -32px); height:3px; border-radius:4px; margin:16px;
 							background-color: #999;
 							}
-		.wm-topicDot { 		position:absolute; width:14px; height:14px; border-radius:16px; 
-							background-color: #009900; border:1px solid #999;
+		.wm-topicDot { 		width:14px; height:14px; border-radius:16px; margin-left:100px;
+							background-color: #009900; border:1px solid #999; cursor:pointer;
 							}
+		.wm-topicDot:hover {background-color: #9999ff
+							}
+		.wm-topicDotLab { 	width:200px; text-align:center; padding-left:-100px;padding-bottom: 4px;
+							}
+		.wm-conceptBar { 	position: absolute; height:16px;background-color: #ccc;
+							background-color: 999; border:1px solid #999; cursor:pointer;
+							}
+		.wm-conceptBar:hover {background-color: #9999ff
+							}
+							
 
 		.wm-userName { 		font-size: 12px; cursor:pointer;color:#000;text-align: right;
 							}
@@ -63,6 +75,7 @@
 		<table style='width:100%;vertical-align: top;'><tr>
 			<td width="100%"style='vertical-align: middle'><span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
 			<span id='topicTitle'class='wm-topicTitle'>Topic</span>
+			<span id='conceptTitle'class='wm-conceptTitle'>Concept</span>
 			<span id='stepTitle' class='wm-stepTitle'>Step</span></td>
 			<td id='stepDiv' class='wm-step'><span id='userName' class='wm-userName'>User&nbsp;Name</span></td>
 		</tr></table>

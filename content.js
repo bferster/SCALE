@@ -13,6 +13,7 @@ class Content  {
 		var l=$("#contentDiv").offset().left;																		// Left
 		var t=$("#contentDiv").offset().top;																		// Top
 
+		this.levels=app.doc.GetLevels();																			// Get levels	
 		this.UpdateHeader(); 																						// Update header
 		$("#contentDiv").height(h);																					// Position nav box
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
@@ -20,21 +21,23 @@ class Content  {
 	
 		$("#contentDiv").html(str);																					// Set content
 		$("#nextBut").css({"top":h-10+"px"});																		// Pos next button
-		$("#nextBut").on("click",()=> { app.nav.Forward(); ButtonPress("nextBut")} );								// On button click, navigate forward   
- }
+		$("#nextBut").on("click",()=> { app.doc.NextLob(); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
+}
 		
 	UpdateHeader() {
-/*		$("#lessonTitle").html(app.pl.name);
-		$("#topicTitle").html(app.pt ? app.pt.name : "");
-		if (app.ps.name) {																							// If a named step
-			var str=app.ps.name.charAt(0).toUpperCase()+app.ps.name.substr(1);										// Add step name
-			if (app.ps.pages.length > 1)																			// If multiple pages
-				str+=`&nbsp;&nbsp;<i>(${app.cp+1}&nbsp;of&nbsp;${app.ps.pages.length})</i>`;						// Add place in pages, if more than 1
-			$("#stepTitle").html(str);																				// Add content	
-			}
-
-		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);
-*/	}
+		var name=app.doc.FindLobById(this.levels[1]).name;															// Get lesson name
+		$("#lessonTitle").html(name);																				// Show it
+		if (this.levels[2]) 	name=app.doc.FindLobById(this.levels[2]).name;										// If live, get name
+		else					name="";																			// Else null it
+		$("#topicTitle").html(name ? name : "");																	// Show it
+		if (this.levels[3]) 	name=app.doc.FindLobById(this.levels[3]).name;										// If live, get name
+		else					name="";																			// Else null it
+		$("#conceptTitle").html(name ? name : "");																	// Show it
+		if (this.levels[4]) 	name=app.doc.FindLobById(this.levels[4]).name;										// If live, get name
+		else					name="";																			// Else null it
+		$("#stepTitle").html(name.charAt(0).toUpperCase()+name.substr(1));											// Show it
+		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);											// Show user
+	}
 
 }
 

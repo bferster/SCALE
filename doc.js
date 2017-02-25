@@ -6,8 +6,8 @@ var demo={
 			{ name:"Using commas", id:5 }, 
 			{ name:"Using joiners", id:6 }, 
 			{ name:"Using semicolons", id:7 }, 
-			{ name:"tell", id:8 }, 
-			{ name:"show", id:9 }, 
+			{ name:"tell 1/2", id:8 }, 
+			{ name:"tell 2/2", id:9 }, 
 			{ name:"show", id:10 }, 
 			{ name:"find", id:11 }, 
 			{ name:"do", id:12 }, 
@@ -23,8 +23,8 @@ var demo={
 			{ level:3, id:6 }, 
 			{ level:3, id:7 }, 
 			{ level:4, id:8 }, 
-			{ level:4, id:9 }, 
-			{ level:5, id:10 }, 
+			{ level:5, id:9 }, 
+			{ level:4, id:10 }, 
 			{ level:4, id:11 }, 
 			{ level:4, id:12 }, 
 			{ level:3, id:13 }, 
@@ -46,11 +46,14 @@ class Doc  {
 			this.lobs=o.lobs;																						// Add lobs
 			this.map=o.map;																							// Add map
 			this.levels=o.levels;																					// Add map
+			this.numLessons=0;																						// Number of lessons in course
+			this.numTopics=0;																						// Number of topics in this lesson
+			this.numConcepts=0;																						// Number of concepts in this topic
+			this.numConcepts=0;																						// Number of steps in this concept
+			this.numPages=0;																						// Number of pages in the step
 			}
-		this.curPos=0;																								// Set current lob
+		this.curMapPos=1;																							// Start at lesson
 		this.firstName="Jerry";		this.lastName="Bruner";
-
-trace(this.GetLevels(13))
 	}
 
 	RemoveLob() {																								// REMOVE LOB AND ALL REFERENCES TO IT
@@ -66,7 +69,12 @@ trace(this.GetLevels(13))
 		return null;																								// Not found
 		}
 
-
+	NextLob() {																									// ADVANCE THROUGH LOB MAP
+		if (this.curMapPos < this.map.length-1)																		// If not last
+			this.curMapPos++;																						// Advance
+		else																										// Last
+			this.curMapPos=1;																						// Loop around
+	}
 
 	UniqueId() {																								// MAKE UNIQUE ID
 		var i,index;
@@ -82,28 +90,36 @@ trace(this.GetLevels(13))
 		return ""+id;																								// Return unique id	as string													
 		}
 			
-		GetLevels(mapIndex)
+		GetLevels(mapIndex)																						// GET LOB LEVELS
 		{
 			var i;
-			var levels=[0,0,0,0];
-			var curLevel=-1;
-			var o=this.map[mapIndex];
-			
-			var curLevel=o.level;
-			for (i=mapIndex;i>=0;--i) {																				// Work upwards
+			if (!mapIndex)																							// If mapindex on set
+				mapIndex=this.curMapPos;																			// Set cur pos
+			var levels=[0,0,0,0,0,0];																				// Reset
+			var highest=this.map[mapIndex].level;																	// Highest level to set
+			for (i=0;i<=mapIndex;i++) {																				// Work to cur point
 				var o=this.map[i];																					// Get map entry
-				if (curLevel != o.level) {																			// A different level than previous
-					trace(curLevel,o.level)
-					curLevel=o.level;																				// Then is now
-					if (!levels[curLevel])																			// Not set yet
-						levels[curLevel]=o.id;																		// Save
-					if (curLevel == 0)																				// If last one
-						return levels;																				// Return levels array
-					}
+				if (o.level <= highest)																				// If below limit 
+					levels[o.level]=o.id;																			// Save id
 				}
 			return levels;																							// Return levels array
 		}
 
+		LevelIds(level) {
+			var i,ids=[];
+			var s=this.GetLevels()[level-1];
+			var e=this.map.length-1;
+			for (i=s+1;i<this.map.length;++i)
+				if (this.map[i].level == level-1) {
+					e=i;
+					break;
+				}
+			for (i=s;i<=e;++i) {
+				if (this.map[i].level == level)
+					ids.push(this.map[i].id)
+				}
+			return ids;
+			}
 
 
 
