@@ -46,20 +46,38 @@ class Doc  {
 			this.lobs=o.lobs;																						// Add lobs
 			this.map=o.map;																							// Add map
 			this.levels=o.levels;																					// Add map
-			this.numLessons=0;																						// Number of lessons in course
-			this.numTopics=0;																						// Number of topics in this lesson
-			this.numConcepts=0;																						// Number of concepts in this topic
-			this.numConcepts=0;																						// Number of steps in this concept
-			this.numPages=0;																						// Number of pages in the step
+			this.Lessons=[];																						// Lessons in course
+			this.topics=[];																							// Topics in this lesson
+			this.concepts=[];																						// Concepts in this topic
+			this.concepts=[];																						// Steps in this concept
+			this.pages=[];																							// Pages in the step
 			}
+		this.levelPos=[0,0,0,0,0];																					// Holds progress with in level
 		this.curMapPos=1;																							// Start at lesson
 		this.firstName="Jerry";		this.lastName="Bruner";
 	}
 
-	RemoveLob() {																								// REMOVE LOB AND ALL REFERENCES TO IT
-		}
-
-
+	Draw() {																									// SET LEVELS AND DATA
+		this.lessons=this.LevelIds(1);																				// Lessons in course
+		this.topics=this.LevelIds(2);																				// Topics in this lesson
+		this.concepts=app.doc.LevelIds(3);																			// Concepts in this topic
+		this.steps=app.doc.LevelIds(4);																				//Steps in this concept
+		this.pages=this.LevelIds(5);																				// Pages in this step
+		this.levels=this.GetLevels();																				// Get levels	
+		var id=this.map[this.curMapPos].id;																			// Get current id
+		
+		if (this.lessons.length)																					// If lessons
+			this.levelPos[0]=this.lessons.findIndex(x => x == id);													// Get index of matching member in lessons
+		if (this.topics.length)																						// If topics
+			this.levelPos[1]=this.topics.findIndex(x => x == id);													// Get index of matching members
+		if (this.concepts.length)																					// If Concepts
+			this.levelPos[2]=this.concepts.findIndex(x => x == id);													// Get index of matching members
+		if (this.steps.length)																						// If steps
+			this.levelPos[4]=this.steps.findIndex(x => x == id);													// Get index of matching members
+		if (this.pages.length)																						// If pages
+			this.levelPos[5]=this.pages.findIndex(x => x == id);													// Get index of matching members
+	}
+	
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
 		for (i=0;i<n;++i) {																							// For each lob
@@ -90,36 +108,36 @@ class Doc  {
 		return ""+id;																								// Return unique id	as string													
 		}
 			
-		GetLevels(mapIndex)																						// GET LOB LEVELS
-		{
-			var i;
-			if (!mapIndex)																							// If mapindex on set
-				mapIndex=this.curMapPos;																			// Set cur pos
-			var levels=[0,0,0,0,0,0];																				// Reset
-			var highest=this.map[mapIndex].level;																	// Highest level to set
-			for (i=0;i<=mapIndex;i++) {																				// Work to cur point
-				var o=this.map[i];																					// Get map entry
-				if (o.level <= highest)																				// If below limit 
-					levels[o.level]=o.id;																			// Save id
-				}
-			return levels;																							// Return levels array
-		}
-
-		LevelIds(level) {
-			var i,ids=[];
-			var s=this.GetLevels()[level-1];
-			var e=this.map.length-1;
-			for (i=s+1;i<this.map.length;++i)
-				if (this.map[i].level == level-1) {
-					e=i;
-					break;
-				}
-			for (i=s;i<=e;++i) {
-				if (this.map[i].level == level)
-					ids.push(this.map[i].id)
-				}
-			return ids;
+	GetLevels(mapIndex)																							// GET LOB LEVELS
+	{
+		var i;
+		if (!mapIndex)																								// If mapindex on set
+			mapIndex=this.curMapPos;																				// Set cur pos
+		var levels=[0,0,0,0,0,0];																					
+		var highest=this.map[mapIndex].level;																		// Highest level to set
+		for (i=0;i<=mapIndex;i++) {																					// Work to cur point
+			var o=this.map[i];																						// Get map entry
+			if (o.level <= highest)																					// If below limit 
+				levels[o.level]=o.id;																				// Save id
 			}
+		return levels;																								// Return levels array
+	}
+
+	LevelIds(level) {																							// GET START OF LEVELS IN MAP
+		var i,ids=[];
+		var s=this.GetLevels()[level-1];																			// Get level map of start one higher up hierarchy
+		var e=this.map.length-1;																					// Assume whole map
+		for (i=s+1;i<this.map.length;++i)																			// For each lob under start
+			if (this.map[i].level == level-1) {																		// If it reaches another of same parent level
+				e=i;																								// This is the real end of the level
+				break;																								// Quit looking
+			}
+		for (i=s;i<=e;++i) {																						// For each lob in the level
+			if (this.map[i].level == level)																			// If a member
+				ids.push(this.map[i].id);																			// Add its id to array
+			}
+		return ids;																									// Return ids array
+		}
 
 
 
