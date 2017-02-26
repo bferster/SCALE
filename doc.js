@@ -1,3 +1,8 @@
+// GLOBALS /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const COURSE=0, LESSON=1, TOPIC=2, CONCEPT=3, STEP=4, PAGE=5, NUMLEVELS=6;
+const TODO=0, DONE=10;
+
 var demo={
 	lobs:[	{ name:"WriteMao", id:1 }, 
 			{ name:"Clauses", id:2 }, 
@@ -14,71 +19,68 @@ var demo={
 			{ name:"Using periods", id:13 }, 
 			{ name:"Ordering clauses", id:14 }
 			],
-	levels:["course","lesson","topic","concept","step","page"],
-	map:[	{ level:0, id:1 }, 
-			{ level:1, id:2 }, 
-			{ level:2, id:3 }, 
-			{ level:2, id:4 }, 
-			{ level:3, id:5 }, 
-			{ level:3, id:6 }, 
-			{ level:3, id:7 }, 
-			{ level:4, id:8 }, 
-			{ level:5, id:9 }, 
-			{ level:4, id:10 }, 
-			{ level:4, id:11 }, 
-			{ level:4, id:12 }, 
-			{ level:3, id:13 }, 
-			{ level:2, id:14 } 
+	map:[{ level:COURSE, id:1, parent:undefined, children:[2], status: TODO }, 
+				{ level:LESSON, id:2, parent:0, children:[3,4,14], status: TODO }, 
+				{ level:TOPIC, id:3, parent:1, children:[], status: DONE }, 
+				{ level:TOPIC, id:4, parent:1, children:[5,6,7,13],status: TODO }, 
+					{ level:CONCEPT,id:5, parent:3, children:[], status: TODO }, 
+					{ level:CONCEPT,id:6, parent:3, children:[], status: TODO }, 
+					{ level:CONCEPT,id:7, parent:3, children:[8,10,11,12], status: TODO }, 
+						{ level:STEP, id:8, parent:6, children:[9], status: TODO }, 
+							{ level:PAGE, id:9, parent:7, children:[], status: TODO }, 
+						{ level:STEP, id:10, parent:6, children:[], status: TODO }, 
+						{ level:STEP, id:11, parent:6, children:[], status: TODO }, 
+						{ level:STEP, id:12, parent:6, children:[],status: TODO }, 
+					{ level:CONCEPT,id:13, parent:3, children:[], status: TODO }, 
+				{ level:TOPIC, id:14, parent:1, children:[],status: TODO } 
 			]
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DOC
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DOC /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Doc  {
 
 	constructor(o)	{																							// CONSTRUCTOR
+		
 		o=demo;
-		this.lobs=this.map=[];																						// Holds learning objects/map
+		this.lobs=this.map;																							// Holds learning objects/map
 		if (o)  {																									// If default data
 			this.lobs=o.lobs;																						// Add lobs
 			this.map=o.map;																							// Add map
-			this.levels=o.levels;																					// Add map
-			this.Lessons=[];																						// Lessons in course
-			this.topics=[];																							// Topics in this lesson
-			this.concepts=[];																						// Concepts in this topic
-			this.concepts=[];																						// Steps in this concept
-			this.pages=[];																							// Pages in the step
 			}
-		this.levelPos=[0,0,0,0,0];																					// Holds progress with in level
 		this.curMapPos=1;																							// Start at lesson
 		this.firstName="Jerry";		this.lastName="Bruner";
-	}
+		}
 
 	Draw() {																									// SET LEVELS AND DATA
-		this.lessons=this.LevelIds(1);																				// Lessons in course
-		this.topics=this.LevelIds(2);																				// Topics in this lesson
-		this.concepts=app.doc.LevelIds(3);																			// Concepts in this topic
-		this.steps=app.doc.LevelIds(4);																				//Steps in this concept
-		this.pages=this.LevelIds(5);																				// Pages in this step
-		this.levels=this.GetLevels();																				// Get levels	
-		var id=this.map[this.curMapPos].id;																			// Get current id
-		
-		if (this.lessons.length)																					// If lessons
-			this.levelPos[0]=this.lessons.findIndex(x => x == id);													// Get index of matching member in lessons
-		if (this.topics.length)																						// If topics
-			this.levelPos[1]=this.topics.findIndex(x => x == id);													// Get index 
-		if (this.concepts.length)																					// If Concepts
-			this.levelPos[2]=this.concepts.findIndex(x => x == id);													// Get index 
-		if (this.steps.length)																						// If steps
-			this.levelPos[3]=this.steps.findIndex(x => x == id);													// Get index 
-		if (this.pages.length)																						// If pages
-			this.levelPos[4]=this.pages.findIndex(x => x == id);													// Get index 
-trace(this.levelPos[4],this.pages)
-}
-	
+		var i;
+		var mp=this.curMapPos;																					// Get id
+		this.curLevel=this.map[mp].level;																			// Current level
+		this.curLobId=this.map[mp].id;																				// Current lob id
+		this.curLob=this.FindLobById(this.map[mp].id);																// Current lob pointer
+		this.curLesson=this.FindLevel(LESSON,mp);																	// Current lesson
+		this.curTopic=this.FindLevel(TOPIC,mp);																		// Current topic
+		this.curConcept=this.FindLevel(CONCEPT,mp);																	// Current concept
+		this.curStep=this.FindLevel(STEP,mp);																		// Current step
+		this.curPage=this.FindLevel(PAGE,mp);																		// Current page
+	}
+
+	FindLevel(level, pos) {
+		var par;
+		do	{
+			par=this.map[pos].parent;
+			if (par == undefined)
+				return 0;
+			if (this.map[pos].level == level)
+				return pos;
+			else
+				pos=par;
+			}
+		while (1);
+		}
+
+
+
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
 		for (i=0;i<n;++i) {																							// For each lob
@@ -102,62 +104,18 @@ trace(this.levelPos[4],this.pages)
 		var parts=id.split("").reverse();																			// Mix them up
 		var n=parts.length-1;																						// Max
 		var s=id.length;																							// Start digit
-		for(i=s;i<s+8;++i) {																						// Add 8 random digits
+		for (i=s;i<s+8;++i) {																						// Add 8 random digits
 			index=Math.floor(Math.random()*n);																		// Get index
 			id+=parts[index];																						// Add to id 
 			}
 		return ""+id;																								// Return unique id	as string													
 		}
-			
-	GetLevels(mapIndex)																							// GET LOB LEVELS
-	{
-		var i;
-		if (!mapIndex)																								// If mapindex on set
-			mapIndex=this.curMapPos;																				// Set cur pos
-		var levels=[0,0,0,0,0,0];																					
-		var highest=this.map[mapIndex].level;																		// Highest level to set
-		for (i=0;i<=mapIndex;i++) {																					// Work to cur point
-			var o=this.map[i];																						// Get map entry
-			if (o.level <= highest)																					// If below limit 
-				levels[o.level]=o.id;																				// Save id
-			}
-		return levels;																								// Return levels array
-	}
-
-	LevelIds(level) {																							// GET START OF LEVELS IN MAP
-		var i,ids=[];
-		var s=this.GetLevels()[level-1];																			// Get level map of start one higher up hierarchy
-		var e=this.map.length-1;																					// Assume whole map
-		for (i=s+1;i<this.map.length;++i)																			// For each lob under start
-			if (this.map[i].level == level-1) {																		// If it reaches another of same parent level
-				e=i;																								// This is the real end of the level
-				break;																								// Quit looking
-			}
-		for (i=s;i<=e;++i) {																						// For each lob in the level
-			if (this.map[i].level == level)																			// If a member
-				ids.push(this.map[i].id);																			// Add its id to array
-			}
-		return ids;																									// Return ids array
-		}
-
-
-
-
-			
-				
-
-
-
-
-
-
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// LOB
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Lob {
+// LOB /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Lob {																										// BASE CLASS FOR LEARNING OBJECTS (LOBs)
 
 	constructor(type)	{
 		this.type=type;																								// Set type o lob

@@ -24,6 +24,7 @@ class Content  {
 }
 		
 	UpdateHeader() {
+return;
 		var name=app.doc.FindLobById(app.doc.levels[1]).name;														// Get lesson name
 		$("#lessonTitle").html(name);																				// Show it
 		if (app.doc.levels[2]) 	name=app.doc.FindLobById(app.doc.levels[2]).name;									// If live, get name

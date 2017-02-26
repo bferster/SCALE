@@ -83,3 +83,38 @@ body .body .title .info .company-branding {
 body .body .about {
     margin-top: 15px
 }
+
+body .body .toggle-button {
+    width: 46px;
+    height: 24px;
+    margin-top: 0px;
+    border: 2px solid transparent;
+    transition-property: border-color,background-color;
+    transition-duration: .2s;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    background-color: #A2C5D3;
+}
+
+body .body .toggle-button.checked {
+    background-color: #7FBA00;
+}
+
+body .body .toggle-button::after {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    box-shadow: 0 1.25px 1.25px rgba(0,0,0,0.1);
+    content: "";
+    position: absolute;
+    transition-property: all;
+    transition-duration: .2s;
+    left: 0;
+    top: 0;
+}
+
+body .body .toggle-button.checked::after {
+    left: 22px;
+}

@@ -3,7 +3,7 @@
 <head>
     <title>Skype</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="c2c_options_menu.css"/>
+    <link rel="stylesheet" type="text/css" href="skype_options_menu.css"/>
 </head>
 <body>
     <div class="body">
@@ -20,7 +20,8 @@
                 </div>
             </div>
         </div>
-        <div class="about">
+        <div id="about" class="about">
+            <h1>About</h1>
             <div class="description">
                 <p>
                     Install the Skype extension for fast access to 'Skype for Web' and 'Share on Skype'  through your browser.
@@ -40,7 +41,15 @@
             </div>
             <a href="https://go.skype.com/skype.extension.faq" target="_blank">Learn more</a> <span>about the Skype Extension</p>
         </div>
+        <div id="settings" class="settings">
+            <h1>Settings</h1>
+            <div class="setting">
+                <button id="enableMeetingsToggle" class="toggle-button" type="button" role="checkbox" aria-labelledby="userSettings-notifications"></button>
+                Enable meetings
+            </div>
+        </div>
     </div>
     <footer></footer>
+    <script src="skype_options_menu.js"></script>
 </body>
 </html>
