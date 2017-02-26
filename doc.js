@@ -19,19 +19,19 @@ var demo={
 			{ name:"Using periods", id:13 }, 
 			{ name:"Ordering clauses", id:14 }
 			],
-	map:[{ level:COURSE, id:1, parent:undefined, children:[2], status: TODO }, 
-				{ level:LESSON, id:2, parent:0, children:[3,4,14], status: TODO }, 
-				{ level:TOPIC, id:3, parent:1, children:[], status: DONE }, 
-				{ level:TOPIC, id:4, parent:1, children:[5,6,7,13],status: TODO }, 
-					{ level:CONCEPT,id:5, parent:3, children:[], status: TODO }, 
-					{ level:CONCEPT,id:6, parent:3, children:[], status: TODO }, 
-					{ level:CONCEPT,id:7, parent:3, children:[8,10,11,12], status: TODO }, 
-						{ level:STEP, id:8, parent:6, children:[9], status: TODO }, 
-							{ level:PAGE, id:9, parent:7, children:[], status: TODO }, 
-						{ level:STEP, id:10, parent:6, children:[], status: TODO }, 
-						{ level:STEP, id:11, parent:6, children:[], status: TODO }, 
-						{ level:STEP, id:12, parent:6, children:[],status: TODO }, 
-					{ level:CONCEPT,id:13, parent:3, children:[], status: TODO }, 
+	map:[{ level:COURSE, id:1, parent:0, children:[2], status: TODO }, 
+				{ level:LESSON, id:2, parent:1, children:[3,4,14], status: TODO }, 
+				{ level:TOPIC, id:3, parent:2, children:[], status: DONE }, 
+				{ level:TOPIC, id:4, parent:2, children:[5,6,7,13],status: TODO }, 
+					{ level:CONCEPT,id:5, parent:4, children:[], status: TODO }, 
+					{ level:CONCEPT,id:6, parent:4, children:[], status: TODO }, 
+					{ level:CONCEPT,id:7, parent:4, children:[8,10,11,12], status: TODO }, 
+						{ level:STEP, id:8, parent:7, children:[9], status: TODO }, 
+							{ level:PAGE, id:9, parent:8, children:[], status: TODO }, 
+						{ level:STEP, id:10, parent:7, children:[], status: TODO }, 
+						{ level:STEP, id:11, parent:7, children:[], status: TODO }, 
+						{ level:STEP, id:12, parent:7, children:[],status: TODO }, 
+					{ level:CONCEPT,id:13, parent:4, children:[], status: TODO }, 
 				{ level:TOPIC, id:14, parent:1, children:[],status: TODO } 
 			]
 }
@@ -66,13 +66,17 @@ class Doc  {
 	}
 
 	FindLevel(level, pos) {
-		var par;
+		var i,par,opos=pos;;
 		do	{
 			par=this.map[pos].parent;
 			if (par == undefined)
 				return 0;
-			if (this.map[pos].level == level)
+			if (this.map[pos].level == level) {
+				trace(this.map[par].children)
+
+				///////////////////////////////////////////////////////////////////
 				return pos;
+			}
 			else
 				pos=par;
 			}

@@ -41,7 +41,7 @@ class Navigation {
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar'`;
 				if (i == 0)							 str+= " style='border-top-left-radius:16px;border-bottom-left-radius:16px";
 				else if (i == children.length-1)	 str+= " style='border-top-right-radius:16px;border-bottom-right-radius:16px";
-				if (app.doc.curLobId == children[i]) str+=";color:#009900'";										// Highlight if current						
+				if (app.doc.curLobId == children[i]) str+=";color:#006600;font-weight:bold'";						// Highlight if current						
 				str+=`'<>${name}</div>`;
 				}
 			}
