@@ -39,19 +39,20 @@ class Navigation {
 
 	Draw() {																									// REDRAW
 		var i,ww,name,children,curConPos=0;
+		var parLev,parPos,curLob,curPos=app.doc.curMapPos
+		var str="";
 		this.UpdateHeader();
 		var w=$("#contentDiv").width()+16;																			// Content width
 		var l=$("#contentDiv").offset().left;																		// Left
 		var h=$(window).height()-$("#navDiv").height();																// Height
 		$("#navDiv").css({top:h+"px",left:l+"px", width:w+"px"});													// Position at bottom
-		var str="<div id='topicBar' class='wm-topicBar'></div>";													// Topic bar
-		
-		var curPos=app.doc.curMapPos
-		var curLob=app.doc.map[curPos].id;
-		var parPos=app.doc.map[curPos].parent;
-		var parLev=app.doc.map[parPos].level;
+
 
 		if (app.doc.curLesson) {																					// If a lesson active
+			curLob=app.doc.map[curPos].id;
+			parPos=app.doc.map[curPos].parent;
+			parLev=app.doc.map[parPos].level;
+			str+="<div id='topicBar' class='wm-topicBar'></div>";													// Topic bar
 			while (parLev > LESSON) {																				// While parent is not lesson
 				curLob=app.doc.map[parPos].id;																		// Use parent
 				parPos=app.doc.map[parPos].parent;																	// New parent
