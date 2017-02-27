@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
 	<title>S C A L E</title>
@@ -20,15 +19,16 @@
 		.wm-header { 		background-color: #bbb;width:calc(100% -32px);color:#fff;
 							padding:8px 16px 8px 16px;margin-bottom:8px;
 							}
-		.wm-lessonTitle { 	font-size: 32px; font-weight: bold; margin-right:32px;
+		.wm-logo { 			height:40px;vertical-align: top; margin-right:16px; cursor:pointer;
 							}
-		.wm-topicTitle { 	font-size: 24px ;margin-right:32px;
+		.wm-courseTitle { 	font-size: 32px; font-weight: bold; margin-right:32px; cursor:pointer;
 							}
-		.wm-conceptTitle { 	font-size: 16px ;margin-right:32px;
+		.wm-lessonTitle { 	font-size: 24px; margin-right:8px;
 							}
-		.wm-StepTitle { 	font-size: 12px; 
+		.wm-lessonTri { 	width: 0; height: 0; border-left: 7px solid transparent;  border-right: 7px solid transparent;
+   							border-top: 7px solid #fff; cursor:pointer; display:inline-block;
 							}
-		.wm-content { 		height:600px;max-width:1024px;  margin: 0 auto;
+		.wm-content { 		width:100%; height:600px;max-width:1024px;  margin: 0 auto;
 							border: 1px solid #ccc;background-color: #eee;padding:8px;
 							border-radius: 16px; box-shadow: 2px 4px 8px #999;
 							}
@@ -43,7 +43,7 @@
 		.wm-topicDot { 		width:14px; height:14px; border-radius:16px; margin-left:100px;
 							background-color: #009900; border:1px solid #999; cursor:pointer;
 							}
-		.wm-topicDot:hover 	{border:1px solid #6699ff;
+		.wm-topicDot:hover{ border:1px solid #6699ff;
 							}
 		.wm-topicDotLab { 	width:200px; text-align:center; padding-left:-100px;padding-bottom: 4px;
 							text-shadow: 1px 1px #fff;font-weight: bold; color:#333;
@@ -56,18 +56,15 @@
 		.wm-stepLab	 { 		position: absolute; text-align:center;
 							text-shadow: 1px 1px #fff; color:#006600;
 							}
-		.wm-triangle { 		position: absolute; width: 0;  height: 0;   border-left: 5px solid transparent;  border-right: 5px solid transparent;
-   							border-bottom: 5px solid #009900;
-							}
 		.wm-userName { 		font-size: 12px; cursor:pointer;color:#000;text-align: right;
 							}
-		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
-							padding:8px 16px 8px 8px; border:1px solid #999;
+		.wm-pullDown {		position:absolute;background-color:#bbb; color:#fff; 
+							padding:8px 16px 8px 8px;font-size: 16px;
 							}
 		.wm-pullDownItem { 	padding:3px;
-						}
-		.wm-pullDownItem:hover{ background-color:#eee;
-						}
+							}
+		.wm-pullDownItem:hover{ background-color:#aaa
+							}
 		.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix { border:none }
 		.ui-dialog { border-radius:12px;box-shadow:2px 2px 6px #ccc }
 		.ui-button { border-radius:30px;outline:none }
@@ -78,7 +75,11 @@
 <body>
 	<div id="headerDiv" class="wm-header">
 		<table style='width:100%;vertical-align: top;'><tr>
-			<td width="100%"style='vertical-align: middle'><span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
+			<td width="100%"style='vertical-align: middle'>
+			<img src='img/scaleLogoWhite.png'class='wm-logo'>
+			<span id='courseTitle' class='wm-courseTitle'>Course</span>
+			<span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
+			<div id='lessonBut' class='wm-lessonTri'></div>
 			<td id='stepDiv' class='wm-step'><span id='userName' class='wm-userName'>User&nbsp;Name</span></td>
 		</tr></table>
 	</div>
@@ -105,8 +106,6 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	app=new App();                                                      	// Alloc app
     });									
 		
-
-			
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +161,6 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			}
 		}
 		
-	
 	function ButtonPress(id)												// WIGGLE BUTTON
 	{
 		Sound("click");

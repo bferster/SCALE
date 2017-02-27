@@ -5,7 +5,7 @@ const TODO=0, DONE=10;
 
 var demo={
 	lobs:[	{ name:"WriteMao", id:10 }, 
-			{ name:"Clauses", id:20 }, 
+			{ name:"Clauses and phrases", id:20 }, 
 			{ name:"Kinds of clauses", id:30 }, 
 			{ name:"Separating clauses", id:40 }, 
 			{ name:"Using commas", id:50 }, 
@@ -41,7 +41,6 @@ var demo={
 class Doc  {
 
 	constructor(o)	{																							// CONSTRUCTOR
-		
 		o=demo;
 		this.lobs=this.map;																							// Holds learning objects/map
 		if (o)  {																									// If default data
@@ -59,6 +58,7 @@ class Doc  {
 		this.curLevel=this.map[mp].level;																			// Current level
 		this.curLobId=this.map[mp].id;																				// Current lob id
 		this.curLob=this.FindLobById(this.map[mp].id);																// Current lob pointer
+		this.curCourse=this.FindLobParent(COURSE,mp);																// Current course
 		this.curLesson=this.FindLobParent(LESSON,mp);																// Current lesson
 		this.curTopic=this.FindLobParent(TOPIC,mp);																	// Current topic
 		this.curConcept=this.FindLobParent(CONCEPT,mp);																// Current concept
@@ -68,23 +68,16 @@ class Doc  {
 
 	FindLobParent(level, mapPos) {																				// FIND MAP INDEX OF LOB PARENT
 		var i,par;
-		do	{
-			par=this.map[mapPos].parent;
-			if (par == undefined)
-				return 0;
-			if (this.map[mapPos].level == level) {
-//				trace("find",this.map[mapPos],mapPos)
-				return mapPos;
-				
+		while (1) {
+			par=this.map[mapPos].parent;																			// Get parent map object
+			if (par == undefined)																					// If at root
+				return 0;																							// Return root
+			if (this.map[mapPos].level == level) 																	// At desired level
+				return mapPos;																						// Return map index
+			else																									// Still under it
+				mapPos=par;																							// Got up a level
 			}
-			else
-				mapPos=par;
-			}
-		while (1);
 		}
-
-
-
 
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;

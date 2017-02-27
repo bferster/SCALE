@@ -3,9 +3,33 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Navigation {
-	constructor() {
+	
+	constructor() {																								// CONSTRUCTOR
 		this.left=this.top=this.wid=this.hgt=0;																		// Sizes
+		$("#lessonBut").on("click",()=> { this.ChangeLesson() } );													// Click on lesson button
 		}
+	
+	ChangeLesson() {																							// CLICK ON CHANGE LESSON BUTTON
+		if ($("#menuSlotDiv").length) {																				// If already open
+			$("#menuSlotDiv").remove();																				// Close it																
+			return;																									// Quit
+			}
+		var str="<div class='wm-pullDown' id='menuSlotDiv'>";														// Add menu div
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Introduction</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Paragraphs</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Sentences</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Clauses and phrases</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Style</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Patterns</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>When patterns meet</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Summing it Up</div>";
+		$("body").append(str);																						// Add menu to body
+		var x=$("#lessonTitle").offset().left-8+"px";																// Left
+		var y=$("#contentDiv").offset().top-20+"px";																// Top
+		var w=$("#lessonTitle").width()+26+"px";																	// Width
+		$("#menuSlotDiv").css( {left:x,top:y, "min-width":w} );														// Position
+		}
+	
 	Forward() {
  		app.Draw();																									// Redraw
 		}
@@ -14,8 +38,8 @@ class Navigation {
 		}
 
 	Draw() {																									// REDRAW
-
 		var i,ww,name,children,curConPos=0;
+		this.UpdateHeader();
 		var w=$("#contentDiv").width()+16;																			// Content width
 		var l=$("#contentDiv").offset().left;																		// Left
 		var h=$(window).height()-$("#navDiv").height();																// Height
@@ -105,4 +129,9 @@ class Navigation {
 			}	
 		}
 
+	UpdateHeader() {
+		$("#courseTitle").html(app.doc.lobs[app.doc.curCourse].name);												// Show course name
+		$("#lessonTitle").html(app.doc.lobs[app.doc.curLesson].name);												// Show lesson name
+		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);											// Show user
+		}
 }
