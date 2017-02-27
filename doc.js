@@ -4,35 +4,35 @@ const COURSE=0, LESSON=1, TOPIC=2, CONCEPT=3, STEP=4, PAGE=5, NUMLEVELS=6;
 const TODO=0, DONE=10;
 
 var demo={
-	lobs:[	{ name:"WriteMao", id:1 }, 
-			{ name:"Clauses", id:2 }, 
-			{ name:"Kinds of clauses", id:3 }, 
-			{ name:"Separating clauses", id:4 }, 
-			{ name:"Using commas", id:5 }, 
-			{ name:"Using joiners", id:6 }, 
-			{ name:"Using semicolons", id:7 }, 
-			{ name:"tell 1/2", id:8 }, 
-			{ name:"tell 2/2", id:9 }, 
-			{ name:"show", id:10 }, 
-			{ name:"find", id:11 }, 
-			{ name:"do", id:12 }, 
-			{ name:"Using periods", id:13 }, 
-			{ name:"Ordering clauses", id:14 }
+	lobs:[	{ name:"WriteMao", id:10 }, 
+			{ name:"Clauses", id:20 }, 
+			{ name:"Kinds of clauses", id:30 }, 
+			{ name:"Separating clauses", id:40 }, 
+			{ name:"Using commas", id:50 }, 
+			{ name:"Using joiners", id:60}, 
+			{ name:"Using semicolons", id:70 }, 
+			{ name:"tell - 1 of 2", id:80 }, 
+			{ name:"tell - 2 of 2", id:90 }, 
+			{ name:"show", id:100 }, 
+			{ name:"find", id:110 }, 
+			{ name:"do", id:120 }, 
+			{ name:"Using periods", id:130 }, 
+			{ name:"Ordering clauses", id:140 }
 			],
-	map:[{ level:COURSE, id:1, parent:0, children:[2], status: TODO }, 
-				{ level:LESSON, id:2, parent:1, children:[3,4,14], status: TODO }, 
-				{ level:TOPIC, id:3, parent:2, children:[], status: DONE }, 
-				{ level:TOPIC, id:4, parent:2, children:[5,6,7,13],status: TODO }, 
-					{ level:CONCEPT,id:5, parent:4, children:[], status: TODO }, 
-					{ level:CONCEPT,id:6, parent:4, children:[], status: TODO }, 
-					{ level:CONCEPT,id:7, parent:4, children:[8,10,11,12], status: TODO }, 
-						{ level:STEP, id:8, parent:7, children:[9], status: TODO }, 
-							{ level:PAGE, id:9, parent:8, children:[], status: TODO }, 
-						{ level:STEP, id:10, parent:7, children:[], status: TODO }, 
-						{ level:STEP, id:11, parent:7, children:[], status: TODO }, 
-						{ level:STEP, id:12, parent:7, children:[],status: TODO }, 
-					{ level:CONCEPT,id:13, parent:4, children:[], status: TODO }, 
-				{ level:TOPIC, id:14, parent:1, children:[],status: TODO } 
+	map:[{ level:COURSE, id:10, children:[2], status: TODO }, 
+				{ level:LESSON, id:20, parent: 0, children:[30,40,140], status: TODO }, 
+				{ level:TOPIC, id:30, parent:1, children:[], status: DONE }, 
+				{ level:TOPIC, id:40, parent:1, children:[50,60,70,130],status: TODO }, 
+					{ level:CONCEPT,id:50, parent:3, children:[], status: TODO }, 
+					{ level:CONCEPT,id:60, parent:3, children:[], status: TODO }, 
+					{ level:CONCEPT,id:70, parent:3, children:[80,100,110,120], status: TODO }, 
+						{ level:STEP, id:80, parent:6, children:[90], status: TODO }, 
+							{ level:PAGE, id:90, parent:7, children:[], status: TODO }, 
+						{ level:STEP, id:100, parent:6, children:[], status: TODO }, 
+						{ level:STEP, id:110, parent:6, children:[], status: TODO }, 
+						{ level:STEP, id:120, parent:6, children:[],status: TODO }, 
+					{ level:CONCEPT,id:130, parent:3, children:[], status: TODO }, 
+				{ level:TOPIC, id:140, parent:1, children:[],status: TODO } 
 			]
 }
 
@@ -54,34 +54,35 @@ class Doc  {
 
 	Draw() {																									// SET LEVELS AND DATA
 		var i;
-		var mp=this.curMapPos;																					// Get id
+		var _this=this;																								// Save context
+		var mp=this.curMapPos;																						// Get id
 		this.curLevel=this.map[mp].level;																			// Current level
 		this.curLobId=this.map[mp].id;																				// Current lob id
 		this.curLob=this.FindLobById(this.map[mp].id);																// Current lob pointer
-		this.curLesson=this.FindLevel(LESSON,mp);																	// Current lesson
-		this.curTopic=this.FindLevel(TOPIC,mp);																		// Current topic
-		this.curConcept=this.FindLevel(CONCEPT,mp);																	// Current concept
-		this.curStep=this.FindLevel(STEP,mp);																		// Current step
-		this.curPage=this.FindLevel(PAGE,mp);																		// Current page
+		this.curLesson=this.FindLobParent(LESSON,mp);																// Current lesson
+		this.curTopic=this.FindLobParent(TOPIC,mp);																	// Current topic
+		this.curConcept=this.FindLobParent(CONCEPT,mp);																// Current concept
+		this.curStep=this.FindLobParent(STEP,mp);																	// Current step
+		this.curPage=this.FindLobParent(PAGE,mp);																	// Current page
 	}
 
-	FindLevel(level, pos) {
-		var i,par,opos=pos;;
+	FindLobParent(level, mapPos) {																				// FIND MAP INDEX OF LOB PARENT
+		var i,par;
 		do	{
-			par=this.map[pos].parent;
+			par=this.map[mapPos].parent;
 			if (par == undefined)
 				return 0;
-			if (this.map[pos].level == level) {
-				trace(this.map[par].children)
-
-				///////////////////////////////////////////////////////////////////
-				return pos;
+			if (this.map[mapPos].level == level) {
+//				trace("find",this.map[mapPos],mapPos)
+				return mapPos;
+				
 			}
 			else
-				pos=par;
+				mapPos=par;
 			}
 		while (1);
 		}
+
 
 
 

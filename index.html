@@ -43,7 +43,7 @@
 		.wm-topicDot { 		width:14px; height:14px; border-radius:16px; margin-left:100px;
 							background-color: #009900; border:1px solid #999; cursor:pointer;
 							}
-		.wm-topicDot:hover {background-color: #6699ff
+		.wm-topicDot:hover 	{border:1px solid #6699ff;
 							}
 		.wm-topicDotLab { 	width:200px; text-align:center; padding-left:-100px;padding-bottom: 4px;
 							text-shadow: 1px 1px #fff;font-weight: bold; color:#333;
@@ -51,13 +51,14 @@
 		.wm-conceptBar { 	position: absolute; height:16px;background-color: #ccc;
 							background-color: 999; border:1px solid #999; cursor:pointer;
 							}
-		.wm-stepIndicator {  position: absolute; width: 0;  height: 0;   border-left: 5px solid transparent;  border-right: 5px solid transparent;
+		.wm-conceptBar:hover {border:1px solid #6699ff;
+							}
+		.wm-stepLab	 { 		position: absolute; text-align:center;
+							text-shadow: 1px 1px #fff; color:#006600;
+							}
+		.wm-triangle { 		position: absolute; width: 0;  height: 0;   border-left: 5px solid transparent;  border-right: 5px solid transparent;
    							border-bottom: 5px solid #009900;
 							}
-		.wm-conceptBar:hover {background-color: #6699ff
-							}
-							
-
 		.wm-userName { 		font-size: 12px; cursor:pointer;color:#000;text-align: right;
 							}
 		.wm-pullDown {		position:absolute;background-color:#fff;width:170px; 
@@ -78,9 +79,6 @@
 	<div id="headerDiv" class="wm-header">
 		<table style='width:100%;vertical-align: top;'><tr>
 			<td width="100%"style='vertical-align: middle'><span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
-			<span id='topicTitle'class='wm-topicTitle'>Topic</span>
-			<span id='conceptTitle'class='wm-conceptTitle'>Concept</span>
-			<span id='stepTitle' class='wm-stepTitle'>Step</span></td>
 			<td id='stepDiv' class='wm-step'><span id='userName' class='wm-userName'>User&nbsp;Name</span></td>
 		</tr></table>
 	</div>

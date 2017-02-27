@@ -21,21 +21,10 @@ class Content  {
 		$("#contentDiv").html(str);																					// Set content
 		$("#nextBut").css({"top":h-10+"px"});																		// Pos next button
 		$("#nextBut").on("click",()=> { app.doc.NextLob(); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
-}
+	}
 		
 	UpdateHeader() {
-return;
-		var name=app.doc.FindLobById(app.doc.levels[1]).name;														// Get lesson name
-		$("#lessonTitle").html(name);																				// Show it
-		if (app.doc.levels[2]) 	name=app.doc.FindLobById(app.doc.levels[2]).name;									// If live, get name
-		else					name="";																			// Else null it
-		$("#topicTitle").html(name ? name : "");																	// Show it
-		if (app.doc.levels[3]) 	name=app.doc.FindLobById(app.doc.levels[3]).name;									// If live, get name
-		else					name="";																			// Else null it
-		$("#conceptTitle").html(name ? name : "");																	// Show it
-		if (app.doc.levels[4]) 	name=app.doc.FindLobById(app.doc.levels[4]).name;									// If live, get name
-		else					name="";																			// Else null it
-		$("#stepTitle").html(name.charAt(0).toUpperCase()+name.substr(1));											// Show it
+		$("#lessonTitle").html(app.doc.lobs[app.doc.curLesson].name);												// Show lesson name
 		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);											// Show user
 	}
 
