@@ -40,14 +40,11 @@ class Navigation {
 	Draw() {																									// REDRAW
 		var i,ww,name,children,curConPos=0;
 		var parLev,parPos,curLob,curPos=app.doc.curMapPos
-		var str="";
-		this.UpdateHeader();
 		var w=$("#contentDiv").width()+16;																			// Content width
 		var l=$("#contentDiv").offset().left;																		// Left
-		var h=$(window).height()-$("#navDiv").height();																// Height
-		$("#navDiv").css({top:h+"px",left:l+"px", width:w+"px"});													// Position at bottom
-
-
+		var str="";
+		this.UpdateHeader();
+	
 		if (app.doc.curLesson) {																					// If a lesson active
 			curLob=app.doc.map[curPos].id;
 			parPos=app.doc.map[curPos].parent;
@@ -62,8 +59,7 @@ class Navigation {
 			children=app.doc.map[app.doc.curLesson].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get topic name
-				str+="<div id='topicDot-"+i+"' style='position:absolute";											// Add dot container
-				str+=`'><div class='wm-topicDotLab'`;																// Label div
+				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div class='wm-topicDotLab'";					// Add dot container
 				if (curLob == children[i]) 	str+=" style='color:#006600'";											// Highlight if current						
 				str+=`>${name}</div>`;																				// Add label
 				str+="<div class='wm-topicDot'></div></div>";														// Add dot
@@ -101,11 +97,11 @@ class Navigation {
 		if (app.doc.curLesson) {																					// If a lesson active
 			l=-92;																									// Start left
 			children=app.doc.map[app.doc.curLesson].children;														// Get topics
+			ww=(w-48)/(children.length-1);																			// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
-				ww=(w-36)/(children.length-1);																		// Width between topic dots
 				for (i=0;i<children.length;++i) {																	// For each topic 
-					$("#topicDot-"+i).css({top:"-9px",left:l+"px"});												// Position dot
-					l+=ww;
+					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
+					l+=ww;																							// Next pos
 					}
 				}
 			}
@@ -113,11 +109,11 @@ class Navigation {
 		if (app.doc.curTopic) {																						// If a topic active
 			l=16;																									// Start left
 			children=app.doc.map[app.doc.curTopic].children;														// Get 
+			ww=(w-40)/children.length;																				// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
-				ww=(w-32)/(children.length);																		// Width between topic dots
 				for (i=0;i<children.length;++i) {																	// For each concept 
-					$("#conceptBar-"+i).css({top:"36px",left:l+"px",width:ww-6+"px"});								// Position concept bar
-					l+=ww;
+					$("#conceptBar-"+i).css({left:l+"px",width:ww-6+"px"});											// Position concept bar
+					l+=ww;																							// Next pos
 					}
 				}
 			}
@@ -126,13 +122,16 @@ class Navigation {
 			l=16+(curConPos*ww);																					// To start of concept bar
 			name=app.doc.FindLobById(app.doc.curLobId).name;														// Get step name
 			$("#stepLab").html(name.charAt(0).toUpperCase()+name.substr(1));										// Show it
-			$("#stepLab").css({top:"60px",left:l+"px",width:ww-4+"px"});											// Position step label
+			$("#stepLab").css({ left:l+"px",width:ww-4+"px"});														// Position step label
 			}	
 		}
 
 	UpdateHeader() {
 		$("#courseTitle").html(app.doc.lobs[app.doc.curCourse].name);												// Show course name
-		$("#lessonTitle").html(app.doc.lobs[app.doc.curLesson].name);												// Show lesson name
+		if (app.doc.curLesson == 0)																					// On splash page
+			$("#lessonTitle").html("");																				// Hide lesson name
+		else																										// Into course
+			$("#lessonTitle").html(app.doc.lobs[app.doc.curLesson].name);											// Show lesson name
 		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);											// Show user
 		}
 }

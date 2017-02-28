@@ -130,18 +130,29 @@ var demo={
 			]
 }
 
-demo.lobs[0].body=`
-<br><br>
-<p style="text-align:center"><img alt="" src="img/scaleLogo.png" /></p>
+demo.lobs[0].body=`<br><br><br><p style="text-align:center"><img alt="" src="img/scaleLogo.png" /></p>
 <h1 style="text-align:center"><span style="background-color:transparent; color:rgb(153, 153, 153); font-family:trebuchet ms; font-size:18pt">S C A L E</span></h1>
 <h1 style="text-align:center"><span style="background-color:transparent; color:rgb(153, 153, 153); font-family:trebuchet ms; font-size:18pt">Student-Centered Adaptive Learning Environment</span></h1>
 <br>
 <p style="text-align:center"><span style="font-size:14px"><em>A platform to guide learning- not just deliver it.</em></span></p>
 `
-demo.lobs[1].body=`
-<p style="text-align: center;"><span style="font-size:24px">WriteMao</span></p>
+demo.lobs[1].body=`<p style="text-align: center;"><span style="font-size:24px">WriteMao</span></p>
 <p style="text-align:left;font-size:14px"><span><span style="font-family:arial,helvetica,sans-serif">This semester, I hope you&#39;ll&nbsp;write in every class, and not just here. Nothing is more effective for learning a subject matter than writing about it &ndash; or teaching it. (Ask any teacher.) So, when an instructor assigns a chapter, summarize it or write a critique. You&#39;ll improve your performance in that course, and you&#39;ll improve your performance here. If you&#39;re not in school now, you could keep a journal. And always write carefully, as you would if you were submitting a writing to your instructor. This includes your email. One of my own goals is to proofread my emails. Make it your goal too. The editing will be very good practice for us all,</span></span></p>
 `
+demo.lobs[2].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about the kinds of clauses.</p>";
+demo.lobs[3].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about separating clauses.</p>";
+demo.lobs[4].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using commas.</p>";
+demo.lobs[5].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using joiners.</p>";
+demo.lobs[6].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons.</p>";
+demo.lobs[7].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Tell page 1).</p>";
+demo.lobs[8].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Tell page 2).</p>";
+demo.lobs[9].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Show).</p>";
+demo.lobs[10].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Find).</p>";
+demo.lobs[11].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Do).</p>";
+demo.lobs[12].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using periods.</p>";
+demo.lobs[13].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about ordering clauses.</p>";
+
+
 
 
 

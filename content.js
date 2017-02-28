@@ -9,21 +9,19 @@ class Content  {
 	}
 
 	Draw() {																									// REDRAW
-		var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height()-66;											// Get height
+		var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height()-36;											// Get height
 		$("#contentDiv").height(h);																					// Position nav box
-		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
-		str+=this.GetContentBody();																					// Get content body
-		$("#contentDiv").html(str);																					// Set content
-		$("#nextBut").css({"top":h-10+"px"});																		// Pos next button
+		$("#contentDiv").html(this.GetContentBody());																// Set content
 		$("#nextBut").on("click",()=> { app.doc.NextLob(); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
 	}
 
-	GetContentBody(d)	{
+	GetContentBody()	{																						// ADD LOB CONTENT
 		var l;
-		var str="<div id='contentbodyDiv' class='wm-contentBody'>"
-		if (l=app.doc.curLob)
-			str+=l.body ? l.body : "";
-		return str+"</div>";
+		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
+		str+="<div id='contentbodyDiv' class='wm-contentBody'>";													// Container div
+		if (l=app.doc.curLob)																						// Valid lob
+			str+=l.body ? l.body : "";																				// Add body
+		return str+"</div>";																						// Close div and return content
 		}
 }
 

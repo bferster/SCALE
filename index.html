@@ -13,52 +13,57 @@
 <!-- <script src="mw-es5.js"></script> -->
 	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
 	<style type="text/css">
-		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
+		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px;
 							padding:0px;margin:0px;background-image:url("img/texture.png");
 							}
-		.wm-header { 		background-color: #bbb;width:calc(100% -32px);color:#fff;
-							padding:8px 16px 8px 16px;margin-bottom:8px;
+		.wm-main { 			position:relative; width:100%; height:100%; overflow:hidden;
 							}
-		.wm-logo { 			height:40px;vertical-align: top; margin-right:16px; cursor:pointer;
+		.wm-header { 		background-color: #bbb;width:100%;color:#fff;
+							padding: 8px 0px;
+							}
+		.wm-logo { 			height:40px; vertical-align: top; margin:0px 16px; cursor:pointer;
 							}
 		.wm-courseTitle { 	font-size: 32px; font-weight: bold; margin-right:32px; cursor:pointer;
 							}
 		.wm-lessonTitle { 	font-size: 24px; margin-right:8px;
 							}
+		.wm-userName { 		position:absolute; left:90%; font-size: 12px; cursor:pointer; color:#000; text-align: left;
+							}
 		.wm-lessonTri { 	width: 0; height: 0; border-left: 7px solid transparent;  border-right: 7px solid transparent;
    							border-top: 7px solid #fff; cursor:pointer; display:inline-block;
 							}
-		.wm-content { 		width:100%; max-width:1024px;  margin: 0 auto; 
-							border: 1px solid #ccc;background-color: #fff; padding:8px;
-							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:auto;
+		.wm-content { 		width:100%; max-width:1024px;  margin: 8px auto;
+							border: 1px solid #ccc;background-color: #fff;
+							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden;
 							}
-		.wm-contentBody { 	margin: 16px; overflow:auto;
+		.wm-contentBody { 	overflow:auto; height:calc(100% - 48px); width:calc(100% - 48px); padding:24px;
 							} 
-		.wm-nextBut { 		position: absolute;left:calc(50% - 40px); border-radius: 128px;
+		.wm-nextBut { 		position: absolute; left:calc(50% - 34px); top:calc(100% - 180px); border-radius: 128px;
 							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 64px;
 							}
-		.wm-navigation { 	position: absolute; height:80px;;
+		.wm-navigation { 	position: relative; height:92px; width:100%; top: calc(100% + 16px);
+							max-width:1024px;  margin: 0px auto;
 							}
-		.wm-topicBar { 		width:calc(100% -32px); height:3px; border-radius:4px; margin:16px;
-							background-color: #999;
+		.wm-topicBar { 		position: absolute; width:calc(100% - 32px); height:3px; top:29px; left:16px;
+							background-color: #999; border-radius:4px;
 							}
-		.wm-topicDot { 		width:14px; height:14px; border-radius:16px; margin-left:100px;
+		.wm-topicDotDiv { 	position: absolute; top:4px;
+							}
+		.wm-topicDot { 		position: absolute; width:14px; height:14px; border-radius:14px; margin-left:100px; top:18px;
 							background-color: #009900; border:1px solid #999; cursor:pointer;
 							}
 		.wm-topicDot:hover{ border:1px solid #6699ff;
 							}
-		.wm-topicDotLab { 	width:200px; text-align:center; padding-left:-100px;padding-bottom: 4px;
+		.wm-topicDotLab { 	width:200px; text-align:center; padding-left:-100px; padding-bottom: 4px;
 							text-shadow: 1px 1px #fff;font-weight: bold; color:#333;
 							}
-		.wm-conceptBar { 	position: absolute; height:16px;background-color: #ccc;
+		.wm-conceptBar { 	position: absolute; height:16px;background-color: #ccc; text-align:center; top: 48px;
 							background-color: 999; border:1px solid #999; cursor:pointer;
 							}
-		.wm-conceptBar:hover {border:1px solid #6699ff;
+		.wm-conceptBar:hover{border:1px solid #6699ff;
 							}
-		.wm-stepLab	 { 		position: absolute; text-align:center;
+		.wm-stepLab	 { 		position: absolute; text-align:center; top:72px;
 							text-shadow: 1px 1px #fff; color:#006600;
-							}
-		.wm-userName { 		font-size: 12px; cursor:pointer;color:#000;text-align: right;
 							}
 		.wm-pullDown {		position:absolute;background-color:#bbb; color:#fff; 
 							padding:8px 16px 8px 8px;font-size: 16px;
@@ -75,19 +80,17 @@
 	</style>
 </head>
 <body>
-	<div id="headerDiv" class="wm-header">
-		<table style='width:100%;vertical-align: top;'><tr>
-			<td width="100%"style='vertical-align: middle'>
+	
+	<div id="mainDiv" class="wm-main">
+		<div id="headerDiv" class="wm-header">
 			<img src='img/scaleLogoWhite.png'class='wm-logo'>
-			<span id='courseTitle' class='wm-courseTitle'>Course</span>
-			<span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
-			<div id='lessonBut' class='wm-lessonTri'></div>
-			<td id='stepDiv' class='wm-step'><span id='userName' class='wm-userName'>User&nbsp;Name</span></td>
-		</tr></table>
-	</div>
-	<div style='text-align:center'>
-		<div id="contentDiv" class="wm-content"></div>
-		<div id="navDiv" class="wm-navigation"></div>
+				<span id='courseTitle' class='wm-courseTitle'>Course</span>
+				<span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
+				<div id='lessonBut' class='wm-lessonTri'></div>
+				<span id='userName' class='wm-userName'>User&nbsp;Name</span>
+		</div>
+			<div id="contentDiv" class="wm-content"></div>
+			<div id="navDiv" class="wm-navigation"></div>
 	</div>
 
 <script>
