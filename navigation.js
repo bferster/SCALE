@@ -40,8 +40,8 @@ class Navigation {
 	Draw() {																									// REDRAW
 		var i,ww,name,children,curConPos=0;
 		var parLev,parPos,curLob,curPos=app.doc.curMapPos
-		var w=$("#contentDiv").width()+16;																			// Content width
-		var l=$("#contentDiv").offset().left;																		// Left
+		var w=$("#navDiv").width()+16;																				// Content width
+		var l=$("#navDiv").offset().left;																			// Left
 		var str="";
 		this.UpdateHeader();
 	
