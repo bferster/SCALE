@@ -15,9 +15,9 @@ class Navigation {
 			return;																									// Quit
 			}
 		var str="<div class='wm-pullDown' id='menuSlotDiv'>";														// Add menu div
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Introduction</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Paragraphs</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Sentences</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Introduction &#10003;</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Paragraphs &#10003;</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Sentences &#10003;</div>";
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Clauses and phrases</div>";
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Style</div>";
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Patterns</div>";
@@ -62,7 +62,7 @@ class Navigation {
 				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div class='wm-topicDotLab'";					// Add dot container
 				if (curLob == children[i]) 	str+=" style='color:#006600'";											// Highlight if current						
 				str+=`>${name}</div>`;																				// Add label
-				str+="<div class='wm-topicDot'></div></div>";														// Add dot
+				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div></div>";								// Add dot
 				}
 			}
 		
@@ -100,7 +100,15 @@ class Navigation {
 			ww=(w-48)/(children.length-1);																			// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				for (i=0;i<children.length;++i) {																	// For each topic 
+					$("#topicDot-"+i).on("click",function(e) {														// ON TOPIC CLICK
+						var id=e.currentTarget.id.substr(9);														// Extract id
+						id=app.doc.map[app.doc.curLesson].children[id];												// Get topic is
+						app.Draw(app.doc.FindMapIndexById(id));														// Set new index and redraw
+						Sound("click");																				// Click
+						});
 					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
+					if (app.doc.GetStatus(app.doc.curLesson,i) == DONE)												// If this topic is done
+						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
 					l+=ww;																							// Next pos
 					}
 				}
@@ -112,7 +120,15 @@ class Navigation {
 			ww=(w-40)/children.length;																				// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				for (i=0;i<children.length;++i) {																	// For each concept 
+					$("#conceptBar-"+i).on("click",function(e) {													// ON CONCEPT CLICK
+						var id=e.currentTarget.id.substr(11);														// Extract id
+						id=app.doc.map[app.doc.curTopic].children[id];												// Get concept id
+						app.Draw(app.doc.FindMapIndexById(id));														// Set new index and redraw
+						Sound("click");																				// Click
+						});
 					$("#conceptBar-"+i).css({left:l+"px",width:ww-6+"px"});											// Position concept bar
+					if (app.doc.GetStatus(app.doc.curTopic,i) == DONE)												// If this concept is done
+						$("#conceptBar-"+i).css({color:"#006600"});													// Done status
 					l+=ww;																							// Next pos
 					}
 				}

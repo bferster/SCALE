@@ -49,11 +49,32 @@ class Doc  {
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
 		for (i=0;i<n;++i) {																							// For each lob
-				if (id == this.lobs[i].id) 																			// A match
+			if (id == this.lobs[i].id) 																				// A match
 				return this.lobs[i];																				// Return ptr to lob
 			}
 		return null;																								// Not found
 		}
+
+	FindMapIndexById(id) {																						// FIND MAP INDEX FROM ID
+		var i,n=this.map.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.map[i].id) 																				// A match
+				return i;																							// Return index
+			}
+		return -1;																								// Not found
+		}
+
+	GetStatus(mapPos, child) {
+		var level=this.map[mapPos].level
+		
+		trace(level,child)
+		if (level == LESSON && !child)
+			return DONE;
+		if (level == TOPIC && child < 2)
+			return DONE;
+		return TODO;
+		}
+
 
 	NextLob() {																									// ADVANCE THROUGH LOB MAP
 		if (this.curMapPos < this.map.length-1)																		// If not last
