@@ -60,7 +60,7 @@ class Navigation {
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get topic name
 				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div class='wm-topicDotLab'";					// Add dot container
-				if (curLob == children[i]) 	str+=" style='color:#006600'";											// Highlight if current						
+				if (curLob == children[i]) 	str+=" style='color:#008800'";											// Highlight if current						
 				str+=`>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div></div>";								// Add dot
 				}
@@ -82,7 +82,7 @@ class Navigation {
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				if (curLob == children[i]) {																		// If current Topic
-					 str+=";color:#006600;font-weight:bold";														// Highlight					
+					 str+=";background-color:#a9dbac;color:#333";													// Highlight					
 					 curConPos=i;																					// Save position
 					}
 				str+=`'>${name}</div>`;
@@ -108,7 +108,7 @@ class Navigation {
 						});
 					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
 					if (app.doc.GetStatus(app.doc.curLesson,i) == DONE)												// If this topic is done
-						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
+						$("#topicDotDot-"+i).css({"background-color":"#a9dbac"});									// Done status
 					l+=ww;																							// Next pos
 					}
 				}
