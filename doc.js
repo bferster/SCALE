@@ -137,18 +137,18 @@ var demo={
 /*15*/		{ name:"Media demo", id:200, status: TODO },
 			{ name:"Video", id:210, status: TODO },
 			{ name:"Qmedia", id:211, status: TODO },
-			{ name:"A YouTube Video", id:212, status: TODO },
+			{ name:"YouTube Video", id:212, status: TODO },
 			{ name:"Images", id:220, status: TODO },
 /*20*/		{ name:"Maps", id:221, status: TODO },
-			{ name:"Pan and Zoom", id:222, status: TODO },
+			{ name:"Zoomable Image", id:222, status: TODO },
 			{ name:"Montage", id:223, status: TODO },
-			{ name:"3D", id:224, status: TODO },
+			{ name:"3D Model", id:224, status: TODO },
 			{ name:"Tools", id:230, status: TODO },
 			{ name:"Assessment", id:231, status: TODO },
-			{ name:"Graphing calc", id:232, status: TODO },
-			{ name:"Chemistry", id:233, status: TODO },
-			{ name:"Discussion", id:234, status: TODO },
-			{ name:"Visualization", id:240, status: TODO },
+			{ name:"Graphing calculator", id:232, status: TODO },
+			{ name:"Chemistry (Drawing molecules)", id:233, status: TODO },
+			{ name:"Today's News", id:234, status: TODO },
+			{ name:"Data Visualization", id:240, status: TODO },
 			{ name:"Tree graph", id:241, status: TODO },
 			{ name:"Network graph", id:242, status: TODO },
 			{ name:"Parallel graph", id:243, status: TODO },
@@ -197,8 +197,7 @@ demo.lobs[0].body=`<br><br><br><p style="text-align:center"><img alt="" src="img
 <br>
 <p style="text-align:center"><span style="font-size:14px"><em>A platform to guide learning- not just deliver it.</em></span></p>
 `
-demo.lobs[1].body=`<p style="text-align: center;"><span style="font-size:24px">WriteMao</span></p>
-<p style="text-align:left;font-size:14px"><span><span style="font-family:arial,helvetica,sans-serif">This semester, I hope you&#39;ll&nbsp;write in every class, and not just here. Nothing is more effective for learning a subject matter than writing about it &ndash; or teaching it. (Ask any teacher.) So, when an instructor assigns a chapter, summarize it or write a critique. You&#39;ll improve your performance in that course, and you&#39;ll improve your performance here. If you&#39;re not in school now, you could keep a journal. And always write carefully, as you would if you were submitting a writing to your instructor. This includes your email. One of my own goals is to proofread my emails. Make it your goal too. The editing will be very good practice for us all,</span></span></p>
+demo.lobs[1].body=`<p style="text-align:left;font-size:14px"><span><span style="font-family:arial,helvetica,sans-serif">This semester, I hope you&#39;ll&nbsp;write in every class, and not just here. Nothing is more effective for learning a subject matter than writing about it &ndash; or teaching it. (Ask any teacher.) So, when an instructor assigns a chapter, summarize it or write a critique. You&#39;ll improve your performance in that course, and you&#39;ll improve your performance here. If you&#39;re not in school now, you could keep a journal. And always write carefully, as you would if you were submitting a writing to your instructor. This includes your email. One of my own goals is to proofread my emails. Make it your goal too. The editing will be very good practice for us all,</span></span></p>
 `
 demo.lobs[2].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about the kinds of clauses.</p>";
 demo.lobs[3].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about separating clauses.</p>";
@@ -212,43 +211,101 @@ demo.lobs[10].body="<br><br><br><p style='text-align:center'>This panel will con
 demo.lobs[11].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Do).</p>";
 demo.lobs[12].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using periods.</p>";
 demo.lobs[13].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about ordering clauses.</p>";
-demo.lobs[15].body=`<p>You can easily add a wide variety of interactive media elements into your course. Although almost any web-app can be added, <strong>SCALE </strong>includes a number of built-in elements:</p>
-<ul><li><strong>Audio and video clips</strong> - Video and audio from popular online sites, as well as more advanced presentations from Qmedia.</li>
-	<br><li><strong>Images </strong>- These can show a single image, a zoomable, silde-show, an animated pan-and zoom with a single image, or even a Ken Burns-style montage with multiple images and audio track.</li>
-	<br><li><strong>Maps </strong>- Zoomable interactive maps with markers and image overlays.</li>
-	<br><li><strong>3D model</strong>s - Fully interactive 3D models and walk-throughs.</li>
-	<br><li><strong>Assessment&nbsp;</strong>- Full assessment tools, including: multiple choice, fill in the blank, matching, sorting, free-form answers, and concept mapping.</li>
-	<br><li><strong>Tools </strong>- Interactive graphing calculator and molecule drawing web-apps.</li>
-	<br><li><strong>Visualization </strong>- A large variety of data visualization graphs from SHIVA.</li></ul>
-<p style="text-align:center">&nbsp;</p>
-<p style="text-align:center">Clicking on the <strong>next button </strong>below will show samples of media the can be added.</p>
+demo.lobs[15].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
+<blockquote><blockquote><blockquote><blockquote><blockquote>
+You can easily add a wide variety of interactive media elements into your course.<br> Although almost any web-app can be added, SCALE includes a number of useful built-in elements:<br>
+<ul><li><strong>Audio and video clips</strong></li>
+	<li><strong>Images animation</strong></li>
+	<li><strong>Maps</strong></li>
+	<li><strong>3D models</strong></li>
+	<li><strong>Assessments</strong></li>
+	<li><strong>Tools </strong></li>
+	<li><strong>Data visualizations</strong></li></ul>
+<p> Clicking on the next button below will show samples of media the can be added.</p>
+</blockquote></blockquote></blockquote></blockquote></blockquote>
 `
-demo.lobs[16].body=`<p>You can easily add video and audio based media elements to the course. This can be as simple as adding Youtube, Vimeo, or Kaltura clips that begin and end at particular times, to a full multimedia experience provided by the Qmedia authoring tool.</p>
-<br>
-<p style="text-align:center"><img alt="" src="https://www.youtube.com/yt/brand/media/image/YouTube-logo-full_color.png" style="height:62px; vertical-align:middle; width:100px" /><img alt="" src="https://cdn.pixabay.com/photo/2015/08/09/12/29/vimeo-881495_960_720.png" style="height:50px; vertical-align:middle; width:100px" />&nbsp; &nbsp;&nbsp;<img alt="" src="http://asperasoft.com/fileadmin/media/Asperasoft.com/Partners/Partner_Screenshot/Kaltura/kalturalogo.png" style="height:54px; vertical-align:middle; width:100px" />&nbsp; &nbsp;</p>
-<p style="text-align:center">&nbsp;<img alt="" src="http://www.qmediaplayer.com/qlogo.png" style="height:99px; vertical-align:middle; width:100px" /></p>
-<br>
-<p style="text-align:center">Clicking on the <strong>next button </strong>below will show samples of YouTube and Qmedia clips.</p>
+demo.lobs[16].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
+<blockquote><blockquote><blockquote><blockquote><blockquote>
+<p>You can easily add video and audio based media elements to the course. This can be as simple as adding Youtube, Vimeo, or Kaltura clips that begin and end at particular times, to a full multimedia experience provided by the Qmedia authoring tool.</p>
+<ul><li><strong>Audio and video clips</strong></li>
+	<li><strong>YouTube</strong></li>
+	<li><strong>Vimeo</strong></li>
+	<li><strong>Kaltura</strong></li>
+	<li><strong>Qmedia</strong></li>
+	<li><strong>3D animations </strong></li></ul>
+	<p>Clicking on the next button below will show samples of YouTube and Qmedia clips.</p>
+</blockquote></blockquote></blockquote></blockquote></blockquote>
 `
 demo.lobs[17].body=`scaleMedia(//stagetools.com/qmedia/show.htm?1479)
-<p>Qmedia provides new ways to use video for instructional and scholarly purposes. The viewer interacts with the whole screen and can see a wide array of web-based resources that offers a more immersive experience that adds context to support the video's narrative.</p>
+<p>Qmedia provides new ways to use video for instructional  purposes. This demo is live, so you can try out Qmedia here, or see the <a href='//qmediaplayer.com' target='_blank'> Qmedia website</a>.</p>
 `
-demo.lobs[18].body=`scaleMedia(https://www.youtube.com/embed/2doZROwdte4,540)
-<p>You can add video and audio based media elements to the course. We support Youtube, Vimeo, or Kaltura clips that can begin and end at particular time.</p>
+demo.lobs[18].body=`scaleMedia(https://www.youtube.com/embed/2doZROwdte4,66)
+<p style='text-align:center'>You can add video and audio based media elements to the course.<br>We support Youtube, Vimeo, or Kaltura clips that can begin and end at particular time.</p>
 `
-demo.lobs[19].body=`<p>These can show a single image, a zoomable, silde-show, an animated pan-and zoom with a single image, or even a Ken Burns-style montage with multiple images and audio track.<p>
+demo.lobs[19].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
+<blockquote><blockquote><blockquote><blockquote><blockquote>
+<p>These can show a single image, a zoomable, slide-show, an animated pan-and zoom with a single image, or even a Ken Burns-style montage with multiple images and audio track.<p>
+<ul><li><strong>Audio and video clips</strong></li>
+	<li><strong>Maps</strong></li>
+	<li><strong>Zoomable images</strong></li>
+	<li><strong>Image Montages</strong></li>
+	<li><strong>3D models </strong></li></ul>
+	<p>Clicking on the next button below will show samples image media elements.</p>
+</blockquote></blockquote></blockquote></blockquote></blockquote>
 `
 demo.lobs[20].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1103)
-<p>You can add maps with image and marker overlay with a number of different basemap styles.</p>
+<p style='text-align:center'>Add maps with image and marker overlay with a number of different basemap styles.</p>
 `
 demo.lobs[21].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3554)
-<p>You can add high-resolution images with coontrols to pan and zoom through them.</p>
+<p style='text-align:center'>Add high-resolution images with coontrols to pan and zoom through them.</p>
 `
 demo.lobs[22].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=393)
-<p>Add animated pan-and zoom for a Ken Burns-style montage with multiple images and audio track. Click on the play button in the center to play move.</p>
+<p style='text-align:center'>Add animated pan-and zoom for a Ken Burns-style montage with multiple images and audio track.<br>Click on the play button in the center to play move.</p>
 `
 demo.lobs[23].body=`scaleMedia(//stagetools.com/qmedia/wgl.htm)
-<p>Fully interactive 3D scenes and walk-throughs. You can rotate around this scene by dragging.</p>
+<p style='text-align:center'>Fully interactive 3D scenes and walk-throughs. You can rotate around this scene by dragging.</p>
 `
-
-
+demo.lobs[24].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
+<blockquote><blockquote><blockquote><blockquote><blockquote>
+<p>SCALE has full assesment tools, as well as accesws to discipline-specific tools such as graphing calculator .<p>
+<ul><li><strong>Audio and video clips</strong></li>
+	<li><strong>Assessments</strong></li>
+	<li><strong>Graphing calculator</strong></li>
+	<li><strong>Chemistry tools</strong></li>
+	<li><strong>Websites and web-services</strong></li></ul>
+	<p>Clicking on the next button below will show sample tools.</p>
+</blockquote></blockquote></blockquote></blockquote></blockquote>
+`
+demo.lobs[25].body=`<br><br>scaleMedia(assess.htm,66,66)
+<p style='text-align:center'>Full traditional assessment tools are available.</p>
+`
+demo.lobs[26].body=`<br><br>scaleMedia(//www.viseyes.org/shiva/graphr/?x^3/20,66,66,1)
+<p style='text-align:center'>Tools such as this interactive graphing caculator can be added.<br>The results being sent back to SCALE to automatically assess progress.</p>
+`
+demo.lobs[27].body=`<br>scaleMedia(//stagetools.com/qmedia/chem/chemdraw.htm,66)
+<div style='text-align:center'>This interactive molecule drawing tool can send results being sent back to SCALE to automatically assess progress.</div>
+`
+demo.lobs[28].body=`scaleMedia(//www.washingtonpost.com/)
+<p style='text-align:center;font-weight:bold'> Link to any website, or web-service, live.</p>
+`
+demo.lobs[29].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
+<blockquote><blockquote><blockquote><blockquote><blockquote>
+<p>Visualizations make data more accessible. SCALE draws on the SHIVA data visualization tools display Google spreadsheet data in meaningful ways.<p>
+<ul><li><strong>Tree Graphs</strong></li>
+	<li><strong>Network graphs</strong></li>
+	<li><strong>Charts</strong></li></ul>
+	<p>Clicking on the next button below will show samples of data visualizations.</p>
+</blockquote></blockquote></blockquote></blockquote></blockquote>
+`
+demo.lobs[30].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3637)
+<p style='text-align:center'>Tree graphs show heirarchical data in an easy to understand form. You can open and close nodes.</p>
+`
+demo.lobs[31].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1121)
+<p style='text-align:center'>Network graphs show relations between items.</p>
+`
+demo.lobs[32].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3638)
+<p style='text-align:center'>Parallel graphs allow for interesting explorations of causal data. Highlight the lines to see how the factors relate to one another.</p>
+`
+demo.lobs[33].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3639,75,66)
+<p style='text-align:center'>Chord graphs show relations between items.</p>
+`

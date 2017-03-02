@@ -25,10 +25,14 @@ class Content  {
 		if (l) {																									// Valid lob
 			str+=l.body ? l.body : "";																				// Add body
 			if (ifr=str.match(/scalemedia\((.+)\)/i)) {																// If a media tag
-				var h=$("#contentDiv").height()-200;																// Calc height
+				var w=100,b=0;																						// Assume full width
+				var h=$("#contentDiv").height()-200;																// Set default height												
 				ifr=(""+ifr[1]).split(",");																			// Get params
-				if (ifr[1])	h=ifr[1];
-				ifs="<iframe class='wm-media' frameborder=0 src='"+ifr[0]+"' style='height:"+h+"px'></iframe>";		// Load in iframe
+				if (ifr[1])		h=(h+200)*ifr[1]/100;																// Calc height based on height percentage
+				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
+				if (ifr[3])		b=1;																				// Border
+				ifs="<div style='text-align:center'>";																// For centering
+				ifs+="<iframe class='wm-media' align='middle' frameborder='"+b+"' src='"+ifr[0]+"' style='height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe
 				str=str.replace(/scalemedia\(.+\)/i,ifs);															// Get tag and replace it with iframe
 				}
 		}
