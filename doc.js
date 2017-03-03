@@ -133,7 +133,7 @@ var demo={
 			{ name:"do", id:120, status: TODO }, 
 			{ name:"Using periods", id:130, status: TODO }, 
 			{ name:"Ordering clauses", id:140, status: TODO },
-			{ name:"Ordering clauses", id:140, status: TODO },
+			{ name:"Assessment", id:150, status: TODO },
 /*15*/		{ name:"Media demo", id:200, status: TODO },
 			{ name:"Video", id:210, status: TODO },
 			{ name:"Qmedia", id:211, status: TODO },
@@ -156,7 +156,7 @@ var demo={
 			],
 
 	map:[{ level:COURSE, id:10, children:[2] }, 
-				{ level:LESSON, id:20, parent: 0, children:[30,40,140,200] }, 
+				{ level:LESSON, id:20, parent: 0, children:[30,40,140,200,150] }, 
 				{ level:TOPIC, id:30, parent:1, children:[] }, 
 				{ level:TOPIC, id:40, parent:1, children:[50,60,70,130] }, 
 					{ level:CONCEPT,id:50, parent:3, children:[] }, 
@@ -178,8 +178,8 @@ var demo={
 	/*20*/				{ level:STEP, id:222, parent:18, children:[] }, 
 						{ level:STEP, id:223, parent:18, children:[] }, 
 						{ level:STEP, id:224, parent:18, children:[] }, 
-					{ level:CONCEPT,id:230, parent:14, children:[231,232,233,234] }, 
-						{ level:STEP, id:231, parent:23, children:[] }, 
+					{ level:CONCEPT,id:230, parent:14, children:[150,232,233,234] }, 
+						{ level:STEP, id:150, parent:23, children:[] }, 
 	/*25*/				{ level:STEP, id:232, parent:23, children:[] }, 
 						{ level:STEP, id:233, parent:23, children:[] }, 
 						{ level:STEP, id:234, parent:23, children:[] }, 
@@ -187,7 +187,8 @@ var demo={
 						{ level:STEP, id:241, parent:28, children:[] }, 
 	/*30*/				{ level:STEP, id:242, parent:28, children:[] }, 
 						{ level:STEP, id:243, parent:28, children:[] }, 
-						{ level:STEP, id:244, parent:28, children:[] } 
+						{ level:STEP, id:244, parent:28, children:[] }, 
+				{ level:TOPIC, id:150, parent:1, children:[] } 
 			]
 }
 
@@ -211,6 +212,7 @@ demo.lobs[10].body="<br><br><br><p style='text-align:center'>This panel will con
 demo.lobs[11].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Do).</p>";
 demo.lobs[12].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using periods.</p>";
 demo.lobs[13].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about ordering clauses.</p>";
+demo.lobs[14].body="<br><br>scaleMedia(assess.htm,66,66)<p style='text-align:center'>Full traditional assessment tools are available.</p>";
 demo.lobs[15].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
 <blockquote><blockquote><blockquote><blockquote><blockquote>
 You can easily add a wide variety of interactive media elements into your course.<br> Although almost any web-app can be added, SCALE includes a number of useful built-in elements:<br>
@@ -275,9 +277,6 @@ demo.lobs[24].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 	<li><strong>Websites and web-services</strong></li></ul>
 	<p>Clicking on the next button below will show sample tools.</p>
 </blockquote></blockquote></blockquote></blockquote></blockquote>
-`
-demo.lobs[25].body=`<br><br>scaleMedia(assess.htm,66,66)
-<p style='text-align:center'>Full traditional assessment tools are available.</p>
 `
 demo.lobs[26].body=`<br><br>scaleMedia(//www.viseyes.org/shiva/graphr/?x^3/20,66,66,1)
 <p style='text-align:center'>Tools such as this interactive graphing caculator can be added.<br>The results being sent back to SCALE to automatically assess progress.</p>
