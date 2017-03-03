@@ -258,8 +258,11 @@ demo.lobs[19].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 demo.lobs[20].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1103)
 <p style='text-align:center'>Add maps with image and marker overlay with a number of different basemap styles.</p>
 `
+//demo.lobs[21].body=`zoomer(//farm9.staticflickr.com/8019/7310697988_08d33c75b3_o.jpg)
+//<p style='text-align:center'>Add high-resolution images with controls to pan and zoom through them.</p>
+//`
 demo.lobs[21].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3554)
-<p style='text-align:center'>Add high-resolution images with coontrols to pan and zoom through them.</p>
+<p style='text-align:center'>Add high-resolution images with controls to pan and zoom through them.</p>
 `
 demo.lobs[22].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=393)
 <p style='text-align:center'>Add animated pan-and zoom for a Ken Burns-style montage with multiple images and audio track.<br>Click on the play button in the center to play move.</p>
@@ -297,7 +300,7 @@ demo.lobs[29].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 </blockquote></blockquote></blockquote></blockquote></blockquote>
 `
 demo.lobs[30].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3637)
-<p style='text-align:center'>Tree graphs show heirarchical data in an easy to understand form. You can open and close nodes.</p>
+<p style='text-align:center'>Tree graphs show hierarchical data in an easy to understand form. You can open and close nodes.</p>
 `
 demo.lobs[31].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1121)
 <p style='text-align:center'>Network graphs show relations between items.</p>
