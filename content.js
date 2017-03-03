@@ -9,7 +9,8 @@ class Content  {
 
 	Draw() {																									// REDRAW
 		var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height()-36;											// Get height
-		$("#contentDiv").height(h);																					// Position nav box
+		h=Math.min(h,1000);																							// Cap at 1000
+		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
 		str+=this.GetContentBody();																					// Add content
 		$("#contentDiv").html(str);																					// Set content

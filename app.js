@@ -16,7 +16,7 @@ class App  {																									 // APP
  
 	Draw(mapIndex) {																							// REDRAW
 		if ((mapIndex != undefined) && (mapIndex != -1))															// A valid index
-			app.doc.curMapPos=mapIndex;																				// Set new index
+		app.doc.curMapPos=mapIndex;																					// Set new index
 		this.wid=$(window).width();																					// Get window width			
 		this.hgt=$(window).height();																				// Height
 		app.doc.Draw();																								// Reset various params
