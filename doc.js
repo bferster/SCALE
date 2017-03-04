@@ -304,7 +304,7 @@ demo.lobs[24].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 demo.lobs[26].body=`<br><br>scaleMedia(//www.viseyes.org/shiva/graphr/?x^3/20,66,66,1)
 <p style='text-align:center'>Tools such as this interactive graphing caculator can be added.<br>The results being sent back to SCALE to automatically assess progress.</p>
 `
-demo.lobs[27].body=`<br>scaleMedia(//stagetools.com/qmedia/chem/chemdraw.htm,66)
+demo.lobs[27].body=`<br>scaleMedia(//stagetools.com/qmedia/chem/chemdraw.htm,75,90)
 <div style='text-align:center'>This interactive molecule drawing tool can send results being sent back to SCALE to automatically assess progress.</div>
 `
 demo.lobs[28].body=`scaleMedia(//www.washingtonpost.com/)
