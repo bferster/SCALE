@@ -212,7 +212,7 @@ demo.lobs[10].body="<br><br><br><p style='text-align:center'>This panel will con
 demo.lobs[11].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Do).</p>";
 demo.lobs[12].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using periods.</p>";
 demo.lobs[13].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about ordering clauses.</p>";
-demo.lobs[14].body="<br><br>scaleMedia(assess.htm,66,66)<p style='text-align:center'>Full traditional assessment tools are available.</p>";
+demo.lobs[14].body="<br><br>scaleMedia(assess.htm,66,66)<p style='text-align:center'>Full traditional assessment tools are available.<br>You can try out the assessment tools by clicking above.</p>";
 demo.lobs[15].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
 <blockquote><blockquote><blockquote><blockquote><blockquote>
 You can easily add a wide variety of interactive media elements into your course.<br> Although almost any web-app can be added, SCALE includes a number of useful built-in elements:<br>
@@ -305,6 +305,6 @@ demo.lobs[31].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1121)
 demo.lobs[32].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3638)
 <p style='text-align:center'>Parallel graphs allow for interesting explorations of causal data. Highlight the lines to see how the factors relate to one another.</p>
 `
-demo.lobs[33].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3639,75,66)
+demo.lobs[33].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3639,100,66)
 <p style='text-align:center'>Chord graphs show relations between items.</p>
 `
