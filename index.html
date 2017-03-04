@@ -114,7 +114,7 @@
 var app=null;
 
 $(window).resize(function() {                                         	// ON WINDOW RESIZE
-	if (app)																// If app loaded
+	if (app && app.allowResize)												// If app loaded and allowing resizing
 		app.Draw();															// Redraw to fit screen
 	});
 			

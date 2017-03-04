@@ -369,8 +369,8 @@
 				else if (ans == "wrong") { 										// Wrong
 					str+="000099'>Sorry, that's not the right answer</div><p>";	// Heading	
 					if (d.whyWrong)												// If wrong 
-						str+="<div style='text-align:center'>"+d.whyWrong+"</div>"; // Show explanation
-					 if (str.match(/here\(/i)) {									// A here() tag
+						str+="<p style='text-align:center'>"+d.whyWrong+"</p>"; // Show explanation
+					 if (str.match(/here\(/i)) {								// A here() tag
 				 		i=str.match(/here\((.+)\)/i)[1];						// Get time
 				 		str=str.replace(/here\(.+\)/i,"<a href='javascript:qe.SendMessage(\"play\",\""+i+"\")'>here</a>");
 				 		}

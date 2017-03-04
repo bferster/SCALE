@@ -241,7 +241,7 @@ demo.lobs[16].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 demo.lobs[17].body=`scaleMedia(//stagetools.com/qmedia/show.htm?1479)
 <p>Qmedia provides new ways to use video for instructional  purposes. This demo is live, so you can try out Qmedia here, or see the <a href='//qmediaplayer.com' target='_blank'> Qmedia website</a>.</p>
 `
-demo.lobs[18].body=`scaleMedia(https://www.youtube.com/embed/2doZROwdte4,66)
+demo.lobs[18].body=`scaleMedia(https://www.youtube.com/embed/2doZROwdte4)
 <p style='text-align:center'>You can add video and audio based media elements to the course.<br>We support Youtube, Vimeo, or Kaltura clips that can begin and end at particular time.</p>
 `
 demo.lobs[19].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
@@ -258,10 +258,7 @@ demo.lobs[19].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 demo.lobs[20].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1103)
 <p style='text-align:center'>Add maps with image and marker overlay with a number of different basemap styles.</p>
 `
-//demo.lobs[21].body=`zoomer(//farm9.staticflickr.com/8019/7310697988_08d33c75b3_o.jpg)
-//<p style='text-align:center'>Add high-resolution images with controls to pan and zoom through them.</p>
-//`
-demo.lobs[21].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3554)
+demo.lobs[21].body=`scaleMedia(zoomer.htm?//farm9.staticflickr.com/8019/7310697988_08d33c75b3_o.jpg,100,90)
 <p style='text-align:center'>Add high-resolution images with controls to pan and zoom through them.</p>
 `
 demo.lobs[22].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=393)

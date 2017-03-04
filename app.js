@@ -6,8 +6,7 @@ class App  {																									 // APP
 
 	constructor()   {
 		app=this;
-		this.pl=this.pt=this.pc=this.ps=this.pp=null;																// Pointers to curriculum parts
-		this.cl=this.ct=this.cc=this.cs=this.cp=0;																	// Current spont in curriculum
+		this.allowResize=true;																						// Redraw after a resize
 		this.doc=new Doc();																							// Alloc doc
 		this.con=new Content();																						// Content
 		this.nav=new Navigation();																					// Navigation
