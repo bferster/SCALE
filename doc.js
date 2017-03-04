@@ -13,9 +13,25 @@ class Doc  {
 		if (o)  {																									// If default data
 			this.lobs=o.lobs;																						// Add lobs
 			this.map=o.map;																							// Add map
+			this.AddChildList(true);																				// Add children	
 			}
 		this.curMapPos=0;																							// Start at lesson
 		this.firstName="Jerry";		this.lastName="Bruner";
+		}
+
+	AddChildList(isMap)	{																							// ADD LIST OF CHILDREN
+		var i,par,n=this.map.length;
+		for (i=0;i<n;++i) {																							// For each map element
+			this.map[i].children=[];																				// Alloc arrays
+			this.map[i].kids=[];																
+			}
+		for (i=0;i<n;++i) {																							// For each map element
+			par=this.map[i].parent;																					// Point at parent
+			if (par != undefined) {																					// If not root
+				this.map[par].children.push(this.map[i].id);														// Add id of child lob
+				this.map[par].kids.push(this.map[i]);																// Add id of map
+				}			
+			}
 		}
 
 	Draw() {																									// SET LEVELS AND DATA
@@ -61,20 +77,27 @@ class Doc  {
 			if (id == this.map[i].id) 																				// A match
 				return i;																							// Return index
 			}
-		return -1;																								// Not found
+		return -1;																									// Not found
 		}
 
-	GetStatus(mapPos, child) {																					// FIND MAP ITEM'S STATUS
-		var status=TODO;																							// Assume not done
-		var m=this.map[mapPos];
-		var level=m.level;
-		if (level == LESSON && !child)
-			return DONE;
-		if (level == TOPIC && child < 2)
-			return DONE;
-		return TODO;
+	GetMastery(num) {																							// GET MASTERY OF LOB AT MAP POSITION
+		var numNodes=-1,done=0;
+		var _this=this;																								// Context
+		if (_this.FindLobById(this.map[num].id).status == DONE)														// If it's already done
+			return DONE;																							// Return done
+		
+		function iterate(node) {																					// RECURSIVE FUNCTION
+			var i;
+			++numNodes;																								// Add to count
+			if (_this.FindLobById(node.id).status == DONE)															// If lob is done
+				++done;																								// Add to count																		
+			for (i=0;i<node.kids.length;i++) 																		// For each child
+				iterate(node.kids[i]);																				// Recurse
+			}
+		
+		iterate(this.map[num]);																						// Start looking
+		return ((done == numNodes) && numNodes) ? DONE : TODO;														// Return mastery for node
 		}
-
 
 	NextLob() {																									// ADVANCE THROUGH LOB MAP
 		if (this.curMapPos < this.map.length-1)																		// If not last
@@ -127,7 +150,7 @@ var demo={
 			{ name:"Using joiners", id:60, status: DONE }, 
 			{ name:"Using semicolons", id:70, status: TODO }, 
 			{ name:"tell - 1 of 2", id:80, status: TODO }, 
-			{ name:"tell - 2 of 2", id:90, status: TODO }, 
+			{ name:"tell - 2 of 2", id:90, status: DONE }, 
 			{ name:"show", id:100, status: TODO }, 
 			{ name:"find", id:110, status: TODO }, 
 			{ name:"do", id:120, status: TODO }, 
@@ -155,40 +178,40 @@ var demo={
 			{ name:"Chord chart", id:244, status: TODO }
 			],
 
-	map:[{ level:COURSE, id:10, children:[2] }, 
-				{ level:LESSON, id:20, parent: 0, children:[30,40,140,200,150] }, 
-				{ level:TOPIC, id:30, parent:1, children:[] }, 
-				{ level:TOPIC, id:40, parent:1, children:[50,60,70,130] }, 
-					{ level:CONCEPT,id:50, parent:3, children:[] }, 
-					{ level:CONCEPT,id:60, parent:3, children:[] }, 
-					{ level:CONCEPT,id:70, parent:3, children:[80,100,110,120] }, 
-						{ level:STEP, id:80, parent:6, children:[90] }, 
-							{ level:PAGE, id:90, parent:7, children:[] }, 
-						{ level:STEP, id:100, parent:6, children:[] }, 
-	/*10*/					{ level:STEP, id:110, parent:6, children:[] }, 
-						{ level:STEP, id:120, parent:6, children:[] }, 
-					{ level:CONCEPT,id:130, parent:3, children:[] }, 
-				{ level:TOPIC, id:140, parent:1, children:[] }, 
-				{ level:TOPIC, id:200, parent:1, children:[210,220,230,240] }, 
-	/*15*/				{ level:CONCEPT,id:210, parent:14, children:[211,212] }, 
-						{ level:STEP, id:211, parent:15, children:[] }, 
-						{ level:STEP, id:212, parent:15, children:[] }, 
-					{ level:CONCEPT,id:220, parent:14, children:[221,222,223,224] }, 
-						{ level:STEP, id:221, parent:18, children:[] }, 
-	/*20*/				{ level:STEP, id:222, parent:18, children:[] }, 
-						{ level:STEP, id:223, parent:18, children:[] }, 
-						{ level:STEP, id:224, parent:18, children:[] }, 
-					{ level:CONCEPT,id:230, parent:14, children:[150,232,233,234] }, 
-						{ level:STEP, id:150, parent:23, children:[] }, 
-	/*25*/				{ level:STEP, id:232, parent:23, children:[] }, 
-						{ level:STEP, id:233, parent:23, children:[] }, 
-						{ level:STEP, id:234, parent:23, children:[] }, 
-					{ level:CONCEPT,id:240, parent:14, children:[241,242,243,244] }, 
-						{ level:STEP, id:241, parent:28, children:[] }, 
-	/*30*/				{ level:STEP, id:242, parent:28, children:[] }, 
-						{ level:STEP, id:243, parent:28, children:[] }, 
-						{ level:STEP, id:244, parent:28, children:[] }, 
-				{ level:TOPIC, id:150, parent:1, children:[] } 
+	map:[{ level:COURSE, id:10 }, 
+				{ level:LESSON, id:20, parent: 0 }, 
+				{ level:TOPIC, id:30, parent:1 }, 
+				{ level:TOPIC, id:40, parent:1 }, 
+					{ level:CONCEPT,id:50, parent:3 }, 
+					{ level:CONCEPT,id:60, parent:3 }, 
+					{ level:CONCEPT,id:70, parent:3 }, 
+						{ level:STEP, id:80, parent:6 }, 
+							{ level:PAGE, id:90, parent:7 }, 
+						{ level:STEP, id:100, parent:6 }, 
+	/*10*/					{ level:STEP, id:110, parent:6 }, 
+						{ level:STEP, id:120, parent:6 }, 
+					{ level:CONCEPT,id:130, parent:3 }, 
+				{ level:TOPIC, id:140, parent:1 }, 
+				{ level:TOPIC, id:200, parent:1 }, 
+	/*15*/				{ level:CONCEPT,id:210, parent:14 }, 
+						{ level:STEP, id:211, parent:15 }, 
+						{ level:STEP, id:212, parent:15 }, 
+					{ level:CONCEPT,id:220, parent:14 }, 
+						{ level:STEP, id:221, parent:18 }, 
+	/*20*/				{ level:STEP, id:222, parent:18 }, 
+						{ level:STEP, id:223, parent:18 }, 
+						{ level:STEP, id:224, parent:18 }, 
+					{ level:CONCEPT,id:230, parent:14 }, 
+						{ level:STEP, id:150, parent:23 }, 
+	/*25*/				{ level:STEP, id:232, parent:23 }, 
+						{ level:STEP, id:233, parent:23 }, 
+						{ level:STEP, id:234, parent:23 }, 
+					{ level:CONCEPT,id:240, parent:14 }, 
+						{ level:STEP, id:241, parent:28 }, 
+	/*30*/				{ level:STEP, id:242, parent:28 }, 
+						{ level:STEP, id:243, parent:28 }, 
+						{ level:STEP, id:244, parent:28 }, 
+				{ level:TOPIC, id:150, parent:1 } 
 			]
 }
 

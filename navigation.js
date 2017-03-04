@@ -99,19 +99,18 @@ class Navigation {
 			children=app.doc.map[app.doc.curLesson].children;														// Get topics
 			ww=(w-48)/(children.length-1);																			// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
-				for (i=0;i<children.length;++i) {																	// For each topic 
 					$("#topicDot-"+i).on("click",function(e) {														// ON TOPIC CLICK
 						var id=e.currentTarget.id.substr(9);														// Extract id
-						id=app.doc.map[app.doc.curLesson].children[id];												// Get topic is
+						id=app.doc.map[app.doc.curLesson].children[id];												// Get topic id
 						app.Draw(app.doc.FindMapIndexById(id));														// Set new index and redraw
 						Sound("click");																				// Click
 						});
 					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
-					if (app.doc.GetStatus(app.doc.curLesson,i) == DONE)												// If this topic is done
+					var id=app.doc.map[app.doc.curLesson].children[i];												// Get topic is
+					if (app.doc.FindLobById(id).status == DONE)														// If done
 						$("#topicDotDot-"+i).css({"background-color":"#a9dbac"});									// Done status
 					l+=ww;																							// Next pos
 					}
-				}
 			}
 
 		if (app.doc.curTopic) {																						// If a topic active
@@ -127,7 +126,8 @@ class Navigation {
 						Sound("click");																				// Click
 						});
 					$("#conceptBar-"+i).css({left:l+"px",width:ww-6+"px"});											// Position concept bar
-					if (app.doc.GetStatus(app.doc.curTopic,i) == DONE)												// If this concept is done
+					var id=app.doc.map[app.doc.curTopic].children[i];												// Get topic is
+					if (app.doc.FindLobById(id).status == DONE)														// If done
 						$("#conceptBar-"+i).css({color:"#006600"});													// Done status
 					l+=ww;																							// Next pos
 					}
