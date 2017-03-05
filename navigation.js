@@ -148,7 +148,7 @@ class Navigation {
 				}
 			}
 
-		if (app.doc.curStep) {																						// If a step active
+		if (app.doc.curConcept) {																					// If a step active
 			l=56;																									// Start left
 			children=app.doc.map[app.doc.curConcept].children;														// Get 
 			ww=(w-120)/children.length;																				// Width between topic dots
