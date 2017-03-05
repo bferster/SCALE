@@ -89,8 +89,7 @@ class Navigation {
 				str+=`'>${name}</div>`;
 				}
 			}
-
-		if (app.doc.curStep) {																						// If a step active
+		if (app.doc.curConcept) {																					// If a step active
 			curLob=app.doc.map[curPos].id;																			// Poiny at lob
 			str+="<div id='stepBarDiv' class='wm-stepBar'>";														// Stepvbar div
 			children=app.doc.map[app.doc.curConcept].children;														// Get topics
