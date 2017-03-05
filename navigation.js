@@ -38,7 +38,7 @@ class Navigation {
 		}
 
 	Draw() {																									// REDRAW
-		var i,ww,name,children,curConPos=0;
+		var i,id,ww,name,children;
 		var parLev,parPos,curLob,curPos=app.doc.curMapPos
 		var w=$("#navDiv").width()+16;																				// Content width
 		var l=$("#navDiv").offset().left;																			// Left
@@ -59,8 +59,8 @@ class Navigation {
 			children=app.doc.map[app.doc.curLesson].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get topic name
-				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div class='wm-topicDotLab'";					// Add dot container
-				if (curLob == children[i]) 	str+=" style='color:#008800'";											// Highlight if current						
+				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div  id='topicDotLab-"+i+"'class='wm-topicDotLab'";	// Add dot container
+				if (curLob == children[i]) 	str+=" style='color:#c57117'";											// Highlight if current						
 				str+=`>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div></div>";								// Add dot
 				}
@@ -81,17 +81,33 @@ class Navigation {
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
-				if (curLob == children[i]) {																		// If current Topic
-					 str+=";background-color:#a9dbac;color:#333";													// Highlight					
-					 curConPos=i;																					// Save position
-					}
+				id=app.doc.map[app.doc.curTopic].children[i];														// Get topic id
+				if (app.doc.FindLobById(id).status == DONE)															// If done
+					str+=";color:#007700";																			// Show done color
+				if (curLob == children[i]) 																			// If current Topic
+				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				str+=`'>${name}</div>`;
 				}
 			}
 
-		if (app.doc.curStep) 																						// If a step active
-			str+="<div id='stepLab' class='wm-stepLab'></div>";														// Step label
-		
+		if (app.doc.curStep) {																						// If a step active
+			curLob=app.doc.map[curPos].id;																			// Poiny at lob
+			str+="<div id='stepBarDiv' class='wm-stepBar'>";														// Stepvbar div
+			children=app.doc.map[app.doc.curConcept].children;														// Get topics
+			for (i=0;i<children.length;++i) {																		// For each topic 
+				name=app.doc.FindLobById(children[i]).name;															// Get concept name
+				str+=`<span id='stepBar-${i}' class='wm-stepBarItem' style='`;
+				id=app.doc.map[app.doc.curConcept].children[i];														// Get concept id
+				if (app.doc.FindLobById(id).status == DONE)															// If done
+					str+=";color:#007700";																			// Show done color
+				if (curLob == children[i]) 																			// If current Topic
+				 	str+=";color:#c57117;font-weight:bold";															// Show current place
+				str+=`'>${name}</span>`;
+				if (i != children.length-1)
+					str+="<span style='color:#999'>|</span>"
+				}	
+			}
+
 		$("#navDiv").html(str);																						// Add content	
 
 		if (app.doc.curLesson) {																					// If a lesson active
@@ -107,14 +123,16 @@ class Navigation {
 						});
 					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
 					var id=app.doc.map[app.doc.curLesson].children[i];												// Get topic is
-					if (app.doc.FindLobById(id).status == DONE)														// If done
-						$("#topicDotDot-"+i).css({"background-color":"#a9dbac"});									// Done status
+					if (app.doc.FindLobById(id).status == DONE)	{													// If done
+						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
+						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
+						}
 					l+=ww;																							// Next pos
 					}
 			}
 
 		if (app.doc.curTopic) {																						// If a topic active
-			l=16;																									// Start left
+			l=14;																									// Start left
 			children=app.doc.map[app.doc.curTopic].children;														// Get 
 			ww=(w-40)/children.length;																				// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
@@ -126,21 +144,28 @@ class Navigation {
 						Sound("click");																				// Click
 						});
 					$("#conceptBar-"+i).css({left:l+"px",width:ww-6+"px"});											// Position concept bar
-					var id=app.doc.map[app.doc.curTopic].children[i];												// Get topic is
-					if (app.doc.FindLobById(id).status == DONE)														// If done
-						$("#conceptBar-"+i).css({color:"#006600"});													// Done status
 					l+=ww;																							// Next pos
 					}
 				}
 			}
 
 		if (app.doc.curStep) {																						// If a step active
-			l=16+(curConPos*ww);																					// To start of concept bar
-			name=app.doc.FindLobById(app.doc.curLobId).name;														// Get step name
-			$("#stepLab").html(name.charAt(0).toUpperCase()+name.substr(1));										// Show it
-			$("#stepLab").css({ left:l+"px",width:ww-4+"px"});														// Position step label
-			}	
-		}
+			l=56;																									// Start left
+			children=app.doc.map[app.doc.curConcept].children;														// Get 
+			ww=(w-120)/children.length;																				// Width between topic dots
+			for (i=0;i<children.length;++i) {																		// For each topic 
+				for (i=0;i<children.length;++i) {																	// For each concept 
+						$("#stepBar-"+i).on("click",function(e) {													// ON STEP CLICK
+						var id=e.currentTarget.id.substr(8);														// Extract id
+						id=app.doc.map[app.doc.curConcept].children[id];											// Get step id
+						app.Draw(app.doc.FindMapIndexById(id));														// Set new index and redraw
+						Sound("click");																				// Click
+						});
+					l+=ww;																							// Next pos
+					}
+				}
+			}
+	}
 
 	UpdateHeader() {
 		$("#courseTitle").html(app.doc.lobs[app.doc.curCourse].name);												// Show course name
