@@ -142,8 +142,8 @@ class Lob {																										// BASE CLASS FOR LEARNING OBJECTS (LOBs)
 
 
 var demo={
-	lobs:[	{ name:"Student Flourishing Institute", id:10, status: 0 }, 
-			{ name:"Clauses and phrases", id:20, status: TODO }, 
+	lobs:[	{ name:"Student Fourishing", id:10, status: 0 }, 
+			{ name:"Week 1", id:20, status: TODO }, 
 			{ name:"Kinds of clauses", id:30, status: DONE }, 
 			{ name:"Separating clauses", id:40, status: TODO }, 
 			{ name:"Using commas", id:50, status: DONE }, 

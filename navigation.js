@@ -15,14 +15,14 @@ class Navigation {
 			return;																									// Quit
 			}
 		var str="<div class='wm-pullDown' id='menuSlotDiv'>";														// Add menu div
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Introduction &#10003;</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Paragraphs &#10003;</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Sentences &#10003;</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Clauses and phrases</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Style</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Patterns</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>When patterns meet</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Summing it Up</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 1 &#10003;</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 2 &#10003;</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 3 &#10003;</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 4</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 5</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 6</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 7</div>";
+		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 8</div>";
 		$("body").append(str);																						// Add menu to body
 		var x=$("#lessonTitle").offset().left-8+"px";																// Left
 		var y=$("#contentDiv").offset().top-20+"px";																// Top
