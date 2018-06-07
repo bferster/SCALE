@@ -143,12 +143,12 @@ class Lob {																										// BASE CLASS FOR LEARNING OBJECTS (LOBs)
 
 var demo={
 	lobs:[	{ name:"Student Fourishing", id:10, status: 0 }, 
-			{ name:"Week 1", id:20, status: TODO }, 
+			{ name:"Week 4", id:20, status: TODO }, 
 			{ name:"Primer on Brain Science", id:30, status: DONE }, 
 			{ name:"Three brain functions", id:40, status: TODO }, 
 			{ name:"Balance body budget", id:50, status: DONE }, 
 			{ name:"Scale and predict", id:60, status: DONE }, 
-			{ name:"Interpret and making meaning", id:70, status: TODO }, 
+			{ name:"Making meaning", id:70, status: TODO }, 
 			{ name:"Tell - 1 of 2", id:80, status: DONE }, 
 			{ name:"Tell - 2 of 2", id:90, status: DONE }, 
 			{ name:"Show", id:100, status: TODO }, 
@@ -221,12 +221,11 @@ demo.lobs[0].body=`<br><br><br><p style="text-align:center"><img alt="" src="img
 <br>
 <p style="text-align:center"><span style="font-size:14px"><em>A platform to guide learning- not just deliver it.</em></span></p>
 `
-demo.lobs[1].body=`<p style="text-align:left;font-size:14px"><span><span style="font-family:arial,helvetica,sans-serif">This semester, I hope you&#39;ll&nbsp;write in every class, and not just here. Nothing is more effective for learning a subject matter than writing about it &ndash; or teaching it. (Ask any teacher.) So, when an instructor assigns a chapter, summarize it or write a critique. You&#39;ll improve your performance in that course, and you&#39;ll improve your performance here. If you&#39;re not in school now, you could keep a journal. And always write carefully, as you would if you were submitting a writing to your instructor. This includes your email. One of my own goals is to proofread my emails. Make it your goal too. The editing will be very good practice for us all,</span></span></p>
-`
-demo.lobs[2].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about brain science primer.</p>";
+demo.lobs[1].body="<p>You are the product of a long lineage of survivors. Around 70,000 years ago our species underwent a cognitive revolution that resulted in a brain and body configuration we enjoy today.</p><p>In addition to evolving an incredible information processing, probability generating central nervous system, we also evolved an unprecedented capacity to engage with other humans using language, pass on knowledge over generations via culture, fashion increasingly complex tools and shape our environments to meet our biological needs.</p>";
+demo.lobs[2].body="scaleMedia(//stagetools.com/qmedia/show.htm?2130)<p>Qmedia provides new ways to use video for instructional  purposes. This demo is live, so you can try out Qmedia here, or see the <a href='//qmediaplayer.com' target='_blank'> Qmedia website</a>.</p>";
 demo.lobs[3].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about brain functions.</p>";
 demo.lobs[4].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using balance body budget.</p>";
-demo.lobs[5].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using ecan and predict.</p>";
+demo.lobs[5].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using scan and predict.</p>";
 demo.lobs[6].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons.</p>";
 demo.lobs[7].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Tell page 1).</p>";
 demo.lobs[8].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Tell page 2).</p>";
@@ -261,7 +260,7 @@ demo.lobs[16].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 	<p>Clicking on the next button below will show samples of YouTube and Qmedia clips.</p>
 </blockquote></blockquote></blockquote></blockquote></blockquote>
 `
-demo.lobs[17].body=`scaleMedia(//stagetools.com/qmedia/show.htm?2130)
+demo.lobs[17].body=`scaleMedia(//stagetools.com/qmedia/show.htm?2194)
 <p>Qmedia provides new ways to use video for instructional  purposes. This demo is live, so you can try out Qmedia here, or see the <a href='//qmediaplayer.com' target='_blank'> Qmedia website</a>.</p>
 `
 demo.lobs[18].body=`scaleMedia(https://www.youtube.com/embed/2doZROwdte4)
