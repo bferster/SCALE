@@ -1,19 +1,19 @@
 {
-  "name": "writemao",
+  "name": "scale",
   "version": "1.0.0",
-  "description": "Writing instruction",
+  "description": "Student-centered Adaptive Learning Environment",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bferster/WriteMao.git"
+    "url": "git+https://github.com/bferster/Scale.git"
   },
   "author": "Bill Ferster",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bferster/WriteMao/issues"
+    "url": "https://github.com/bferster/Scale/issues"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
@@ -24,5 +24,5 @@
       "es2015"
     ]
   },
-  "homepage": "https://github.com/bferster/WriteMao#readme"
+  "homepage": "https://github.com/bferster/Scale#readme"
 }

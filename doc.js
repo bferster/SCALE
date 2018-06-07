@@ -144,18 +144,18 @@ class Lob {																										// BASE CLASS FOR LEARNING OBJECTS (LOBs)
 var demo={
 	lobs:[	{ name:"Student Fourishing", id:10, status: 0 }, 
 			{ name:"Week 1", id:20, status: TODO }, 
-			{ name:"Kinds of clauses", id:30, status: DONE }, 
-			{ name:"Separating clauses", id:40, status: TODO }, 
-			{ name:"Using commas", id:50, status: DONE }, 
-			{ name:"Using joiners", id:60, status: DONE }, 
-			{ name:"Using semicolons", id:70, status: TODO }, 
+			{ name:"Primer on Brain Science", id:30, status: DONE }, 
+			{ name:"Three brain functions", id:40, status: TODO }, 
+			{ name:"Balance body budget", id:50, status: DONE }, 
+			{ name:"Scale and predict", id:60, status: DONE }, 
+			{ name:"Interpret and making meaning", id:70, status: TODO }, 
 			{ name:"Tell - 1 of 2", id:80, status: DONE }, 
 			{ name:"Tell - 2 of 2", id:90, status: DONE }, 
 			{ name:"Show", id:100, status: TODO }, 
 			{ name:"Find", id:110, status: TODO }, 
 			{ name:"Do", id:120, status: TODO }, 
-			{ name:"Using periods", id:130, status: TODO }, 
-			{ name:"Ordering clauses", id:140, status: TODO },
+			{ name:"Human brain structure", id:130, status: TODO }, 
+			{ name:"Transition to college", id:140, status: TODO },
 			{ name:"Assessment", id:150, status: TODO },
 /*15*/		{ name:"Media demo", id:200, status: TODO },
 			{ name:"Video", id:210, status: TODO },
@@ -211,7 +211,7 @@ var demo={
 	/*30*/				{ level:STEP, id:242, parent:28 }, 
 						{ level:STEP, id:243, parent:28 }, 
 						{ level:STEP, id:244, parent:28 }, 
-				{ level:TOPIC, id:150, parent:1 } 
+						{ level:TOPIC, id:150, parent:1 } 
 			]
 }
 
@@ -223,18 +223,18 @@ demo.lobs[0].body=`<br><br><br><p style="text-align:center"><img alt="" src="img
 `
 demo.lobs[1].body=`<p style="text-align:left;font-size:14px"><span><span style="font-family:arial,helvetica,sans-serif">This semester, I hope you&#39;ll&nbsp;write in every class, and not just here. Nothing is more effective for learning a subject matter than writing about it &ndash; or teaching it. (Ask any teacher.) So, when an instructor assigns a chapter, summarize it or write a critique. You&#39;ll improve your performance in that course, and you&#39;ll improve your performance here. If you&#39;re not in school now, you could keep a journal. And always write carefully, as you would if you were submitting a writing to your instructor. This includes your email. One of my own goals is to proofread my emails. Make it your goal too. The editing will be very good practice for us all,</span></span></p>
 `
-demo.lobs[2].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about the kinds of clauses.</p>";
-demo.lobs[3].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about separating clauses.</p>";
-demo.lobs[4].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using commas.</p>";
-demo.lobs[5].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using joiners.</p>";
+demo.lobs[2].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about brain science primer.</p>";
+demo.lobs[3].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about brain functions.</p>";
+demo.lobs[4].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using balance body budget.</p>";
+demo.lobs[5].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using ecan and predict.</p>";
 demo.lobs[6].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons.</p>";
-demo.lobs[7].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Tell page 1).</p>";
-demo.lobs[8].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Tell page 2).</p>";
-demo.lobs[9].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Show).</p>";
-demo.lobs[10].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Find).</p>";
-demo.lobs[11].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using semicolons (Do).</p>";
-demo.lobs[12].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using periods.</p>";
-demo.lobs[13].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about ordering clauses.</p>";
+demo.lobs[7].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Tell page 1).</p>";
+demo.lobs[8].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Tell page 2).</p>";
+demo.lobs[9].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Show).</p>";
+demo.lobs[10].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Find).</p>";
+demo.lobs[11].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using making meaning (Do).</p>";
+demo.lobs[12].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about using human brain structure.</p>";
+demo.lobs[13].body="<br><br><br><p style='text-align:center'>This panel will contain instruction about transition to college.</p>";
 demo.lobs[14].body="<br><br>scaleMedia(assess.htm,66,66)<p style='text-align:center'>Full traditional assessment tools are available.<br>You can try out the assessment tools by clicking above.</p>";
 demo.lobs[15].body=`<p style="text-align:center"><img src='img/scaleLogo.png' height='32'"></p>
 <blockquote><blockquote><blockquote><blockquote><blockquote>
@@ -261,7 +261,7 @@ demo.lobs[16].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 	<p>Clicking on the next button below will show samples of YouTube and Qmedia clips.</p>
 </blockquote></blockquote></blockquote></blockquote></blockquote>
 `
-demo.lobs[17].body=`scaleMedia(//stagetools.com/qmedia/show.htm?1479)
+demo.lobs[17].body=`scaleMedia(//stagetools.com/qmedia/show.htm?2130)
 <p>Qmedia provides new ways to use video for instructional  purposes. This demo is live, so you can try out Qmedia here, or see the <a href='//qmediaplayer.com' target='_blank'> Qmedia website</a>.</p>
 `
 demo.lobs[18].body=`scaleMedia(https://www.youtube.com/embed/2doZROwdte4)
@@ -319,15 +319,15 @@ demo.lobs[29].body=`<p style="text-align:center"><img src='img/scaleLogo.png' he
 	<p>Clicking on the next button below will show samples of data visualizations.</p>
 </blockquote></blockquote></blockquote></blockquote></blockquote>
 `
-demo.lobs[30].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3637)
+demo.lobs[30].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3294)
 <p style='text-align:center'>Tree graphs show hierarchical data in an easy to understand form. You can open and close nodes.</p>
 `
 demo.lobs[31].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=1121)
 <p style='text-align:center'>Network graphs show relations between items.</p>
 `
-demo.lobs[32].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3638)
+demo.lobs[32].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3293)
 <p style='text-align:center'>Parallel graphs allow for interesting explorations of causal data. Highlight the lines to see how the factors relate to one another.</p>
 `
-demo.lobs[33].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3639,100,66)
+demo.lobs[33].body=`scaleMedia(//www.viseyes.org/shiva/go.htm?e=3292,100,66)
 <p style='text-align:center'>Chord graphs show relations between items.</p>
 `
