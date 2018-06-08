@@ -44,39 +44,4 @@ class Content  {
 	}
 }
 
-/*
-GDriveLoad(id) 																								// LOAD FROM GOOGLE DRIVE
-{
-	var _this=this;																								// Save context
-	var str="https://docs.google.com/spreadsheets/d/"+id+"/export?format=tsv";									// Access tto
-	var xhr=new XMLHttpRequest();																				// Ajax
-	xhr.open("GET",str);																						// Set open url
-	xhr.onload=function() { 																					// On successful load
-		return;
-		var i,v,csv;
-		if (xhr.responseText) csv=xhr.responseText.replace(/\\r/,"");											// Remove CRs
-		csv=csv.split("\n");																					// Split into lines
-		_this.lobs=[]
-		_this.map=[];
-		for (i=1;i<csv.length;++i) {																			// For each line
-			v=csv[i].split("\t");																				// Split into fields
-			if (v[0] == "lob")																					// A lob
-				_this.lobs.push({ name:v[2], id:v[1]-0, status:v[3].toUpperCase(), body:v[4]});					// Add learning object
-			if (v[0] == "map")																					// A map
-				_this.map.push({ level:v[2].toUpperCase(), id:v[1]-0, parent:v[3]-0 });							// Add mapping
-			}
-		_this.AddChildList(true);																				// Add children	
-		_this.Draw()
-		trace(_this.map,_this.lobs)
-		};			
-	xhr.onreadystatechange=function(e)  { 																		// On readystate change
-		if ((xhr.readyState === 4) && (xhr.status !== 200)) {  													// Ready, but no load
-			Sound("delete");																					// Delete sound
-			PopUp("<p style='color:#990000'><b>Couldn't load Google Doc!</b></p>Make sure that <i>anyone</i><br>can view it in Google",5000); // Popup warning
-			}
-		};		
-	xhr.send();																										// Do it
-	}
-}																												// Class closur
-*/
 

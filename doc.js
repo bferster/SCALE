@@ -8,18 +8,20 @@ const TODO=0, DONE=10;
 class Doc  {
 
 	constructor(o)	{																							// CONSTRUCTOR
-		o=demo;
-		this.lobs=this.map;																							// Holds learning objects/map
+//		o=demo;
+		this.map=[  { level:0, id: 0 }];																			// Map
+		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
+		this.curMapPos=0;																							// Start at lesson
+		this.firstName="Jerry";		this.lastName="Bruner";
 		if (o)  {																									// If default data
 			this.lobs=o.lobs;																						// Add lobs
 			this.map=o.map;																							// Add map
-			this.AddChildList(true);																				// Add children	
+			this.AddChildList();																					// Add children	
 			}
-		this.curMapPos=0;																							// Start at lesson
-		this.firstName="Jerry";		this.lastName="Bruner";
+		this.GDriveLoad("1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4");											// Load default
 		}
 
-	AddChildList(isMap)	{																						// ADD LIST OF CHILDREN
+	AddChildList()	{																							// ADD LIST OF CHILDREN
 		var i,par,n=this.map.length;
 		for (i=0;i<n;++i) {																							// For each map element
 			this.map[i].children=[];																				// Alloc arrays
@@ -127,7 +129,6 @@ class Doc  {
 		var xhr=new XMLHttpRequest();																				// Ajax
 		xhr.open("GET",str);																						// Set open url
 		xhr.onload=function() { 																					// On successful load
-			return;
 			var i,v,csv;
 			if (xhr.responseText) csv=xhr.responseText.replace(/\\r/,"");											// Remove CRs
 			csv=csv.split("\n");																					// Split into lines
@@ -136,13 +137,16 @@ class Doc  {
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
 				if (v[0] == "lob")																					// A lob
-					_this.lobs.push({ name:v[2], id:v[1]-0, status:v[3].toUpperCase(), body:v[4]});					// Add learning object
-//				if (v[0] == "map")																					// A map
-//					_this.map.push({ level:v[2].toUpperCase(), id:v[1]-0, parent:v[3]-0 });							// Add mapping
+					_this.lobs.push({ name:v[2], id:v[1]-0, status:v[3], body:v[4]});								// Add learning object
+				if (v[0] == "map") {
+						if (v[3] != "")
+							_this.map.push({ level:v[2]-0, id:v[1]-0, parent:v[3]-0 });								// Add mapping
+						else
+							_this.map.push({ level:v[2]-0, id:v[1]-0 });											// Add mapping
+					}
 				}
-			_this.AddChildList(true);																				// Add children	
-			_this.Draw()
-			trace(_this.map,_this.lobs)
+			_this.AddChildList();																					// Add children	
+			app.Draw();																								// Redraw
 			};			
 		xhr.onreadystatechange=function(e)  { 																		// On readystate change
 			if ((xhr.readyState === 4) && (xhr.status !== 200)) {  													// Ready, but no load
@@ -177,7 +181,7 @@ class Lob {																										// BASE CLASS FOR LEARNING OBJECTS (LOBs)
 
 
 var demo={
-	lobs:[	{ name:"Student Fourishing", id:10, status: 0 }, 
+	lobs:[	{ name:"Student Fourishing 2", id:10, status: 0 }, 
 			{ name:"Week 4", id:20, status: TODO }, 
 			{ name:"Primer on Brain Science", id:30, status: DONE }, 
 			{ name:"Three brain functions", id:40, status: TODO }, 
