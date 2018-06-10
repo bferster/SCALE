@@ -2,14 +2,16 @@
 // APP
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class App  {																									 // APP
+class App  {																								 // APP
 
-	constructor()   {
+	constructor(id)   {																							// CONSTRUCTOR
 		app=this;
 		this.allowResize=true;																						// Redraw after a resize
-		this.doc=new Doc();																							// Alloc doc
+		this.doc=new Doc(id);																						// Alloc doc w/ lobs/map id
 		this.con=new Content();																						// Content
 		this.nav=new Navigation();																					// Navigation
+		this.msg=new Messaging();																					// Messaging
+		this.rul=new Rules();																						// Rules
 		this.Draw(); 																								// Draw app
 		}
  

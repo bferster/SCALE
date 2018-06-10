@@ -11,8 +11,9 @@
 	<script src="app.js"></script>
 	<script src="doc.js"></script>
 	<script src="content.js"></script>
+	<script src="messaging.js"></script>
+	<script src="rules.js"></script>
 	<script src="navigation.js"></script>
-<!-- <script src="mw-es5.js"></script> -->
 	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
 	<style type="text/css">
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px;  box-sizing:border-box;
@@ -74,7 +75,9 @@
 							}
 		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
-		.wm-media	 {		
+		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
+							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
+							font-size: 14px; text-align:center; display: none;
 							}
 		.wm-pullDown {		position:absolute;background-color:#bbb; color:#fff; 
 							padding:8px 16px 8px 8px;font-size: 16px;
@@ -102,8 +105,10 @@
 				<span id='courseTitle' class='wm-courseTitle'>Course</span>
 				<span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
 				<div id='lessonBut' class='wm-lessonTri'></div>
+				<span id='menuMsg' style="display:none;margin-left:32px'"></span>
 				<span id='userName' class='wm-userName'>User&nbsp;Name</span>
-		</div>
+				<img id="showgdoc" style="cursor:pointer;float:right;margin-right:8px" src="img/gdrive.png">
+			</div>
 			<div id="contentDiv" class="wm-content"></div>
 			<div id="navDiv" class="wm-navigation"></div>
 	</div>
@@ -123,9 +128,26 @@ $(window).resize(function() {                                         	// ON WIN
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
 	var url=window.location.search.substring(1);						   	// Get query string
-	app=new App();                                                      	// Alloc app
-    });									
-		
+	if (!url)																// No lobs/map id set
+		url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// Use this one
+	app=new App(url);                                                      	// Alloc app
+	if (window.addEventListener) 											// If supported this way
+		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
+	else																	// Use other method
+		window.attachEvent("message",html5MessageHandler);					// Add handler
+
+	$("#showgdoc").on("click",function() {									// Show google doc
+		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.mapId,"_blank");	// Show it	
+		});
+   });									
+
+ function html5MessageHandler(e)										// ON HTML5 MESSAGE
+{
+	if (e && e.data) 														// If a valid message				
+		app.msg.OnMessage(e.data);											// Route
+}
+  
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +175,27 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			$("#dialogDiv").dialog("option","position",{ my:"center", at:"center", of:this.parent });
 	}
 
+	function MenuBarMsg(msg, time)											// FLASH MESSAGE IN MENU BAR
+	{
+		Sound("ding");															// Ding
+		$("#menuMsg").text(msg);												// Set message
+		$("#menuMsg").fadeIn(500).delay(time ? time : 2000).fadeOut(500)		// Animate in and out		
+	}
+
+	function PopUp(msg, time, div)											// TIMED POPUP
+	{
+		var str="";
+		$("#popupDiv").remove();												// Kill old one, if any
+		str+="<div id='popupDiv' class='wm-popup'>"; 							// Add div
+		if (time == -1) {														// If has close but
+			time=100000;														// Increase time
+			str+="<img id='pu-close' src='img/closedot.gif' style='float:right;cursor:pointer'>";	// Add close button
+			}
+		str+=msg+"</div>"; 														// Add div
+		$(div ? "#"+div : "body").append(str);									// Add popup to div or body
+		$("#pu-close").click(function() { $("#popupDiv").remove(); });			// Remove on click of close but
+		$("#popupDiv").fadeIn(500).delay(time ? time : 2000).fadeOut(500)		// Animate in and out		
+	}
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{
@@ -176,7 +219,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		else	
 			snd=new Audio("img/"+sound+".mp3");									// Use mp3
 		if (!mute)	{															// If not initing or muting	
-			snd.volume=50/100;											// Set volume
+			snd.volume=50/100;													// Set volume
 			snd.play();															// Play it
 			}
 		}

@@ -31,7 +31,7 @@ class Navigation {
 		}
 	
 	Forward() {
- 		app.Draw();																									// Redraw
+		app.Draw();																									// Redraw
 		}
 
 	Back() {
@@ -43,7 +43,8 @@ class Navigation {
 		var w=$("#navDiv").width()+16;																				// Content width
 		var l=$("#navDiv").offset().left;																			// Left
 		var str="";
-		this.UpdateHeader();
+		this.UpdateHeader();																						
+		$("#menuSlotDiv").remove();																					// Close lesson picker															
 	
 		if (app.doc.curLesson) {																					// If a lesson active
 			curLob=app.doc.map[curPos].id;
