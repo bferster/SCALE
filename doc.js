@@ -13,7 +13,6 @@ class Doc  {
 		this.assess=[],this.asks=[];																				// Assessment
 		this.studentMap=[];																							// Map of student progress
 		this.curMapPos=0;																							// Start at lesson
-		this.curAssess=0;																							// Current assessment
 		this.mapId=id;																								// Default lobs/map id
 		this.GDriveLoad(this.mapId);																				// Load default lobs/map
 		this.firstName="Jerry";		this.lastName="Bruner";
@@ -74,6 +73,15 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 		return null;																								// Not found
 		}
 
+	FindAssessById(id) {																						// FIND PTR TO ASSESS FROM ID
+		var i,n=this.assess.length;
+		for (i=0;i<n;++i) {																							// For each assess
+			if (id == this.assess[i].id) 																			// A match
+				return this.assess[i];																				// Return ptr to assess
+			}
+		return null;																								// Not found
+		}
+		
 	FindAskById(id) {																							// FIND PTR TO ASK FROM ID
 		var i,n=this.asks.length;
 		for (i=0;i<n;++i) {																							// For each ask
@@ -82,7 +90,7 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 			}
 		return null;																								// Not found
 		}
-		
+	
 	FindMapIndexById(id) {																						// FIND MAP INDEX FROM ID
 		var i,n=this.map.length;
 		for (i=0;i<n;++i) {																							// For each lob

@@ -22,13 +22,16 @@ class Messaging {
 			MenuBarMsg("You clicked on "+v[2]+","+v[3]);															// React							
 		else if (msg.match(/Assess=ready/)) {																		// Assessment module loaded
 			var i,j,o;
+			var oo=app.doc.FindAssessById(v[1]);																	// Point at assess
+			if (!oo)	return;																						// Invalid assessment
 			var str="ScaleAct=data|"+JSON.stringify({});															// Get data
 			str='ScaleAct=data|{"pages":[';																			// Header
-			for (i=0;i<app.doc.assess[app.doc.curAssess].steps.length;++i) {										// For each step
-				j=app.doc.assess[app.doc.curAssess].steps[i]-0;														// Get step id	
+			for (i=0;i<oo.steps.length;++i) {																		// For each step
+				j=oo.steps[i]-0;																					// Get step id	
 				o=app.doc.FindAskById(j);																			// Point at step
-				str+=o.step;
-				if (i != app.doc.assess[app.doc.curAssess].steps.length-1)											// Not last
+				if (!o)	continue;																					// Invalid step
+				str+=o.step;																						// Add step
+				if (i != oo.steps.length-1)																			// Not last
 					str+=",\n";																						// Add comma
 				else																								// Last
 					str+="]}";																						// Close array/object										
