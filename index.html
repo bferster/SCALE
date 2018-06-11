@@ -17,12 +17,14 @@
 	<link rel="stylesheet" href="css/jquery-ui.min.css"></link>
 	<style type="text/css">
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px;  box-sizing:border-box;
-							padding:0px;margin:0px;background-color: #ddd;
+							padding:0px;margin:0px;
 							/*background-image:url("img/texture.png");*/
 							}
-		.wm-main { 			position:relative; width:100%; height:100%; overflow:hidden;
+		.wm-main { 			position:relative; width:100%; height:100%; overflow:hidden; background-color: #ddd; display:none;
 							}
-		.wm-header { 		background-color: #bbb;width:100%;color:#fff;
+		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%;  display:none;
+							}
+		.wm-header { 		background-color: #bbb; width:100%; color:#fff;
 							padding: 8px 0px;
 							}
 		.wm-logo { 			height:40px; vertical-align: top; margin:0px 16px; cursor:pointer;
@@ -52,7 +54,7 @@
 		.wm-topicBar { 		position: absolute; width:calc(100% - 32px); height:3px; top:29px; left:16px;
 							background-color: #999; border-radius:4px;
 							}
-		.wm-topicDotDiv { 	position: absolute; top:4px;
+		.wm-topicDotDiv { 	position:absolute; top:4px;
 							}
 		.wm-topicDot { 		position: absolute; width:12px; height:12px; border-radius:14px; margin-left:100px; top:18px;
 							background-color: #ccc; border:2px solid #999; cursor:pointer;
@@ -65,7 +67,7 @@
 		.wm-conceptBar { 	position: absolute; height:18px;background-color: #bbb; text-align:center; top: 48px;
 							background-color: 999; border:1px solid #bbb; cursor:pointer; color:#333;
 							}
-		.wm-conceptBar:hover{border:1px solid #6699ff;
+		.wm-conceptBar:hover{ border:1px solid #6699ff;
 							}
 		.wm-stepBar { 		position: absolute; text-align:center; top: 80px; font-size: 11px; width:100%;
 							}
@@ -79,16 +81,16 @@
 							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
 							font-size: 14px; text-align:center; display: none;
 							}
-		.wm-pullDown {		position:absolute;background-color:#bbb; color:#fff; 
-							padding:8px 16px 8px 8px;font-size: 16px;
+		.wm-pullDown {		position:absolute; background-color:#bbb; color:#fff; 
+							padding:8px 16px 8px 8px; font-size: 16px;
 							}
 		.wm-pullDownItem { 	padding:3px;
 							}
 		.wm-pullDownItem:hover{ background-color:#aaa
 							}
 		.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix { border:none }
-		.ui-dialog { border-radius:12px;box-shadow:2px 2px 6px #ccc }
-		.ui-button { border-radius:30px;outline:none }
+		.ui-dialog { 		border-radius:12px; box-shadow:2px 2px 6px #ccc }
+		.ui-button { 		border-radius:30px; outline:none }
 		.ui-dialog-titlebar { display:none }
 		 table {			border-spacing: 0px;  }
 
@@ -101,16 +103,21 @@
 	
 	<div id="mainDiv" class="wm-main">
 		<div id="headerDiv" class="wm-header">
-			<img src='img/scaleLogoWhite.png'class='wm-logo'>
-				<span id='courseTitle' class='wm-courseTitle'>Course</span>
-				<span id='lessonTitle' class='wm-lessonTitle'>Lesson</span>
-				<div id='lessonBut' class='wm-lessonTri'></div>
-				<span id='menuMsg' style="display:none;margin-left:32px'"></span>
-				<span id='userName' class='wm-userName'>User&nbsp;Name</span>
+			<img src="img/scaleLogoWhite.png"class="wm-logo">
+				<span id="courseTitle" class="wm-courseTitle">Course</span>
+				<span id="lessonTitle" class="wm-lessonTitle">Lesson</span>
+				<div id="lessonBut" class="wm-lessonTri"></div>
+				<span id="'menuMsg" style="display:none;margin-left:32px"></span>
+				<span id="userName" class="wm-userName">User&nbsp;Name</span>
 				<img id="showgdoc" style="cursor:pointer;float:right;margin-right:8px" src="img/gdrive.png">
 			</div>
 			<div id="contentDiv" class="wm-content"></div>
 			<div id="navDiv" class="wm-navigation"></div>
+	</div>
+	<div id="splashDiv" class="wm-splash">
+		<img src="img/scaleLogo.png"><br><br>
+		<h1 style="font-size:18pt;font-family:trebuchet ms,sans-serif"><p></p>S C A L E</p>Student-Centered Adaptive Learning Environment</h1>
+		<br><p style="color:#000;font-size:14px"><em>A platform to guide learning- not just deliver it.</em></p>
 	</div>
 
 <script>
@@ -127,6 +134,13 @@ $(window).resize(function() {                                         	// ON WIN
 	});
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
+	if (window.location.host != "loocalhost") {								// Not in debug
+		$("#splashDiv").fadeIn().delay(2000).fadeOut();						// Fade out splash
+		$("#mainDiv").delay(2000).fadeIn(2000);								// Wait, and fade in main
+		}	
+	else																	// Debug
+		$("#mainDiv").fadeIn(0);											// Load fast
+	
 	var url=window.location.search.substring(1);						   	// Get query string
 	if (!url)																// No lobs/map id set
 		url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// Use this one
@@ -144,7 +158,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
  function html5MessageHandler(e)										// ON HTML5 MESSAGE
 {
 	if (e && e.data) 														// If a valid message				
-		app.msg.OnMessage(e.data);											// Route
+		app.msg.OnMessage(e);												// Route
 }
   
 

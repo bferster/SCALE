@@ -10,8 +10,10 @@ class Doc  {
 	constructor(id)	{																							// CONSTRUCTOR
 		this.map=[  { level:0, id: 0 }];																			// Map
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
+		this.assess=[],this.asks=[];																				// Assessment
 		this.studentMap=[];																							// Map of student progress
 		this.curMapPos=0;																							// Start at lesson
+		this.curAssess=0;																							// Current assessment
 		this.mapId=id;																								// Default lobs/map id
 		this.GDriveLoad(this.mapId);																				// Load default lobs/map
 		this.firstName="Jerry";		this.lastName="Bruner";
@@ -72,6 +74,15 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 		return null;																								// Not found
 		}
 
+	FindAskById(id) {																							// FIND PTR TO ASK FROM ID
+		var i,n=this.asks.length;
+		for (i=0;i<n;++i) {																							// For each ask
+			if (id == this.asks[i].id) 																				// A match
+				return this.asks[i];																				// Return ptr to ask
+			}
+		return null;																								// Not found
+		}
+		
 	FindMapIndexById(id) {																						// FIND MAP INDEX FROM ID
 		var i,n=this.map.length;
 		for (i=0;i<n;++i) {																							// For each lob
@@ -131,18 +142,23 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 			var i,v,csv;
 			if (xhr.responseText) csv=xhr.responseText.replace(/\\r/,"");											// Remove CRs
 			csv=csv.split("\n");																					// Split into lines
-			_this.lobs=[]
-			_this.map=[];
+			_this.map=[],_this.lobs=[];																				// Init maps
+			_this.assess=[],_this.asks=[];																			// Init assessment
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
 				if (v[0] == "lob")																					// A lob
 					_this.lobs.push({ name:v[2], id:v[1]-0, status:v[3], body:v[4]});								// Add learning object
-				if (v[0] == "map") {
+				else if (v[0] == "map") {
 						if (v[3] != "")
 							_this.map.push({ level:v[2]-0, id:v[1]-0, parent:v[3]-0 });								// Add mapping
 						else
 							_this.map.push({ level:v[2]-0, id:v[1]-0 });											// Add mapping
 					}
+				else if (v[0] == "assess")																			// An assessment
+					_this.assess.push({ id:v[1]-0, name:v[2], steps:v[4].split(",")});								// Add asks array
+				else if (v[0] == "ask")																				// An assessment step
+					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add step
+
 				}
 			_this.AddChildList();																					// Add children	
 			app.Draw();																								// Redraw
