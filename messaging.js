@@ -38,6 +38,15 @@ class Messaging {
 				}	
 			source.postMessage(str,"*");																			// Send data to window
 			}
+		else if (msg.match(/ScaleVideo=play/)) {																	// Video play event
+			trace(v[1]);
+			}
+		else if (msg.match(/ScaleVideo/)) {																			// Video event
+			if (msg.match(/next/)) {																				// Go onto next event
+				app.doc.NextLob(); 																					// Advance to next pos
+				app.Draw();																							// Redraw
+				}
+		}
 		else
 			trace(msg)
 		}

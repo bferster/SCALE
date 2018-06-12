@@ -153,7 +153,14 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	$("#showgdoc").on("click",function() {									// Show google doc
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.mapId,"_blank");	// Show it	
 		});
-   });									
+
+	$(window).on("keydown",function(e) {								// HANDLE KEYPRESS
+		if ((e.which == 84) && e.altKey && e.ctrlKey) {						// CTRL+ALT+T (TEST)
+			SendToIframe("ScaleAct=seek|20");
+			}
+		});
+ 
+ });									
 
  function html5MessageHandler(e)										// ON HTML5 MESSAGE
 {
@@ -246,6 +253,14 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			function() {$("#"+id).css( { left: p.left+"px", top: p.top+"px"})} 
 			);
 	}
+
+	function SendToIframe(msg) 												// SENT MESSAGE TO CURRENT CONTENT IFRAME
+	{
+		if (!$("#contentIF").length)		return;								// Quit if no iframe	
+		$("#contentIF")[0].contentWindow.postMessage(msg,"*");	 				// Send message 
+	}
+
+
 
 </script>
 

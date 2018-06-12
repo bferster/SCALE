@@ -36,7 +36,7 @@ class Content  {
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
 				ifs="<div style='text-align:center'>";																// For centering
-				ifs+="<iframe class='wm-media' align='middle' frameborder='"+b+"' src='"+ifr[0]+"' style='height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe
+				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='"+b+"' src='"+ifr[0]+"' style='height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe
 				str=str.replace(/scalemedia\(.+\)/i,ifs);															// Get tag and replace it with iframe
 				}
 			$("#contentDiv").append(str+"</div>");																	// Set content
