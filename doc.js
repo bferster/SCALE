@@ -152,6 +152,7 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 			csv=csv.split("\n");																					// Split into lines
 			_this.map=[],_this.lobs=[];																				// Init maps
 			_this.assess=[],_this.asks=[];																			// Init assessment
+			app.rules=[];
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
 				if (v[0] == "lob")																					// A lob
@@ -165,8 +166,16 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 				else if (v[0] == "assess")																			// An assessment
 					_this.assess.push({ id:v[1]-0, name:v[2], steps:v[4].split(",")});								// Add asks array
 				else if (v[0] == "ask")																				// An assessment step
-					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add step
-
+					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add ask
+				else if (v[0] == "rule")	{																		// A Rule
+					var o={id:v[1]-0, name:v[2] };																	// Base
+					v[4]=v[4].replace(/ +/g," ");																	// Single space
+					v=v[4].split(" ");																				// Split by space														
+					if (v.length < 6)	continue;																	// Skip if now well formed
+					o.subject=v[1];		o.verb=v[2];  	o.trigger=v[3];												// Left
+					o.do=v[5];			o.object=v[6];																// Right
+					app.rul.rules.push(o);																			// Add step
+					}
 				}
 			_this.AddChildList();																					// Add children	
 			app.Draw();																								// Redraw

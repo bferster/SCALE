@@ -20,6 +20,8 @@ class Messaging {
 			MenuBarMsg("You clicked on "+v[2]);																		// React							
 		else if (msg.match(/ShivaMap=click/)) 																		// On map click
 			MenuBarMsg("You clicked on "+v[2]+","+v[3]);															// React							
+		else if (msg.match(/ShivaMap=marker/)) 																		// On map click
+			MenuBarMsg("You clicked marker at "+v[3]+","+v[4]);															// React							
 		else if (msg.match(/Assess=ready/)) {																		// Assessment module loaded
 			var i,j,o;
 			var oo=app.doc.FindAssessById(v[1]);																	// Point at assess
@@ -38,9 +40,8 @@ class Messaging {
 				}	
 			source.postMessage(str,"*");																			// Send data to window
 			}
-		else if (msg.match(/ScaleVideo=play/)) {																	// Video play event
-			trace(v[1]);
-			}
+		else if (msg.match(/ScaleVideo=play/)) 																		// Video play event
+			app.rul.CheckRules("play",v[1]);																		// Match rule
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
 			if (msg.match(/next/)) {																				// Go onto next event
 				app.doc.NextLob(); 																					// Advance to next pos

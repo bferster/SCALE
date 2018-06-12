@@ -16,6 +16,7 @@ class App  {																								 // APP
 		}
  
 	Draw(mapIndex) {																							// REDRAW
+			trace(mapIndex)		
 		if ((mapIndex != undefined) && (mapIndex != -1))															// A valid index
 			app.doc.curMapPos=mapIndex;																				// Set new index
 		this.wid=$(window).width();																					// Get window width			
