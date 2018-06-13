@@ -21,24 +21,23 @@ class Messaging {
 		else if (msg.match(/ShivaMap=click/)) 																		// On map click
 			MenuBarMsg("You clicked on "+v[2]+","+v[3]);															// React							
 		else if (msg.match(/ShivaMap=marker/)) 																		// On map click
-			MenuBarMsg("You clicked marker at "+v[3]+","+v[4]);															// React							
+			MenuBarMsg("You clicked marker at "+v[3]+","+v[4]);														// React							
 		else if (msg.match(/Assess=ready/)) {																		// Assessment module loaded
-			var i,j,o;
-			var oo=app.doc.FindAssessById(v[1]);																	// Point at assess
-			if (!oo)	return;																						// Invalid assessment
-			var str="ScaleAct=data|"+JSON.stringify({});															// Get data
-			str='ScaleAct=data|{"pages":[';																			// Header
-			for (i=0;i<oo.steps.length;++i) {																		// For each step
-				j=oo.steps[i]-0;																					// Get step id	
-				o=app.doc.FindAskById(j);																			// Point at step
+			var i,o;
+			var str='ScaleAct=data|{"pages":[';																		// Header
+			for (i=1;i<v.length;++i) {																				// For each step
+				o=app.doc.FindAskById(v[i]);																		// Point at step
 				if (!o)	continue;																					// Invalid step
 				str+=o.step;																						// Add step
-				if (i != oo.steps.length-1)																			// Not last
-					str+=",\n";																						// Add comma
-				else																								// Last
-					str+="]}";																						// Close array/object										
+				if (i != v.length-1)	str+=",\n";																	// Not last, add comma
+				else					str+="]}";																	// Last, close array/object										
 				}	
 			source.postMessage(str,"*");																			// Send data to window
+			}
+		else if (msg.match(/Assess=done/)) {																		// Assessment module loaded
+			if (app.con.resumeId)																					// If a resume set
+				app.con.Draw(app.doc.curLobId);																		// Init player
+			app.con.resumeId=0;																						// Clear resume flag
 			}
 		else if (msg.match(/ScaleVideo=play/)) 																		// Video play event
 			app.rul.CheckRules("play",v[1]);																		// Match rule
@@ -47,9 +46,15 @@ class Messaging {
 				app.doc.NextLob(); 																					// Advance to next pos
 				app.Draw();																							// Redraw
 				}
-		}
+			if (msg.match(/trigger/)) {																				// Hit a trigger point
+				app.con.resumeId=app.doc.curLobId;																	// Store resume id
+				app.con.resumeTime=v[2];																			// Store resume time
+				app.con.Draw(v[1]);																					// Draw content
+				}
+			}
 		else
 			trace(msg)
 		}
+		
 
 }

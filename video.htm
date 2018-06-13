@@ -31,15 +31,19 @@
 	var playerHgt,playerWid;													// Source height/width
 	var isMobile=false;															// Flag for mobile devices
 	var playerTime=null;														// Timer
+	var triggers=[];															// Time triggers to do something												
 
 	var v=window.location.search.substring(1).split("|");						// Get query string
 	for (i=0;i<v.length;++i) {													// For each param
-		if (v[i].match(/src/i))			playerSource=GetDirectLink(v[i].substr(4));  // Set src
-		if (v[i].match(/start/i))		playerStart=v[i].substr(6)-0;			// Set start
-		if (v[i].match(/end/i))			playerEnd=v[i].substr(4);				// Set end
-		if (v[i].match(/auto/i))		playerAuto=v[i].substr(5);				// Set auto
-		if (v[i].match(/next/i))		playerNext=v[i].substr(5);				// Set next
+		if (v[i].match(/src=/i))		playerSource=GetDirectLink(v[i].substr(4));  // Set src
+		if (v[i].match(/start=/i))		playerStart=v[i].substr(6)-0;			// Set start
+		if (v[i].match(/end=/i))		playerEnd=v[i].substr(4);				// Set end
+		if (v[i].match(/auto=/i))		playerAuto=v[i].substr(5);				// Set auto
+		if (v[i].match(/next=/i))		playerNext=v[i].substr(5);				// Set next
+		if (v[i].match(/trigger=/i))	triggers=v[i].substr(8).split("+");		// Set triggers
 		}
+	for (var i=0;i<triggers.length;++i) 										// For each trigger
+		triggers[i]=triggers[i].split("-");										// Split time-action
 
 	$(document).ready(function() {												// When loaded
  		if (window.addEventListener) 											// If supported this way
@@ -70,8 +74,21 @@
 			SendScaleMessage("stop",playerEnd);									// Send stop
 			if (playerNext == "true")	SendScaleMessage("next");				// Send next if set
 			}
-		else
-			SendScaleMessage("play",now.toFixed(3));							// Send time
+		else if (triggers) {													// If triggers defined
+			var i;
+			for (i=0;i<triggers.length;++i) {									// For each trigger
+				if (Math.abs(now-triggers[i][0]) < .15)	{						// Near trigger point
+					RunPlayer("pause");											// Pause
+					SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+					break;														// Quit
+					}
+				}
+			}
+
+
+
+//		else
+//			SendScaleMessage("play",now.toFixed(3));							// Send time
 	}
 
 	function Init()
@@ -168,9 +185,8 @@
 			if ((playerMode == "empty") && isMobile)							// Mobiles need user to initiate touch before controlled play
 				return;															// Quit
 			playerCurTime=playerNow=param;										// Set now
-			if (!player) {														// If no player yet
+			if (!player) 														// If no player yet
 				return;															// Quit
-				}
 			if (playerType == "youtube") 										// If YouTube
 				player.seekTo(playerNow,true);									// Cue
 			else if (playerType == "vimeo") 									// If Vimeo
@@ -180,7 +196,6 @@
 					player.currentTime=playerNow;								// Cue
 				}
 		else if (what == "pause") {												// Pause
-			$("#playBut").attr("src","images/playbut.gif");						// Show pause but
 			playerMode="pause";													// Set mode
 			if (!player)	return;												// If no player yet, quit
 			if (playerType == "youtube") 										// If YouTube
@@ -223,7 +238,7 @@
 				RunPlayer("play",playerStart);									// Play
 			else if (playerStart) {												// Normal pause start
 				RunPlayer("seek",playerStart);									// Seek
-				RunPlayer("pause");												// Pause
+//				RunPlayer("pause");												// Pause
 				}
 			}
 		else if (what == "init") {												// Init player
@@ -237,18 +252,14 @@
 	         	 	events:{													// Add event handlers
 	            		"onStateChange": function(s) {							// Change of state
 		         			if (s.data == 1) {									// In play
-								$("#playBut").attr("src","images/pausebut.gif");// Show pause but
-       							if (playerMode == "empty" && !isMobile) 		// If first time
+	   							if (playerMode == "empty" && !isMobile) 		// If first time
        								player.pauseVideo();						// Pause
 								playerMode="play";								// Set mode
        							playerStarted=playerNow;						// Save start point
-
-       							}
-       						else if ((s.data == 2) || (s.data == 0)) {			// In pause
-  								$("#playBut").attr("src","images/playbut.gif");	// Show play but
-								playerMode="pause";								// Set mode
-       							}
-       						},
+    							}
+       						else if ((s.data == 2) || (s.data == 0)) 			// In pause
+ 								playerMode="pause";								// Set mode
+        						},
 	            		"onReady": function(s) { RunPlayer("ready") }			// When ready
 		 	   			}});
 					}
