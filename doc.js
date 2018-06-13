@@ -10,7 +10,7 @@ class Doc  {
 	constructor(id)	{																							// CONSTRUCTOR
 		this.map=[  { level:0, id: 0 }];																			// Map
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
-		this.assess=[],this.asks=[];																				// Assessment
+		this.asks=[];																								// Assessment
 		this.studentMap=[];																							// Map of student progress
 		this.curMapPos=0;																							// Start at lesson
 		this.mapId=id;																								// Default lobs/map id
@@ -73,15 +73,6 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 		return null;																								// Not found
 		}
 
-	FindAssessById(id) {																						// FIND PTR TO ASSESS FROM ID
-		var i,n=this.assess.length;
-		for (i=0;i<n;++i) {																							// For each assess
-			if (id == this.assess[i].id) 																			// A match
-				return this.assess[i];																				// Return ptr to assess
-			}
-		return null;																								// Not found
-		}
-		
 	FindAskById(id) {																							// FIND PTR TO ASK FROM ID
 		var i,n=this.asks.length;
 		for (i=0;i<n;++i) {																							// For each ask
@@ -151,7 +142,7 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 			if (xhr.responseText) csv=xhr.responseText.replace(/\\r/,"");											// Remove CRs
 			csv=csv.split("\n");																					// Split into lines
 			_this.map=[],_this.lobs=[];																				// Init maps
-			_this.assess=[],_this.asks=[];																			// Init assessment
+			_this.asks=[];																							// Init assessment
 			app.rules=[];
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
@@ -163,8 +154,6 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 						else
 							_this.map.push({ level:v[2]-0, id:v[1]-0 });											// Add mapping
 					}
-				else if (v[0] == "assess")																			// An assessment
-					_this.assess.push({ id:v[1]-0, name:v[2], steps:v[4].split(",")});								// Add asks array
 				else if (v[0] == "ask")																				// An assessment step
 					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add ask
 				else if (v[0] == "rule")	{																		// A Rule

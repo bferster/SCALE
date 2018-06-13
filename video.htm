@@ -9,7 +9,7 @@
 		body { 	font-family:Verdana,Geneva,sans-serif; font-size:13px;padding:0px;margin:0px }
 </style>
 <body>
-	<div id="playerDiv" style="width:100%;height:100%;padding:0px;margin:0px"></div>
+	<div id="playerDiv" style="width:100%;height:100%;padding:0px;margin:0px;display:none"></div>
  	
 <script>
 
@@ -240,6 +240,7 @@
 				RunPlayer("seek",playerStart);									// Seek
 //				RunPlayer("pause");												// Pause
 				}
+			$("#playerDiv").css("display","block");								// Show	
 			}
 		else if (what == "init") {												// Init player
 			if (playerType == "youtube") {										// If YouTube

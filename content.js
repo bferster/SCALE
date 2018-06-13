@@ -38,7 +38,7 @@ class Content  {
 				if (ifr[1])		h=h*ifr[1]/100;																		// Calc height based on height percentage
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
-				if (this.resumeTime)																				// A resume time set
+				if (this.resumeTime && this.resumeId)																// A resume time/id set
 					ifr[0]+="|start="+this.resumeTime;																// Set new start
 				ifs="<div style='text-align:center'>";																// For centering
 				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='"+b+"' src='"+ifr[0]+"' style='height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe

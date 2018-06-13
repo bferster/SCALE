@@ -37,7 +37,7 @@ class Messaging {
 		else if (msg.match(/Assess=done/)) {																		// Assessment module loaded
 			if (app.con.resumeId)																					// If a resume set
 				app.con.Draw(app.doc.curLobId);																		// Init player
-			app.con.resumeId=0;																						// Clear resume flag
+			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
 			}
 		else if (msg.match(/ScaleVideo=play/)) 																		// Video play event
 			app.rul.CheckRules("play",v[1]);																		// Match rule
