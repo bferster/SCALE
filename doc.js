@@ -11,7 +11,7 @@ class Doc  {
 		this.map=[  { level:0, id: 0 }];																			// Map
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
 		this.asks=[];																								// Assessment
-		this.studentMap=[];																							// Map of student progress
+		this.vars=[];																								// Associative array to hold
 		this.curMapPos=0;																							// Start at lesson
 		this.mapId=id;																								// Default lobs/map id
 		this.GDriveLoad(this.mapId);																				// Load default lobs/map
@@ -45,11 +45,7 @@ class Doc  {
 		this.curConcept=this.FindLobParent(CONCEPT,mp);																// Current concept
 		this.curStep=this.FindLobParent(STEP,mp);																	// Current step
 		this.curPage=this.FindLobParent(PAGE,mp);																	// Current page
-		for (i=0;i<this.lobs.length;++i)	this.studentMap[i]=0;													// Zero progress
-this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10			
-		for (i=0;i<this.lobs.length;++i)																			// For each lob
-			this.lobs[i].status=this.studentMap[i];																	// Set progress
-}
+		}
 
 	FindLobParent(level, mapPos) {																				// FIND MAP INDEX OF LOB PARENT
 		var i,par;
@@ -166,6 +162,7 @@ this.studentMap[4]=this.studentMap[5]=this.studentMap[7]=this.studentMap[8]=10
 					app.rul.rules.push(o);																			// Add step
 					}
 				}
+_this.lobs[4].status=_this.lobs[5].status=_this.lobs[7].status=_this.lobs[7].status=10;
 			_this.AddChildList();																					// Add children	
 			app.Draw();																								// Redraw
 			};			
