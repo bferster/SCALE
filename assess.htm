@@ -72,8 +72,9 @@
 	var numTries=0;																// Number of tries at page
 	var curTime;																// Current player time
 	var qe=new ScaleEvents("ScaleAssess");										// Alloc events library
+	var numAnswers=0, numCorrect=0;												// Correct answer count
 	var fontSize=12;
-
+	
 	$(document).ready(function() {											// WHEN PAGE LOADED
 		qe.SendMessage("ready",window.location.search.substring(1));			// Send ready message
 		$("body").on("keydown", function(e) {									// Handle key down
@@ -143,7 +144,7 @@
 	{
 		var i,lab,str="",col="#000",sliAns=-1;												
 		if (num >= aData.pages.length) {										// Past last page
-			qe.SendMessage("done");												// Send done message
+			qe.SendMessage("done",""+numCorrect/numAnswers);					// Send done message
 			return;																// Quit
 			}
 		if (curPage != num)														// If a new page
@@ -272,12 +273,6 @@
 				Draw(curPage+1);												// Move on
 				return;															// Quit
 				}
-			else if (d.optionType == "draw") {									// Draw style
-				qe.SendMessage("answer",curPage+"|draw");						// Send answer message
-				qe.SendMessage("draw","done");									// Send done message
-				Draw(curPage+1);												// Move on
-				return;															// Quit
-				}	
 			var i,correct=0,wrong=0,requiredCorrect=0;
 			
 			if (d.optionType != "write")										// Anything but write
@@ -457,6 +452,10 @@
 	
 	ScaleEvents.prototype.SendMessage=function(cmd, msg)					// SEND MESSAGE TO CONTAINER
 		{
+		if (cmd == "answer") {													// An answer
+			numAnswers++;														// Add to count
+			if (msg.split("|")[1] == "right")	numCorrect++;					// Add to correct
+			}
 		var str=this.header+cmd;												// Add header				
 		if (msg) str+="|"+msg;													// If more to it, add
 		if (window.parent)														// If has a parent

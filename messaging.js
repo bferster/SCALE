@@ -37,8 +37,17 @@ class Messaging {
 		else if (msg.match(/Assess=done/)) {																		// Assessment module loaded
 			if (app.con.resumeId)																					// If a resume set
 				app.con.Draw(app.doc.curLobId);																		// Init player
+			else{																									// Normal end
+				app.doc.NextLob(); 																					// Advance to next pos
+				app.Draw();																							// Redraw
+				}
 			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
+			trace(v)
+			trace("Done with "+Math.floor(v[1]*100)+"%");															// Send to rules
 			}
+		else if (msg.match(/Assess=answer/)) {																		// Assessment module loaded
+			trace("answer",app.doc.curLobId+":"+v[1],v[2]);															// Sedn to rule checker
+			}	
 		else if (msg.match(/ScaleVideo=play/)) 																		// Video play event
 			app.rul.CheckRules("play",v[1]);																		// Match rule
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
