@@ -42,7 +42,6 @@ class Messaging {
 				app.Draw();																							// Redraw
 				}
 			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
-			trace(v)
 			trace("Done with "+Math.floor(v[1]*100)+"%");															// Send to rules
 			}
 		else if (msg.match(/Assess=answer/)) {																		// Assessment module loaded
