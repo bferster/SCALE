@@ -142,7 +142,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		$("#mainDiv").fadeIn(0);											// Load fast
 	
 	var url=window.location.search.substring(1);						   	// Get query string
-	if (!url)																// No lobs/map id set
+	if (!url)																// No lobs id set
 		url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// Use this one
 	app=new App(url);                                                      	// Alloc app
 	if (window.addEventListener) 											// If supported this way
@@ -151,7 +151,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		window.attachEvent("message",html5MessageHandler);					// Add handler
 
 	$("#showgdoc").on("click",function() {									// Show google doc
-		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.mapId,"_blank");	// Show it	
+		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
 	$(window).on("keydown",function(e) {								// HANDLE KEYPRESS

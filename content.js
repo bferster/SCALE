@@ -4,13 +4,15 @@
 
 class Content  {
 	
-	constructor()   {																							// CONSTRUCTOR
+	constructor()   																							// CONSTRUCTOR
+	{	
 		this.lobId;																									// Currently drawn lob id
 		this.resumeId=0;																							// Id of triggered lob
 		this.resumeTime=0;																							// Time of trigger
-		}
+	}
 
-	Draw(id) {																									// REDRAW
+	Draw(id) 																									// REDRAW
+		{	
 		var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height()-36;											// Get height
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
@@ -19,14 +21,15 @@ class Content  {
 		this.lobId=id ? id : app.doc.curLobId;																		// Get lob id
 		this.GetContentBody();																						// Add content
 		$("#nextBut").on("click",()=> { app.doc.NextLob(); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
-		}
+	}
 
-	GetContentBody()	{																						// ADD LOB CONTENT
+	GetContentBody()																							// ADD LOB CONTENT
+	{	
 		var ifr,ifs,str="";
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
 		var l=app.doc.FindLobById(this.lobId);																		// Point at lob
-		if (app.doc.curMapPos)																						// If not splash page
+		if (app.doc.curPos)																							// If not splash page
 			str+=l.name ? "<div class='wm-pageTitle'>"+l.name+"</div>" : "";										// Add page title
 		str+="<div id='contentBodyDiv' class='wm-contentBody'>";													// Container div
 		if (l) {																									// Valid lob

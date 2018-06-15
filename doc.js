@@ -5,24 +5,27 @@ const TODO=0, DONE=10;
 
 // DOC /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class Doc  {
-
-	constructor(id)	{																							// CONSTRUCTOR
+class Doc {
+	constructor(id)																								// CONSTRUCTOR
+		{
 		this.map=[  { level:0, id: 0 }];																			// Map
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
-		this.curMapPos=0;																							// Start at lesson
-		this.mapId=id;																								// Default lobs/map id
-		this.GDriveLoad(this.mapId);																				// Load default lobs/map
+		this.curPos=0;																								// Start at lesson
+		this.courseId=id;																							// Default course id
+		this.GDriveLoad(this.courseId);																				// Load default lobs/map
 		this.firstName="Jerry";		this.lastName="Bruner";
-		}
+	}
 
-	AddChildList()	{																							// ADD LIST OF CHILDREN
+	AddChildList()																								// ADD LIST OF CHILDREN
+	{	
 		var i,par,n=this.map.length;
 		for (i=0;i<n;++i) {																							// For each map element
 			this.map[i].children=[];																				// Alloc arrays
 			this.map[i].kids=[];																
+			this.lobs[i].children=[];																				// Alloc arrays
+			this.lobs[i].kids=[];																
 			}
 		for (i=0;i<n;++i) {																							// For each map element
 			if (this.lobs[i].parent === "")	delete(this.lobs[i].parent);
@@ -35,24 +38,30 @@ class Doc  {
 			if (par != undefined) {																					// If not root
 				this.map[par].children.push(this.map[i].id);														// Add id of child lob
 				this.map[par].kids.push(this.map[i]);																// Add id of map
+				this.lobs[par].children.push(this.lobs[i].id);														// Add id of child lob
+				this.lobs[par].kids.push(this.lobs[i]);																// Add ptr to lob
 				}			
 			}
-		}
-
-	Draw() 																										// SET LEVELS AND DATA
-	{
-		var i=this.curMapPos;																						// Get id
-		this.curLevel=this.lobs[i].level;																			// Current level
-		this.curLobId=this.lobs[i].id;																				// Current lob id
-		this.curLob=this.FindLobById(this.map[i].id);																// Current lob pointer
-		this.curCourse=this.FindLobParent(COURSE,i);																// Current course
-		this.curLesson=this.FindLobParent(LESSON,i);																// Current lesson
-		this.curTopic=this.FindLobParent(TOPIC,i);																	// Current topic
-		this.curConcept=this.FindLobParent(CONCEPT,i);																// Current concept
-		this.curStep=this.FindLobParent(STEP,i);																	// Current step
-		this.curPage=this.FindLobParent(PAGE,i);																	// Current page
 	}
 
+	Draw() 																										// DRAW
+	{
+		this.SetCurVars(this.curPos);																				// Get id
+	}
+
+	SetCurVars(id)																								// SET CURRENT AREAS
+	{
+		this.curLevel=this.lobs[id].level;																			// Current level
+		this.curLobId=this.lobs[id].id;																				// Current lob id
+		this.curLob=this.FindLobById(this.map[id].id);																// Current lob pointer
+		this.curCourse=this.FindLobParent(COURSE,id);																// Current course
+		this.curLesson=this.FindLobParent(LESSON,id);																// Current lesson
+		this.curTopic=this.FindLobParent(TOPIC,id);																	// Current topic
+		this.curConcept=this.FindLobParent(CONCEPT,id);																// Current concept
+		this.curStep=this.FindLobParent(STEP,id);																	// Current step
+		this.curPage=this.FindLobParent(PAGE,id);																	// Current page
+	}
+	
 	FindLobParent(level, index) 																				// FIND MAP INDEX OF LOB PARENT
 	{		
 		var i,par;
@@ -66,6 +75,15 @@ class Doc  {
 				index=par;																							// Go up a level
 			}
 	}
+
+	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
+		var i,n=this.lobs.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.lobs[i].id) 																				// A match
+				return this.lobs[i];																				// Return ptr to lob
+			}
+		return null;																								// Not found
+		}
 
 	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
 		var i,n=this.lobs.length;
@@ -85,25 +103,6 @@ class Doc  {
 			}
 		return level;																								// Return level of lob
 	}
-	
-	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
-		var i,n=this.lobs.length;
-		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.lobs[i].id) 																				// A match
-				return i;																							// Return ptr to lob
-			}
-			return undefined;																						// Not found
-			}
-		
-
-	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
-		var i,n=this.lobs.length;
-		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.lobs[i].id) 																				// A match
-				return this.lobs[i];																				// Return ptr to lob
-			}
-		return null;																								// Not found
-		}
 
 	FindAskById(id) {																							// FIND PTR TO ASK FROM ID
 		var i,n=this.asks.length;
@@ -114,15 +113,6 @@ class Doc  {
 		return null;																								// Not found
 		}
 	
-	FindMapIndexById(id) {																						// FIND MAP INDEX FROM ID
-		var i,n=this.map.length;
-		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.map[i].id) 																				// A match
-				return i;																							// Return index
-			}
-		return -1;																									// Not found
-		}
-
 	GetMastery(num) {																							// GET MASTERY OF LOB AT MAP POSITION
 		var numNodes=-1,done=0;
 		var _this=this;																								// Context
@@ -143,10 +133,10 @@ class Doc  {
 		}
 
 	NextLob() {																									// ADVANCE THROUGH LOB MAP
-		if (this.curMapPos < this.map.length-1)																		// If not last
-			this.curMapPos++;																						// Advance
+		if (this.curPos < this.map.length-1)																		// If not last
+			this.curPos++;																						// Advance
 		else																										// Last
-			this.curMapPos=0;																						// Loop around
+			this.curPos=0;																						// Loop around
 	}
 
 	UniqueId() {																								// MAKE UNIQUE ID

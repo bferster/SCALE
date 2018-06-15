@@ -4,11 +4,13 @@
 
 class Rules {
 	
-	constructor() {																								// CONSTRUCTOR
+	constructor() 																								// CONSTRUCTOR
+	{	
 		this.rules=[];																								// Holds rule
-		}
+	}
 	
-	CheckRules(op, subject, value) {																			// CHECK RULES FOR MATCH
+	CheckRules(op, subject, value) 																				// CHECK RULES FOR MATCH
+	{	
 		var i,o,v,act=false;
 		var n=this.rules.length;																					// Number of rules
 		for (i=0;i<n;++i) {																							// For each rule
@@ -28,7 +30,7 @@ class Rules {
 			v=o.object.split(":");																					// Split object
 			switch(o.do.toUpperCase()) {																			// Route on verb
 				case "SHOW": 	app.con.Draw(o.object);				break;											// SHOW							
-				case "GOTO": 	app.Draw(o.object);					break;											// GOTO MAP SLOT						
+				case "GOTO": 	app.Draw(o.object);					break;											// GOTO index						
 				case "VAR": 	app.doc.vars[v[0]]=v[1];			break;											// SET VAR						
 				case "STATUS": 																						// STATUS
 					var l=app.doc.FindLobById(v[0]);																// Point at lob
@@ -36,11 +38,6 @@ class Rules {
 					break;		
 					}
 			}
-		}
+	}
 	
-	DoAction(what, object)																						// HANDLE ACTION
-	{
-		if (what.toLowerCase() == "show") 																			// Show a new lob by map
-			app.Draw(object);																						// Draw new page
-			}
 }
