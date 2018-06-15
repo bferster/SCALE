@@ -25,7 +25,13 @@ class Doc  {
 			this.map[i].kids=[];																
 			}
 		for (i=0;i<n;++i) {																							// For each map element
-			par=this.map[i].parent;																					// Point at parent
+			if (this.lobs[i].parent === "")	delete(this.lobs[i].parent);
+			par=this.FindLobIndexById(this.lobs[i].parent);															// Get index of parent
+			if (par)	this.map[i].parent=par;																		// If valid, set index 
+			this.lobs[i].level=this.FindLobLevelById(this.lobs[i].id);												// Set level
+			
+			this.map[i].level=this.FindLobLevelById(this.lobs[i].id);												// Set level
+			this.map[i].id=this.lobs[i].id;
 			if (par != undefined) {																					// If not root
 				this.map[par].children.push(this.map[i].id);														// Add id of child lob
 				this.map[par].kids.push(this.map[i]);																// Add id of map
@@ -33,32 +39,62 @@ class Doc  {
 			}
 		}
 
-	Draw() {																									// SET LEVELS AND DATA
-		var i;
-		var mp=this.curMapPos;																						// Get id
-		this.curLevel=this.map[mp].level;																			// Current level
-		this.curLobId=this.map[mp].id;																				// Current lob id
-		this.curLob=this.FindLobById(this.map[mp].id);																// Current lob pointer
-		this.curCourse=this.FindLobParent(COURSE,mp);																// Current course
-		this.curLesson=this.FindLobParent(LESSON,mp);																// Current lesson
-		this.curTopic=this.FindLobParent(TOPIC,mp);																	// Current topic
-		this.curConcept=this.FindLobParent(CONCEPT,mp);																// Current concept
-		this.curStep=this.FindLobParent(STEP,mp);																	// Current step
-		this.curPage=this.FindLobParent(PAGE,mp);																	// Current page
-		}
+	Draw() 																										// SET LEVELS AND DATA
+	{
+		var i=this.curMapPos;																						// Get id
+		this.curLevel=this.lobs[i].level;																			// Current level
+		this.curLobId=this.lobs[i].id;																				// Current lob id
+		this.curLob=this.FindLobById(this.map[i].id);																// Current lob pointer
+		this.curCourse=this.FindLobParent(COURSE,i);																// Current course
+		this.curLesson=this.FindLobParent(LESSON,i);																// Current lesson
+		this.curTopic=this.FindLobParent(TOPIC,i);																	// Current topic
+		this.curConcept=this.FindLobParent(CONCEPT,i);																// Current concept
+		this.curStep=this.FindLobParent(STEP,i);																	// Current step
+		this.curPage=this.FindLobParent(PAGE,i);																	// Current page
+	}
 
-	FindLobParent(level, mapPos) {																				// FIND MAP INDEX OF LOB PARENT
+	FindLobParent(level, index) 																				// FIND MAP INDEX OF LOB PARENT
+	{		
 		var i,par;
-		while (1) {
-			par=this.map[mapPos].parent;																			// Get parent map object
+		while (1) {																									// Loop
+			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
 			if (par == undefined)																					// If at root
 				return 0;																							// Return root
-			if (this.map[mapPos].level == level) 																	// At desired level
-				return mapPos;																						// Return map index
+			if (this.lobs[index].level == level) 																	// At desired level
+				return index;																						// Return index
 			else																									// Still under it
-				mapPos=par;																							// Got up a level
+				index=par;																							// Go up a level
 			}
+	}
+
+	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
+		var i,n=this.lobs.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.lobs[i].id) 																				// A match
+				return i;																							// Return ptr to lob
+			}
+			return undefined;																						// Not found
 		}
+
+	FindLobLevelById(id) {																						// FIND LEVEL OF LOB FROM ID
+		var level=0;
+		var o=this.FindLobById(id);																					// Point at lob
+		while (o.parent) {																							// While not root
+			o=this.FindLobById(o.parent);																			// Set id to parent and go up hierarchy
+			++level;																								// Increase level
+			}
+		return level;																								// Return level of lob
+	}
+	
+	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
+		var i,n=this.lobs.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.lobs[i].id) 																				// A match
+				return i;																							// Return ptr to lob
+			}
+			return undefined;																						// Not found
+			}
+		
 
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
@@ -143,7 +179,7 @@ class Doc  {
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
 				if (v[0] == "lob")																					// A lob
-					_this.lobs.push({ name:v[2], id:v[1]-0, status:v[3], body:v[4]});								// Add learning object
+					_this.lobs.push({ name:v[2], id:v[1]-0, parent:v[3], body:v[4], status:0 });					// Add learning object
 				else if (v[0] == "map") {
 						if (v[3] != "")
 							_this.map.push({ level:v[2]-0, id:v[1]-0, parent:v[3]-0 });								// Add mapping
@@ -162,7 +198,7 @@ class Doc  {
 					app.rul.rules.push(o);																			// Add step
 					}
 				}
-_this.lobs[4].status=_this.lobs[5].status=_this.lobs[7].status=_this.lobs[7].status=10;
+_this.lobs[2].status=_this.lobs[5].status=_this.lobs[7].status=_this.lobs[8].status=10;
 			_this.AddChildList();																					// Add children	
 			app.Draw();																								// Redraw
 			};			

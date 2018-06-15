@@ -125,7 +125,7 @@ class Navigation {
 					var id=app.doc.map[app.doc.curLesson].children[i];												// Get topic is
 					if (app.doc.FindLobById(id).status == DONE)	{													// If done
 						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
-						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
+//						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
 						}
 					l+=ww;																							// Next pos
 					}
