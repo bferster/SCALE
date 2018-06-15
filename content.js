@@ -12,7 +12,7 @@ class Content  {
 	}
 
 	Draw(id) 																									// REDRAW
-		{	
+	{	
 		var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height()-36;											// Get height
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content

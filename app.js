@@ -8,7 +8,7 @@ class App  {																								 // APP
 	{
 		app=this;
 		this.allowResize=true;																						// Redraw after a resize
-		this.doc=new Doc(id);																						// Alloc doc w/ lobs/map id
+		this.doc=new Doc(id);																						// Alloc doc w/ course id
 		this.con=new Content();																						// Content
 		this.nav=new Navigation();																					// Navigation
 		this.msg=new Messaging();																					// Messaging

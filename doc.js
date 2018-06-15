@@ -6,38 +6,30 @@ const TODO=0, DONE=10;
 // DOC /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Doc {
+
 	constructor(id)																								// CONSTRUCTOR
-		{
-		this.map=[  { level:0, id: 0 }];																			// Map
+	{
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
 		this.curPos=0;																								// Start at lesson
 		this.courseId=id;																							// Default course id
-		this.GDriveLoad(this.courseId);																				// Load default lobs/map
+		this.GDriveLoad(this.courseId);																				// Load default lobs
 		this.firstName="Jerry";		this.lastName="Bruner";
 	}
 
 	AddChildList()																								// ADD LIST OF CHILDREN
 	{	
-		var i,par,n=this.map.length;
-		for (i=0;i<n;++i) {																							// For each map element
-			this.map[i].children=[];																				// Alloc arrays
-			this.map[i].kids=[];																
+		var i,par,n=this.lobs.length;
+		for (i=0;i<n;++i) {																							// For each element
 			this.lobs[i].children=[];																				// Alloc arrays
 			this.lobs[i].kids=[];																
 			}
-		for (i=0;i<n;++i) {																							// For each map element
-			if (this.lobs[i].parent === "")	delete(this.lobs[i].parent);
+		for (i=0;i<n;++i) {																							// For each element
+			if (this.lobs[i].parent === "")	delete(this.lobs[i].parent);											// Blank = undefined
 			par=this.FindLobIndexById(this.lobs[i].parent);															// Get index of parent
-			if (par)	this.map[i].parent=par;																		// If valid, set index 
 			this.lobs[i].level=this.FindLobLevelById(this.lobs[i].id);												// Set level
-			
-			this.map[i].level=this.FindLobLevelById(this.lobs[i].id);												// Set level
-			this.map[i].id=this.lobs[i].id;
 			if (par != undefined) {																					// If not root
-				this.map[par].children.push(this.map[i].id);														// Add id of child lob
-				this.map[par].kids.push(this.map[i]);																// Add id of map
 				this.lobs[par].children.push(this.lobs[i].id);														// Add id of child lob
 				this.lobs[par].kids.push(this.lobs[i]);																// Add ptr to lob
 				}			
@@ -53,7 +45,7 @@ class Doc {
 	{
 		this.curLevel=this.lobs[id].level;																			// Current level
 		this.curLobId=this.lobs[id].id;																				// Current lob id
-		this.curLob=this.FindLobById(this.map[id].id);																// Current lob pointer
+		this.curLob=this.FindLobById(this.lobs[id].id);																// Current lob pointer
 		this.curCourse=this.FindLobParent(COURSE,id);																// Current course
 		this.curLesson=this.FindLobParent(LESSON,id);																// Current lesson
 		this.curTopic=this.FindLobParent(TOPIC,id);																	// Current topic
@@ -62,7 +54,7 @@ class Doc {
 		this.curPage=this.FindLobParent(PAGE,id);																	// Current page
 	}
 	
-	FindLobParent(level, index) 																				// FIND MAP INDEX OF LOB PARENT
+	FindLobParent(level, index) 																				// FIND INDEX OF LOB PARENT
 	{		
 		var i,par;
 		while (1) {																									// Loop
@@ -91,7 +83,7 @@ class Doc {
 			if (id == this.lobs[i].id) 																				// A match
 				return i;																							// Return ptr to lob
 			}
-			return undefined;																						// Not found
+		return undefined;																							// Not found
 		}
 
 	FindLobLevelById(id) {																						// FIND LEVEL OF LOB FROM ID
@@ -104,19 +96,21 @@ class Doc {
 		return level;																								// Return level of lob
 	}
 
-	FindAskById(id) {																							// FIND PTR TO ASK FROM ID
+	FindAskById(id) 																							// FIND PTR TO ASK FROM ID
+	{	
 		var i,n=this.asks.length;
 		for (i=0;i<n;++i) {																							// For each ask
 			if (id == this.asks[i].id) 																				// A match
 				return this.asks[i];																				// Return ptr to ask
 			}
 		return null;																								// Not found
-		}
+	}
 	
-	GetMastery(num) {																							// GET MASTERY OF LOB AT MAP POSITION
+	GetMastery(num) 																							// GET MASTERY OF LOB AT POSITION
+	{	
 		var numNodes=-1,done=0;
 		var _this=this;																								// Context
-		if (_this.FindLobById(this.map[num].id).status == DONE)														// If it's already done
+		if (_this.FindLobById(this.lobs[num].id).status == DONE)													// If it's already done
 			return DONE;																							// Return done
 		
 		function iterate(node) {																					// RECURSIVE FUNCTION
@@ -128,18 +122,20 @@ class Doc {
 				iterate(node.kids[i]);																				// Recurse
 			}
 		
-		iterate(this.map[num]);																						// Start looking
+		iterate(this.lobs[num]);																					// Start looking
 		return ((done == numNodes) && numNodes) ? DONE : TODO;														// Return mastery for node
-		}
-
-	NextLob() {																									// ADVANCE THROUGH LOB MAP
-		if (this.curPos < this.map.length-1)																		// If not last
-			this.curPos++;																						// Advance
-		else																										// Last
-			this.curPos=0;																						// Loop around
 	}
 
-	UniqueId() {																								// MAKE UNIQUE ID
+	NextLob() 																									// ADVANCE THROUGH LOB
+	{	
+		if (this.curPos < this.lobs.length-1)																		// If not last
+			this.curPos++;																							// Advance
+		else																										// Last
+			this.curPos=0;																							// Loop around
+	}
+
+	UniqueId() 																									// MAKE UNIQUE ID
+	{	
 		var i,index;
 		var ts=+new Date;																							// Get date
 		var id=ts.toString();																						// Start with timestamp				
@@ -151,7 +147,7 @@ class Doc {
 			id+=parts[index];																						// Add to id 
 			}
 		return ""+id;																								// Return unique id	as string													
-		}
+	}
 
 	GDriveLoad(id) 																								// LOAD FROM GOOGLE DRIVE
 	{
@@ -163,19 +159,13 @@ class Doc {
 			var i,v,csv;
 			if (xhr.responseText) csv=xhr.responseText.replace(/\\r/,"");											// Remove CRs
 			csv=csv.split("\n");																					// Split into lines
-			_this.map=[],_this.lobs=[];																				// Init maps
+			_this.lobs=[];																							// Init lobs
 			_this.asks=[];																							// Init assessment
 			app.rules=[];
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
 				if (v[0] == "lob")																					// A lob
 					_this.lobs.push({ name:v[2], id:v[1]-0, parent:v[3], body:v[4], status:0 });					// Add learning object
-				else if (v[0] == "map") {
-						if (v[3] != "")
-							_this.map.push({ level:v[2]-0, id:v[1]-0, parent:v[3]-0 });								// Add mapping
-						else
-							_this.map.push({ level:v[2]-0, id:v[1]-0 });											// Add mapping
-					}
 				else if (v[0] == "ask")																				// An assessment step
 					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add ask
 				else if (v[0] == "rule")	{																		// A Rule
