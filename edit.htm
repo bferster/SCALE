@@ -146,9 +146,8 @@ class App  {
 	function DrawNav()															// DRAW COURSE NAVIGATION
 	{
 		var i,o
-		var rules=[],asks=[];
-		$("#courseTitle").html(app.doc.lobs[0].name);							// Show course name
 		if (app.doc.lobs.length > 1) {												// If loaded
+			$("#courseTitle").html(app.doc.lobs[0].name);							// Show course name
 			app.doc.SetCurVars(2);													// Set current areas																								
 			for (i=0;i<app.doc.lobs.length;++i) {									// For each lob
 				o=app.doc.lobs[i];													// Point at it
@@ -156,13 +155,22 @@ class App  {
 					$("#topicBut").append("<option value='"+i+"'>"+o.name+"</option>");	// Add to pulldown
 				}
 			app.tree=new Tree(0,500,function(m){trace(m)});							// Show lobs tree				
-			var str="<div class='wm-bs'>Add new pane</div>";						// Add button
+			var str="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
+			str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
 			str+="<br><br><hr><br><table class='wm-navTable'>";						// Line and table
-			str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("pageBut",false,asks)+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td></tr>";
-			str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("pageBut",false,rules)+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td></tr>";
+			str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,[])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td></tr>";
+			str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,[])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td></tr>";
 			str+="</table>";
-			$("#navDiv").append(str);													// Draw nav part												
-		}
+			$("#navDiv").append(str);												// Draw nav part
+			for (i=0;i<app.rul.rules.length;++i) {									// For each rule
+				o=app.rul.rules[i];													// Point at rule
+				$("#rulesBut").append("<option value='"+o.id+"'>"+o.name+"</option>");	// Add to pulldown
+				}
+			for (i=0;i<app.doc.asks.length;++i) {									// For each ask
+				o=app.doc.asks[i];													// Point at ask
+				$("#asksBut").append("<option value='"+o.id+"'>"+o.name+"</option>");	// Add to pulldown
+				}
+			}
 	}	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -225,12 +233,8 @@ class App  {
 			$('.wm-tree li > a').off();														// Clear handlers
 			$('.wm-tree li > a').on("click",function(e) { app.tree.handleTreeClick($(this),e); }); 	// Restore handler
 			}
-	}
-}																							// Class closure
-
-
-	
-	
+		}
+	}																						// Class closure
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
