@@ -3,28 +3,132 @@
 <head>
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
-	<title>SCALE Editor</title>
+	<title>S C A L E &nbsp;Editor</title>
  	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
-	<script src="ckeditor/ckeditor.js"></script>
+	 <script src="doc.js"></script>
+	 <script src="rules.js"></script>
+	 <script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
-		 body { font-family: Verdana,Geneva,sans-serif; font-size: 12px; padding: 0; box-sizing: border-box;	}
+		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; box-sizing: border-box;	}
+		.wm-main { 			position:relative; width:100%; height:100%; overflow:hidden; background-color: #eee; display:none;
+							}
+		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1060px);
+							}
+		.wm-content {		width:1000px; margin:12px; margin-left:0; float:right; box-shadow: 2px 4px 8px #999; overflow:hidden; border-radius: 12px;
+							}
+		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%;  display:none;
+							}
+		.wm-header { 		background-color: #bbb; width:100%; color:#fff;
+							padding: 8px 0px;
+							}
+		.wm-logo { 			height:40px; vertical-align: top; margin:0px 16px; cursor:pointer;
+							}
+		.wm-courseTitle { 	font-size: 32px; font-weight: bold; margin-right:32px; cursor:pointer;
+							}
+		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
+							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
+							font-size: 14px; text-align:center; display: none;
+							}
+		.wm-is {			border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
+							border:1px solid #999;font-size:12px;height:20px;
+							}
+		.wm-bs {			border-radius: 16px; padding-left: 8px; padding-right: 8px; display: inline-block; height: 17px; padding-top: 1px;
+							font-size: 12px; background-color: #27ae5fb2; cursor: pointer; text-align: center; color:#fff; 
+							}
+		.wm-tree {      	user-select: none; width: 100%; margin-left:40px;
+							padding: 0px 0; font-size: 14px; text-align: left; 
+							}
+
+		.wm-tree ul { 		list-style: none outside none; padding: 0 }
+		.wm-tree li a { 	line-height: 20px; cursor: pointer; }
+		.wm-tree > ul > li > a { color:#000; display: block;  font-weight: normal; position: relative; text-decoration: none; }
+		.wm-tree li.parent > a { padding: 0 0 0 16px;  }
+		.wm-tree li.parent > a:before { background-image: url("../img/treebuts.png"); content: ""; display: block;
+										height: 11px; left: 0; position: absolute; top: 4px; width: 11px;  background-position: 0px;
+										}
+		.wm-tree ul li.active > a:before { background-position: 22px; }
+		.wm-tree ul li ul 	{ border-left: 1px solid #ccc;  display: none; margin: 0 0 0 5px; padding: 0 0 0 10px; }
+		.wm-tree ul li ul li { position: relative; }
+
 	</style>
+
+
 </head>
 <body>
-	<textarea class="ckeditor" id="editor1" name="editor1"></textarea>
+
+<div id="mainDiv" class="wm-main">
+		<div id="headerDiv" class="wm-header">
+			<img src="img/scaleLogoWhite.png"class="wm-logo">
+				<span id="courseTitle" class="wm-courseTitle">Course</span>
+				<span id="menuMsg" style="display:none;margin-left:32px"></span>
+				<img id="showgdoc" style="cursor:pointer;float:right;margin-right:8px" src="img/gdrive.png">
+			</div>
+		<div id="navDiv" class="wm-nav"></div>
+		<div class="wm-content">
+			<textarea class="ckeditor" id="editor1" name="editor1"></textarea>
+		</div>
+	</div>
+	<div id="splashDiv" class="wm-splash">
+		<img src="img/scaleLogo.png"><br><br>
+		<h1 style="font-size:18pt;font-family:trebuchet ms,sans-serif"><p></p>S C A L E &nbsp;Editor</p>Student-Centered Adaptive Learning Environment</h1>
+		<p style="font-weight:bold;font-size:48px"><b>Course editor</p>
+	</div>
+		
+
+
 <script>
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// APP
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class App  {																
+
+	constructor(id)   															// CONSTRUCTOR
+	{
+		app=this;
+		this.doc=new Doc(id);														// Alloc doc w/ course id
+		this.rul=new Rules();														// Rules
+		this.Draw(); 																// Draw app
+		this.tree=null;																// Holds lobs tree
+	}
+
+	Draw(index) 																// REDRAW
+	{
+		app.doc.Draw();																// Reset various params
+		DrawNav();																	// Draw navigation
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // INIT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	var app=null;															// Hold course data 
 
 	$(document).ready(function() {											// WHEN PAGE LOADED
 		if (window.addEventListener) 											// If supported this way
 			window.addEventListener("message",eventHandler,false);				// Add event handler
 		else																	// Use other method
 			window.attachEvent("message",eventHandler);							// Add handler
-		var h=$(window).height()-34;											// Editor height
-		CKEDITOR.on('instanceLoaded', function(e) {e.editor.resize(1000, h)});// Resize editor
+
+	var h=$(window).height()-130;												// Editor height
+		if (window.location.host != "localhost") {								// Not in debug
+		$("#splashDiv").fadeIn().delay(2000).fadeOut();							// Fade out splash
+		$("#mainDiv").delay(2000).fadeIn(2000);									// Wait, and fade in main
+		}	
+	else																		// Debug
+		$("#mainDiv").fadeIn(0),h+=44;											// Load fast (account for CK sizing bug)
+	
+	var url=window.location.search.substring(1);						   		// Get query string
+	if (!url)	url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";				// If id set, use it
+	app=new App(url);															// Alloc doc w/ course id
+	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});	// Resize editor
+
+	$("#showgdoc").on("click",function() {										// Show google doc
+		window.open("https://docs.google.com/spreadsheets/d/"+courseId,"_blank");	// Show it	
+		});
+
 	});
 
 	function eventHandler(e)												// ON HTML5 EVENT
@@ -35,10 +139,122 @@
 			}
 	}
 
-		
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// NAVIGATION
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	function DrawNav()															// DRAW COURSE NAVIGATION
+	{
+		var i,o
+		var rules=[],asks=[];
+		$("#courseTitle").html(app.doc.lobs[0].name);							// Show course name
+		if (app.doc.lobs.length > 1) {												// If loaded
+			app.doc.SetCurVars(2);													// Set current areas																								
+			for (i=0;i<app.doc.lobs.length;++i) {									// For each lob
+				o=app.doc.lobs[i];													// Point at it
+				if (o.level == 2)													// If a topic
+					$("#topicBut").append("<option value='"+i+"'>"+o.name+"</option>");	// Add to pulldown
+				}
+			app.tree=new Tree(0,500,function(m){trace(m)});							// Show lobs tree				
+			var str="<div class='wm-bs'>Add new pane</div>";						// Add button
+			str+="<br><br><hr><br><table class='wm-navTable'>";						// Line and table
+			str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("pageBut",false,asks)+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td></tr>";
+			str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("pageBut",false,rules)+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td></tr>";
+			str+="</table>";
+			$("#navDiv").append(str);													// Draw nav part												
+		}
+	}	
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TREE  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	class Tree {
+
+		constructor(x, y, callback)  													// CONSTRUCTOR
+		{
+			var _this=this;																	// Save context		
+			this.callback=callback;															// Save callack
+			var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";
+			str+="<div id='treeDiv' class='wm-tree'><ul>";				
+			str+="<li class='parent'><a id='0'>Week 1</a>";		str+="<li class='parent'><a id='0'>Week 2</a>";
+			str+="<li class='parent'><a id='0'>Week 3</a>";		str+="<li class='parent'><a id='0'>Week 4</a>";
+			str+="<li class='parent'><a id='0'>Week 5</a>";		str+="<li class='parent'><a id='0'>Week 6</a>";
+			str+="<li class='parent'><a id='0'>Week 7</a>";		str+="<li class='parent'><a id='0'>Week 8</a>";
+			$("#navDiv").append(str+"</ul></div>");											// Add to tree div
+
+			$('.wm-tree li').each( function() {                                				// For each element
+				if ($(this).children('ul').length > 0)                       				// If has children 
+					$(this).addClass('parent');                              				// Make parent class
+				});
+
+			$('.wm-tree li > a').on("click", function(e) {									// ON CLICK OF NODE TEXT
+				_this.handleTreeClick($(this),e);  												// Handle
+				});      
+		}
+
+	handleTreeClick(row, e)																// HANDLE TREE CLICK
+	{
+		if (e.offsetX < 12) {                                         				  		// In icon
+			if (row.parent().children().length == 1) 										// If no children
+				AddChildren(row) 
+			else{																			// Open or close
+				row.parent().toggleClass('active');                         				// Toggle active class on or off
+				row.parent().children('ul').slideToggle('fast');            				// Slide into place
+				}
+			}
+		else{																				// In text
+			$('.wm-tree li a').each( function() {                          					// For each line
+				$(this).css({"color":"#000","font-weight":"normal"});      					// Normal
+				}); 
+			row.css({"color":"#009900","font-weight":"bold"});          					// Bold and green   
+			app.tree.callback(e.target.id);														// Run callback
+			}		
+	
+		function AddChildren(row) 	{
+			var str="<ul style='display:none'>";											// Wrapper
+			for (i=0;i<3;++i) {																// For each child
+				str+="<li";																	// Start row
+				str+=" class='parent'"
+				str+="><a id='"+"150'>A new node";											// Add id
+				str+"</a></li>";															// Add label
+				}
+			row.after(str+"</ul>");															// Add to tree
+			row.parent().toggleClass('active');                         					// Toggle active class on or off
+			row.parent().children('ul').slideToggle('fast');            					// Slide into place
+			$('.wm-tree li > a').off();														// Clear handlers
+			$('.wm-tree li > a').on("click",function(e) { app.tree.handleTreeClick($(this),e); }); 	// Restore handler
+			}
+	}
+}																							// Class closure
+
+
+	
+	
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
+	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
+	{
+		var	str="<select class='wm-is' id='"+id+"'";							// Header
+		if (multi)																// Multi select
+			str+="multiple='multiple' size='"+multi+"'";						// Add flag
+		if (extra)																// If extra param
+			str+=extra;															// Add them
+		str+=">";																// End header
+		for (i=0;i<items.length;++i) {											// For each option
+			str+="<option";														// Add tag
+			if (sel == items[i])												// If selected
+				str+=" selected='selected'"										// Add tag
+			if (values && values[i])											// If has a value
+				str+=" value='"+values[i]+"'";									// Add it
+			str+=">"+items[i]+"</option>";										// End option
+			}	
+		return str+"</select>";													// End select				
+	}
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{

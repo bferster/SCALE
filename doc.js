@@ -46,7 +46,6 @@ class Doc {
 		this.curLevel=this.lobs[id].level;																			// Current level
 		this.curLobId=this.lobs[id].id;																				// Current lob id
 		this.curLob=this.FindLobById(this.lobs[id].id);																// Current lob pointer
-		this.curCourse=this.FindLobParent(COURSE,id);																// Current course
 		this.curLesson=this.FindLobParent(LESSON,id);																// Current lesson
 		this.curTopic=this.FindLobParent(TOPIC,id);																	// Current topic
 		this.curConcept=this.FindLobParent(CONCEPT,id);																// Current concept
@@ -60,7 +59,7 @@ class Doc {
 		while (1) {																									// Loop
 			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
 			if (par == undefined)																					// If at root
-				return 0;																							// Return root
+				return -1;																							// Return root
 			if (this.lobs[index].level == level) 																	// At desired level
 				return index;																						// Return index
 			else																									// Still under it

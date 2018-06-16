@@ -48,7 +48,7 @@ class Navigation {
 		this.UpdateHeader();																						// Update header																						
 		$("#menuSlotDiv").remove();																					// Close lesson picker															
 	
-		if (app.doc.curLesson) {																					// If a lesson active
+		if (app.doc.curLesson != -1) {																				// If a lesson active
 			str+="<div id='topicBar' class='wm-topicBar'></div>";													// Topic bar
 			children=app.doc.lobs[app.doc.curLesson].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
@@ -60,7 +60,7 @@ class Navigation {
 				}
 			}
 		
-		if (app.doc.curTopic) {																						// If a topic active
+		if (app.doc.curTopic != -1) {																				// If a topic active
 			children=app.doc.lobs[app.doc.curTopic].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
@@ -75,13 +75,13 @@ class Navigation {
 				str+=`'>${name}</div>`;
 				}
 			}
-		if (app.doc.curConcept) {																					// If a step active
+		if (app.doc.curConcept != -1) {																				// If a step active
 			str+="<div id='stepBarDiv' class='wm-stepBar'>";														// Stepvbar div
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				str+=`<span id='stepBar-${i}' class='wm-stepBarItem' style='`;
-				id=app.doc.lobs[app.doc.curConcept].children[i];														// Get concept id
+				id=app.doc.lobs[app.doc.curConcept].children[i];													// Get concept id
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color
 				if (app.doc.curLobId == children[i]) 																// If current Topic
@@ -94,7 +94,7 @@ class Navigation {
 
 		$("#navDiv").html(str);																						// Add content	
 
-		if (app.doc.curLesson) {																					// If a lesson active
+		if (app.doc.curLesson != -1) {																				// If a lesson active
 			l=-92;																									// Start left
 			children=app.doc.lobs[app.doc.curLesson].children;														// Get topics
 			ww=(w-48)/(children.length-1);																			// Width between topic dots
@@ -115,7 +115,7 @@ class Navigation {
 					}
 			}
 
-		if (app.doc.curTopic) {																						// If a topic active
+		if (app.doc.curTopic != -1) {																				// If a topic active
 			l=14;																									// Start left
 			children=app.doc.lobs[app.doc.curTopic].children;														// Get 
 			ww=(w-40)/children.length;																				// Width between topic dots
@@ -133,7 +133,7 @@ class Navigation {
 				}
 			}
 
-		if (app.doc.curConcept) {																					// If a step active
+		if (app.doc.curConcept != -1) {																				// If a step active
 			l=56;																									// Start left
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get 
 			ww=(w-120)/children.length;																				// Width between topic dots
@@ -153,8 +153,8 @@ class Navigation {
 
 	UpdateHeader() 																								// UPDATE HEADER																					
 	{	
-		$("#courseTitle").html(app.doc.lobs[app.doc.curCourse].name);												// Show course name
-		if (app.doc.curLesson == 0)																					// On splash page
+		$("#courseTitle").html(app.doc.lobs[0].name);																// Show course name
+		if (app.doc.curLesson <= 0)																					// On splash page
 			$("#lessonTitle").html("");																				// Hide lesson name
 		else																										// Into course
 			$("#lessonTitle").html(app.doc.lobs[app.doc.curLesson].name);											// Show lesson name
