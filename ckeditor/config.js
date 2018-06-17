@@ -2,7 +2,7 @@ CKEDITOR.editorConfig = function( config ) {
 	config.resize_dir='both';
 	config.width="100%";
 	config.skin = 'moono-lisa';
-	config.removePlugins = "elementspath"
+	config.removePlugins = "elementspath";
 	config.resize_enabled = false;
 
 	config.toolbar =[

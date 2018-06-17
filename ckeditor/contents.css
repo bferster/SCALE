@@ -6,8 +6,8 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 body
 {
 	/* Font */
-	font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
-	font-size: 12px;
+	font-family: Verdana,Geneva,"sans-serif";
+	font-size: 14px;
 
 	/* Text color */
 	color: #333;
@@ -20,8 +20,11 @@ body
 
 .cke_editable
 {
-	font-size: 13px;
-	line-height: 1.6;
+	font-size: 14px;
+	line-height: 1.5;
+	padding-left: 12px;
+	padding-right: 12px;
+	padding-top: 0;
 
 	/* Fix for missing scrollbars with RTL texts. (#10488) */
 	word-wrap: break-word;

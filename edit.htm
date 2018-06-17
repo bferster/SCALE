@@ -3,18 +3,18 @@
 <head>
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
-	<title>S C A L E &nbsp;Editor</title>
+	<title>S C A L E &nbsp;Course Editor</title>
  	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	 <script src="doc.js"></script>
 	 <script src="rules.js"></script>
 	 <script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; box-sizing: border-box;	}
-		.wm-main { 			position:relative; width:100%; height:calc(100vh - 4px); overflow:hidden; background-color: #eee; display:none;
+		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none;
 							}
 		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px);
 							}
-		.wm-content {		width:1000px; overflow:hidden; float:right; margin-top:24px; margin-right:24px; 
+		.wm-content {		width:1000px; overflow:hidden; float:right; margin-right:24px; 
 							}
 		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%; display:none;
 							}
@@ -23,6 +23,8 @@
 		.wm-logo { 			height:30px; vertical-align: top; margin:0px 16px; cursor:pointer;
 							}
 		.wm-courseTitle { 	font-size: 24px; font-weight: bold; margin-right:32px; cursor:pointer;
+							}
+		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
 							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
@@ -64,7 +66,11 @@
 			</div>
 		<div id="navDiv" class="wm-nav"></div>
 		<div class="wm-content">
-			<textarea class="ckeditor" id="editor1" name="editor1"></textarea>
+			<div id="contentDiv"></div>
+			<div id="editorDiv">
+				<textarea class="ckeditor" id="editor1" name="editor1"></textarea>
+				<div id='savePaneBut' style='text-align:center;cursor:pointer'><img src='img/savepane.gif'></div>
+			</div>
 		</div>
 	</div>
 	<div id="splashDiv" class="wm-splash">
@@ -86,13 +92,16 @@ class App  {
 		app=this;
 		this.doc=new Doc(id);														// Alloc doc w/ course id
 		this.rul=new Rules();														// Rules
+		this.con=new Content();														// Alloc content
+
 		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
 	}
 
-	Draw(index) 																// REDRAW
+	Draw() 																		// REDRAW
 	{
-		app.doc.Draw();																// Reset various params
+		this.doc.Draw();															// Reset various params
+		this.con.Draw();															// Reset various params
 		DrawNav();																	// Draw navigation
 	}
 }
@@ -109,8 +118,8 @@ class App  {
 		else																	// Use other method
 			window.attachEvent("message",eventHandler);							// Add handler
 
-	var h=$(window).height()-135;												// Editor height
-		if (window.location.host != "localhost") {								// Not in debug
+	var h=$(window).height()-300;												// Editor height
+	if (window.location.host != "loocalhost") {								// Not in debug
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();							// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);									// Wait, and fade in main
 		}	
@@ -123,7 +132,7 @@ class App  {
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});	// Resize editor
 
 	$("#showgdoc").on("click",function() {										// Show google doc
-		window.open("https://docs.google.com/spreadsheets/d/"+courseId,"_blank");	// Show it	
+		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
 	});
@@ -155,6 +164,10 @@ class App  {
 			str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose a rule"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
 			str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
 			str+="</table>";
+			str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
+			str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
+			str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
+			str+="<div id='redoBut' class='wm-bs'>Redo</div>";
 			$("#navDiv").append(str);												// Draw nav part
 			for (i=0;i<app.rul.rules.length;++i) {									// For each rule
 				o=app.rul.rules[i];													// Point at rule
@@ -166,6 +179,49 @@ class App  {
 				}
 			}
 	}	
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// CONTENT
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	class Content {
+
+		constructor()  																	// CONSTRUCTOR
+		{
+			this.curEditType="splash";														// Default edit type
+			this.curEditId=0;																// Default edit id
+			this.Draw();
+		}
+
+		Draw(type, id)																	// DRAW
+		{
+			var o;
+			if (id != undefined)	this.curEditId=id;										// Set edit id
+			if (type != undefined)	this.curEditType=type;									// Set edit id
+			var str="";
+			$("#editorDiv").hide();															// Hide editor
+			if (this.curEditType == "splash") {												// Draw splash
+				str+="<div style='text-align:center;color:#666'><br><br><br><br><br>";
+				str+="<img src='img/scaleLogo.png'><br>";
+				str+="<h1 style='font-size:24pt;font-family:trebuchet ms,sans-serif'><p></p>S C A L E</h1>";
+				$("#contentDiv").html(str);													// Add splash
+				}
+			else if (this.curEditType == "pane") {											// Draw pane
+				o=app.doc.lobs[this.curEditId];
+				str+=o.name ? "<div id='pageTitle' class='wm-pageTitle' contentEditable='true'> "+o.name+"</div>" : "";			// Get page title
+				$("#contentDiv").html(str);													// Add page title
+				CKEDITOR.instances.editor1.setData(o.body);									// Add body data
+				$("#editorDiv").show();														// Show editor
+				}
+			else if (this.curEditType == "rule") {											// Draw rule
+				}
+			else if (this.curEditType == "ask") {											// Draw question
+				}
+		}
+	
+	}																						// Class closure
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TREE  
@@ -210,8 +266,8 @@ class App  {
 				$(this).css({"color":"#000","font-weight":"normal"});      					// Normal
 				}); 
 			row.css({"color":"#009900","font-weight":"bold"});          					// Bold and green   
-			app.tree.callback(e.target.id);													// Run callback
-			}		
+			app.con.Draw("pane",e.target.id);												// Show pane
+			}
 		}
 
 	AddChildren(row, id) 																// ADD CHILDREN TO TREE
