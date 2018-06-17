@@ -70,6 +70,7 @@
 			<div id="editorDiv">
 				<textarea class="ckeditor" id="editor1" name="editor1"></textarea>
 				<div id='savePaneBut' style='text-align:center;cursor:pointer'><img src='img/savepane.gif'></div>
+				<div style="float:right" id='paneId'></div>
 			</div>
 		</div>
 	</div>
@@ -110,38 +111,38 @@ class App  {
 // INIT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	var app=null;															// Hold course data 
+	var app=null;																// Hold course data 
 
-	$(document).ready(function() {											// WHEN PAGE LOADED
-		if (window.addEventListener) 											// If supported this way
-			window.addEventListener("message",eventHandler,false);				// Add event handler
-		else																	// Use other method
-			window.attachEvent("message",eventHandler);							// Add handler
+	$(document).ready(function() {												// WHEN PAGE LOADED
+		if (window.addEventListener) 												// If supported this way
+			window.addEventListener("message",eventHandler,false);					// Add event handler
+		else																		// Use other method
+			window.attachEvent("message",eventHandler);								// Add handler
 
-	var h=$(window).height()-300;												// Editor height
-	if (window.location.host != "loocalhost") {								// Not in debug
-		$("#splashDiv").fadeIn().delay(2000).fadeOut();							// Fade out splash
-		$("#mainDiv").delay(2000).fadeIn(2000);									// Wait, and fade in main
+	var h=$(window).height()-300;													// Editor height
+	if (window.location.host != "localhost") {										// Not in debug
+		$("#splashDiv").fadeIn().delay(2000).fadeOut();								// Fade out splash
+		$("#mainDiv").delay(2000).fadeIn(2000);										// Wait, and fade in main
 		}	
-	else																		// Debug
-		$("#mainDiv").fadeIn(0),h+=44;											// Load fast (account for CK sizing bug)
+	else																			// Debug
+		$("#mainDiv").fadeIn(0),h+=44;												// Load fast (account for CK sizing bug)
 	
-	var url=window.location.search.substring(1);						   		// Get query string
-	if (!url)	url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";				// If id set, use it
-	app=new App(url);															// Alloc doc w/ course id
-	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});	// Resize editor
+	var url=window.location.search.substring(1);						   			// Get query string
+	if (!url)	url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// If id set, use it
+	app=new App(url);																// Alloc doc w/ course id
+	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
 
-	$("#showgdoc").on("click",function() {										// Show google doc
+	$("#showgdoc").on("click",function() {											// Show google doc
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
 	});
 
-	function eventHandler(e)												// ON HTML5 EVENT
+	function eventHandler(e)													// ON HTML5 EVENT
 	{
-		if (e.data && e.data.match(/INS:/))	{									// Insert macro
-			CKEDITOR.instances.editor1.insertText(e.data.substring(4));			// Insert text	
-			Sound("ding");														// Ding	
+		if (e.data && e.data.match(/INS:/))	{										// Insert macro
+			CKEDITOR.instances.editor1.insertText(e.data.substring(4));				// Insert text	
+			Sound("ding");															// Ding	
 			}
 	}
 
@@ -188,38 +189,50 @@ class App  {
 
 		constructor()  																	// CONSTRUCTOR
 		{
-			this.curEditType="splash";														// Default edit type
-			this.curEditId=0;																// Default edit id
-			this.Draw();
+			var _this=this;																	// Save context		
+			this.curEditId=0;																// Id of current pane
+			this.Draw("splash");															// Draw content
+
+			$("#savePaneBut").on("click", function() {										// Dave edits
+				var o=app.doc.lobs[_this.curEditId];										// Point at lob
+				o.body=CKEDITOR.instances.editor1.getData();								// Get body
+				o.name=$("#pageTitle").text();												// Get name
+				$("#tr-"+_this.curEditId).text(o.name)                             			// Reset tree name
+				Sound("ding");																// Ding
+				});
 		}
 
 		Draw(type, id)																	// DRAW
 		{
 			var o;
-			if (id != undefined)	this.curEditId=id;										// Set edit id
-			if (type != undefined)	this.curEditType=type;									// Set edit id
 			var str="";
 			$("#editorDiv").hide();															// Hide editor
-			if (this.curEditType == "splash") {												// Draw splash
+			if (type == "splash") {															// Draw splash
 				str+="<div style='text-align:center;color:#666'><br><br><br><br><br>";
 				str+="<img src='img/scaleLogo.png'><br>";
 				str+="<h1 style='font-size:24pt;font-family:trebuchet ms,sans-serif'><p></p>S C A L E</h1>";
 				$("#contentDiv").html(str);													// Add splash
 				}
-			else if (this.curEditType == "pane") {											// Draw pane
-				o=app.doc.lobs[this.curEditId];
+			else if (type == "pane") {														// Draw pane
+				o=app.doc.lobs[id];															// Point at lob
+				if (!o) { 																	// Invalid pane
+					this.Draw("splash");													// Show splash																								
+					return;																	// Quit
+					}
 				str+=o.name ? "<div id='pageTitle' class='wm-pageTitle' contentEditable='true'> "+o.name+"</div>" : "";			// Get page title
 				$("#contentDiv").html(str);													// Add page title
 				CKEDITOR.instances.editor1.setData(o.body);									// Add body data
+				this.curEditId=id;															// Save id
+				$("#paneId").text(id);														// Show id
 				$("#editorDiv").show();														// Show editor
 				}
-			else if (this.curEditType == "rule") {											// Draw rule
+			else if (type == "rule") {														// Draw rule
 				}
-			else if (this.curEditType == "ask") {											// Draw question
+			else if (type == "ask") {														// Draw question
 				}
 		}
 	
-	}																						// Class closure
+}																						// Class closure
 
 
 
@@ -234,25 +247,26 @@ class App  {
 			var _this=this;																	// Save context		
 			this.callback=callback;															// Save callack
 			var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";
-			str+="<div id='treeDiv' class='wm-tree'><ul>";				
-			str+="<li class='parent'><a id='0'>Week 1</a>";			str+="<li><a id='-2'>Week 2</a>";
-			str+="<li><a id='-3'>Week 3</a>";		str+="<li><a id='-4'>Week 4</a>";
-			str+="<li><a id='-5'>Week 5</a>";		str+="<li><a id='-6'>Week 6</a>";
-			str+="<li><a id='-7'>Week 7</a>";		str+="<li><a id='-8'>Week 8</a>";
+			str+="<div id='treeDiv' class='wm-tree'><ul>";
+			str+="<li class='parent active'><a id='tr-0'>Student Flourishing</a>";
+			str+="<ul><li class='parent'><a id='tr-1'>Week 1</a></ul>";
+			str+="<ul><li><a id='tr--2'>Week 2</a></ul>";	str+="<ul><li><a id='tr--3'>Week 3</a></ul>";
+			str+="<ul><li><a id='tr--4'>Week 4</a></ul>";	str+="<ul><li><a id='tr--5'>Week 5</a></ul>";
+			str+="<ul><li><a id='tr--6'>Week 6</a></ul>";	str+="<ul><li><a id='tr--7'>Week 7</a></ul>";
+			str+="<ul><li><a id='tr--8'>Week 8</a></ul>";
 			$("#navDiv").append(str+"</ul></div>");											// Add to tree div
+			this.AddChildren($("#tr-1"),1);													// Add week one (KLUGE!)
 
 			$('.wm-tree li').each( function() {                                				// For each element
 				if ($(this).children('ul').length > 0)                       				// If has children 
 					$(this).addClass('parent');                              				// Make parent class
 				});
 
-			$('.wm-tree li > a').each( function() {                                			// For each element
-				_this.AddChildren($(this),$(this)[0].id);									// Add children, if any
-			});      
-	
-			$('.wm-tree li > a').on("click", function(e) {									// ON CLICK OF NODE TEXT
-				_this.handleTreeClick($(this),e);  												// Handle
+				$('.wm-tree li > a').on("click", function(e) {								// ON CLICK OF NODE TEXT
+				_this.handleTreeClick($(this),e);  											// Handle
 				});      
+		
+			$("#tr-0").parent().children('ul').slideToggle('fast');            				// Open course
 		}
 
 	handleTreeClick(row, e)																// HANDLE TREE CLICK
@@ -266,7 +280,7 @@ class App  {
 				$(this).css({"color":"#000","font-weight":"normal"});      					// Normal
 				}); 
 			row.css({"color":"#009900","font-weight":"bold"});          					// Bold and green   
-			app.con.Draw("pane",e.target.id);												// Show pane
+			app.con.Draw("pane",e.target.id.substr(3));										// Show pane
 			}
 		}
 
@@ -280,7 +294,7 @@ class App  {
 		for (i=0;i<o.length;++i) {															// For each child
 			str+="<li";																		// Start row
 			if (o[i].kids)	str+=" class='parent'"											// Add parent if kid has kids
-			str+="><a id='"+app.doc.FindLobIndexById(o[i].id)+"'>"+o[i].name;				// Add index and name
+			str+="><a id='tr-"+app.doc.FindLobIndexById(o[i].id)+"'>"+o[i].name;			// Add index and name
 			str+"</a></li>";																// Add label
 			}
 		row.after(str+"</ul>");																// Add to tree
