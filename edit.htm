@@ -4,10 +4,13 @@
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
 	<title>S C A L E &nbsp;Course Editor</title>
- 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
-	 <script src="doc.js"></script>
-	 <script src="rules.js"></script>
-	 <script src="ckeditor/ckeditor.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script src="lib/jquery.ui.touch-punch.min.js"></script>
+	<script src="doc.js"></script>
+	<script src="rules.js"></script>
+	<script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; box-sizing: border-box;	}
 		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none;
@@ -53,7 +56,6 @@
 
 	</style>
 
-
 </head>
 <body>
 
@@ -94,7 +96,6 @@ class App  {
 		this.doc=new Doc(id);														// Alloc doc w/ course id
 		this.rul=new Rules();														// Rules
 		this.con=new Content();														// Alloc content
-
 		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
 	}
@@ -135,6 +136,12 @@ class App  {
 	$("#showgdoc").on("click",function() {											// Show google doc
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
+	
+	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
+		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
+			app.doc.IterateLobs(function(a) { trace(a); });						
+			}
+		});
 
 	});
 
@@ -155,9 +162,9 @@ class App  {
 		var i,o
 		if (app.doc.lobs.length > 1) {												// If loaded
 			$("#courseTitle").html(app.doc.lobs[0].name);							// Show course name
-			app.tree=new Tree(0,500,function(m){trace(m)});							// Show lobs tree				
-			app.doc.SetCurVars(2);													// Set current areas																								
-			var str="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
+			var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";			// Tree label
+			str+="<div id='treeDiv' class='wm-tree'></div>";						// Add div to hold tree
+			str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
 			str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
 			str+="<br><br><hr><br><table class='wm-navTable'>";						// Line and table
 			str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose a question"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
@@ -169,7 +176,9 @@ class App  {
 			str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
 			str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
 			str+="<div id='redoBut' class='wm-bs'>Redo</div>";
-			$("#navDiv").append(str);												// Draw nav part
+			$("#navDiv").html(str);												// Draw nav part
+			app.tree=new Tree();													// Show lobs tree				
+			app.doc.SetCurVars(2);													// Set current areas																								
 			for (i=0;i<app.rul.rules.length;++i) {									// For each rule
 				o=app.rul.rules[i];													// Point at rule
 				$("#rulesBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
@@ -178,6 +187,11 @@ class App  {
 				o=app.doc.asks[i];													// Point at ask
 				$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
 				}
+			$("#addPaneBut").on("click", ()=> {  									// Add new pane
+				app.doc.AddNewLob(app.tree.curPaneId); 								// Add lob
+				Sound("ding"); 														// Ding
+				app.tree.Init();													// Remake tree
+				});
 			}
 	}	
 
@@ -193,11 +207,11 @@ class App  {
 			this.curEditId=0;																// Id of current pane
 			this.Draw("splash");															// Draw content
 
-			$("#savePaneBut").on("click", function() {										// Dave edits
+			$("#savePaneBut").on("click", function() {										// Save edits
 				var o=app.doc.lobs[_this.curEditId];										// Point at lob
 				o.body=CKEDITOR.instances.editor1.getData();								// Get body
 				o.name=$("#pageTitle").text();												// Get name
-				$("#tr-"+_this.curEditId).text(o.name)                             			// Reset tree name
+				$("#tr-"+o.id).text(o.name)                             					// Reset tree name
 				Sound("ding");																// Ding
 				});
 		}
@@ -214,6 +228,7 @@ class App  {
 				$("#contentDiv").html(str);													// Add splash
 				}
 			else if (type == "pane") {														// Draw pane
+				id=app.doc.FindLobIndexById(id);											// Get index from id
 				o=app.doc.lobs[id];															// Point at lob
 				if (!o) { 																	// Invalid pane
 					this.Draw("splash");													// Show splash																								
@@ -223,7 +238,7 @@ class App  {
 				$("#contentDiv").html(str);													// Add page title
 				CKEDITOR.instances.editor1.setData(o.body);									// Add body data
 				this.curEditId=id;															// Save id
-				$("#paneId").text(id);														// Show id
+				$("#paneId").text(id+" - "+o.id);											// Show index - id
 				$("#editorDiv").show();														// Show editor
 				}
 			else if (type == "rule") {														// Draw rule
@@ -242,31 +257,33 @@ class App  {
 
 	class Tree {
 
-		constructor(x, y, callback)  													// CONSTRUCTOR
+		constructor()  																	// CONSTRUCTOR
+		{
+			this.Init();																	// Init tree
+		}
+
+		Init() 																			// INIT TREE
 		{
 			var _this=this;																	// Save context		
-			this.callback=callback;															// Save callack
-			var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";
-			str+="<div id='treeDiv' class='wm-tree'><ul>";
-			str+="<li class='parent active'><a id='tr-0'>Student Flourishing</a>";
-			str+="<ul><li class='parent'><a id='tr-1'>Week 1</a></ul>";
-			str+="<ul><li><a id='tr--2'>Week 2</a></ul>";	str+="<ul><li><a id='tr--3'>Week 3</a></ul>";
-			str+="<ul><li><a id='tr--4'>Week 4</a></ul>";	str+="<ul><li><a id='tr--5'>Week 5</a></ul>";
-			str+="<ul><li><a id='tr--6'>Week 6</a></ul>";	str+="<ul><li><a id='tr--7'>Week 7</a></ul>";
-			str+="<ul><li><a id='tr--8'>Week 8</a></ul>";
-			$("#navDiv").append(str+"</ul></div>");											// Add to tree div
-			this.AddChildren($("#tr-1"),1);													// Add week one (KLUGE!)
+			var str="<ul><li class='parent active'><a id='tr-10'>Student Flourishing</a>";
+	str+="<ul><li><a id='tr--2'>Week 2</a></ul>";	str+="<ul><li><a id='tr--3'>Week 3</a></ul>";	str+="<ul><li><a id='tr--4'>Week 4</a></ul>";	str+="<ul><li><a id='tr--5'>Week 5</a></ul>"; str+="<ul><li><a id='tr--6'>Week 6</a></ul>";	str+="<ul><li><a id='tr--7'>Week 7</a></ul>";	str+="<ul><li><a id='tr--8'>Week 8</a></ul>";
+			$("#treeDiv").html(str+"</ul>");												// Add to tree div
+			this.AddChildren($("#tr-10"),0);													// Add children to tree
+			$("#tr-10").parent().children('ul').slideToggle('fast');            				// Open course
+			$("[id^=tr-]").draggable( {	revert:true });										// Make lines draggable to change parent
+			$("[id^=tr-]").droppable( {														// Make lines droppable to change parent
+				drop: function(e,ui) {														// On drop
+					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3)); // Rearrange
+					_this.Init();															// Re-init tree	
+					Sound("ding");															// Ding
+					}
+			});
 
-			$('.wm-tree li').each( function() {                                				// For each element
-				if ($(this).children('ul').length > 0)                       				// If has children 
-					$(this).addClass('parent');                              				// Make parent class
-				});
 
-				$('.wm-tree li > a').on("click", function(e) {								// ON CLICK OF NODE TEXT
+			$('.wm-tree li > a').on("click", function(e) {								// ON CLICK OF NODE TEXT
 				_this.handleTreeClick($(this),e);  											// Handle
 				});      
 		
-			$("#tr-0").parent().children('ul').slideToggle('fast');            				// Open course
 		}
 
 	handleTreeClick(row, e)																// HANDLE TREE CLICK
@@ -280,24 +297,30 @@ class App  {
 				$(this).css({"color":"#000","font-weight":"normal"});      					// Normal
 				}); 
 			row.css({"color":"#009900","font-weight":"bold"});          					// Bold and green   
-			app.con.Draw("pane",e.target.id.substr(3));										// Show pane
+			this.curRow=row;																// Save row
+			this.curPaneId=e.target.id.substr(3);											// Save pane id
+			app.con.Draw("pane",this.curPaneId);											// Show pane
 			}
 		}
 
-	AddChildren(row, id) 																// ADD CHILDREN TO TREE
+	AddChildren(row, id) 																// ADD CHILDREN TO TREE RECURSIVELY
 	{
-		var i,o;
+		var i,o,oo;
 		if (id < 0)	return;																	// Invalid index
-		var o=app.doc.lobs[id].kids;														// Number of children (as indices!)
-		if (!o)	return;																		// No kids
+		var o=app.doc.lobs[id];																// Point at parent												
+		if (!o)	return;																		// If invalid, quit
+		if (!o.children)	return;															// Quit if no children
 		var str="<ul style='display:none'>";												// Wrapper
-		for (i=0;i<o.length;++i) {															// For each child
+		for (i=0;i<o.children.length;++i) {													// For each child
 			str+="<li";																		// Start row
-			if (o[i].kids)	str+=" class='parent'"											// Add parent if kid has kids
-			str+="><a id='tr-"+app.doc.FindLobIndexById(o[i].id)+"'>"+o[i].name;			// Add index and name
+			oo=app.doc.lobs[o.kids[i]];														// Point at child lob via index
+			if (oo.children.length)	str+=" class='parent'"									// Add parent if it has children
+			str+="><a id='tr-"+oo.id+"'>"+oo.name;											// Add index and name
 			str+"</a></li>";																// Add label
 			}
 		row.after(str+"</ul>");																// Add to tree
+		for (i=0;i<o.children.length;++i) 													// For each child
+			this.AddChildren($("#tr-"+o.children[i]),o.kids[i]);							// Recurse
 		}
 
 }																						// Class closure

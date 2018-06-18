@@ -28,10 +28,11 @@ class Doc {
 		for (i=0;i<n;++i) {																							// For each element
 			if (this.lobs[i].parent === "")	delete(this.lobs[i].parent);											// Blank = undefined
 			par=this.FindLobIndexById(this.lobs[i].parent);															// Get index of parent
+			if (par < 0)	continue;																				// Skip if invalid parent
 			this.lobs[i].level=this.FindLobLevelById(this.lobs[i].id);												// Set level
 			if (par != undefined) {																					// If not root
 				this.lobs[par].children.push(this.lobs[i].id);														// Add id of child lob
-				this.lobs[par].kids.push(this.lobs[i]);																// Add ptr to lob
+				this.lobs[par].kids.push(i);																		// Add index of child lob
 				}			
 			}
 	}
@@ -53,58 +54,54 @@ class Doc {
 		this.curPage=this.FindLobParent(PAGE,id);																	// Current page
 	}
 	
-	FindLobParent(level, index) 																				// FIND INDEX OF LOB PARENT
-	{		
-		var i,par;
-		while (1) {																									// Loop
-			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
-			if (par == undefined)																					// If at root
-				return -1;																							// Return root
-			if (this.lobs[index].level == level) 																	// At desired level
-				return index;																						// Return index
-			else																									// Still under it
-				index=par;																							// Go up a level
-			}
-	}
-
-	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
-		var i,n=this.lobs.length;
-		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.lobs[i].id) 																				// A match
-				return this.lobs[i];																				// Return ptr to lob
-			}
-		return null;																								// Not found
-		}
-
-	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
-		var i,n=this.lobs.length;
-		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.lobs[i].id) 																				// A match
-				return i;																							// Return ptr to lob
-			}
-		return undefined;																							// Not found
-		}
-
-	FindLobLevelById(id) {																						// FIND LEVEL OF LOB FROM ID
-		var level=0;
-		var o=this.FindLobById(id);																					// Point at lob
-		while (o.parent) {																							// While not root
-			o=this.FindLobById(o.parent);																			// Set id to parent and go up hierarchy
-			++level;																								// Increase level
-			}
-		return level;																								// Return level of lob
-	}
-
-	FindAskById(id) 																							// FIND PTR TO ASK FROM ID
-	{	
-		var i,n=this.asks.length;
-		for (i=0;i<n;++i) {																							// For each ask
-			if (id == this.asks[i].id) 																				// A match
-				return this.asks[i];																				// Return ptr to ask
-			}
-		return null;																								// Not found
-	}
+/// MANAGEMENT //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	AddNewLob(parent, id, name)																					// ADD NEW LOB
+	{
+		if (parent < 0)	return;
+		if (!id)	id=this.UniqueId();																				// If not spec'd add unique id
+		if (!name)	name="Rename this";																				// And name
+		this.lobs.push({ name:name, id:id, status:0, body:"", parent:parent, kids:[], children:[]});				// Add lob
+		parent=this.FindLobById(parent);																			// Point at parent lob
+		parent.children.push(id);																					// Add lob id to children	
+		parent.kids.push(this.lobs.length-1);																		// Add lob index to kids	
+	}
+
+	RemoveLob(id)																								// REMOVE LOB
+	{
+	}
+
+	ChangeOrder(lobId, parent)																					// CHANGE LOB'S ORDER VIA PARENT OR PLACE IN CHILDREN
+	{
+		var i=this.FindLobIndexById(lobId);																			// Get index of lob to move	
+		if (i < 0)	return;																							// Quit if invalid
+		var j=this.FindLobIndexById(parent);																		// Get index of lob to move to	
+		if (j < 0)	return;																							// Quit if invalid
+		if (this.lobs[j].parent == this.lobs[i].parent)	{															// Pointing to same parent
+			var ii,fromKid,fromChild;
+			var o=this.FindLobById(this.lobs[j].parent);															// Point at parent lob
+			for (ii=0;ii<o.children.length;++ii) 																	// For reach child
+				if (o.children[ii] == lobId)  {																		// Save from point
+					fromKid=o.kids[ii];																				// Save from kids value
+					fromChild=o.children[ii];																		// Save from child value
+					o.kids.splice(ii,1);																			// Remove from from kids
+					o.children.splice(ii,1);																		// Remove from from children
+					break;
+					}
+			for (ii=0;ii<o.children.length;++ii) 																	// For reach child
+				if (o.children[ii] == parent)  {																	// Save from point
+					o.kids.splice(ii,0,fromKid);																	// Add from kids
+					o.children.splice(ii,0,fromChild);																// Add from children
+					break;
+					}
+		}
+	else{	
+		this.lobs[i].parent=parent;																					// Set new parent
+		this.AddChildList();																						// Remake childen/kids arrays
+		}
+	}
+
+
 	GetMastery(num) 																							// GET MASTERY OF LOB AT POSITION
 	{	
 		var numNodes=-1,done=0;
@@ -132,6 +129,77 @@ class Doc {
 		else																										// Last
 			this.curPos=0;																							// Loop around
 	}
+
+/// DATA HELPERS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	FindLobParent(level, index) 																				// FIND INDEX OF LOB PARENT
+	{		
+		var i,par;
+		while (1) {																									// Loop
+			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
+			if (par == -1)																						// If at root
+				return -1;																							// Return root
+			if (this.lobs[index].level == level) 																	// At desired level
+				return index;																						// Return index
+			else																									// Still under it
+				index=par;																							// Go up a level
+			}
+	}
+
+	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
+		var i,n=this.lobs.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.lobs[i].id) 																				// A match
+				return this.lobs[i];																				// Return ptr to lob
+			}
+		return null;																								// Not found
+		}
+
+	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
+		var i,n=this.lobs.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.lobs[i].id) 																				// A match
+				return i;																							// Return ptr to lob
+			}
+		return -1;																									// Not found
+		}
+
+	FindLobLevelById(id) {																						// FIND LEVEL OF LOB FROM ID
+		var level=0;
+		var o=this.FindLobById(id);																					// Point at lob
+		while (o.parent) {																							// While not root
+			o=this.FindLobById(o.parent);																			// Set id to parent and go up hierarchy
+			if (!o)	return 0;																						// At root level
+			++level;																								// Increase level
+			}
+		return level;																								// Return level of lob
+	}
+
+	FindAskById(id) 																							// FIND PTR TO ASK FROM ID
+	{	
+		var i,n=this.asks.length;
+		for (i=0;i<n;++i) {																							// For each ask
+			if (id == this.asks[i].id) 																				// A match
+				return this.asks[i];																				// Return ptr to ask
+			}
+		return null;																								// Not found
+	}
+	
+	IterateLobs(callback) 																						// ITERATE THROUGH FLAT LOB LIST
+	{
+		var _this=this;																								// Context
+		iterate(0);																									// Start process																					
+		
+		function iterate(index) {																				// RECURSIVE FUNCTION
+			var i;
+			var o=_this.lobs[index];																				// Point at lob
+			callback(index,o.id);																					// Show progress
+			for (i=0;i<o.children.length;i++) 																		// For each child 
+				iterate(o.kids[i]);																					// Recurse using cild index
+			}
+	}	
+
+/// MISC //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	UniqueId() 																									// MAKE UNIQUE ID
 	{	
