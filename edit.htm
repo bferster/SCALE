@@ -13,9 +13,12 @@
 	<script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; box-sizing: border-box;	}
-		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none;
+		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none; min-width:1600px;
 							}
-		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px);
+		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px); min-width:500px;
+							}
+		.wm-confirm {		position: absolute;  width: 300px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
+							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
 							}
 		.wm-content {		width:1000px; overflow:hidden; float:right; margin-right:24px; 
 							}
@@ -31,13 +34,13 @@
 							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
 							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
-							font-size: 14px; text-align:center; display: none;
+							text-align:center; display: none;
 							}
 		.wm-is {			border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
 							border:1px solid #999;font-size:12px;height:20px;
 							}
 		.wm-bs {			border-radius: 16px; padding-left: 8px; padding-right: 8px; display: inline-block; height: 17px; padding-top: 1px;
-							font-size: 12px; background-color: #27ae5fb2; cursor: pointer; text-align: center; color:#fff; 
+							font-size: 12px; background-color: #27ae5fb2; cursor: pointer; text-align: center; color:#fff; user-select: none;
 							}
 		.wm-tree {      	user-select: none; width: 100%; margin-left:40px;
 							padding: 0px 0; font-size: 14px; text-align: left; 
@@ -160,39 +163,47 @@ class App  {
 	function DrawNav()															// DRAW COURSE NAVIGATION
 	{
 		var i,o
-		if (app.doc.lobs.length > 1) {												// If loaded
-			$("#courseTitle").html(app.doc.lobs[0].name);							// Show course name
-			var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";			// Tree label
-			str+="<div id='treeDiv' class='wm-tree'></div>";						// Add div to hold tree
-			str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
-			str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
-			str+="<br><br><hr><br><table class='wm-navTable'>";						// Line and table
-			str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose a question"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
-			str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
-			str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose a rule"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
-			str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
-			str+="</table>";
-			str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
-			str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
-			str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
-			str+="<div id='redoBut' class='wm-bs'>Redo</div>";
-			$("#navDiv").html(str);												// Draw nav part
-			app.tree=new Tree();													// Show lobs tree				
-			app.doc.SetCurVars(2);													// Set current areas																								
-			for (i=0;i<app.rul.rules.length;++i) {									// For each rule
-				o=app.rul.rules[i];													// Point at rule
-				$("#rulesBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
-				}
-			for (i=0;i<app.doc.asks.length;++i) {									// For each ask
-				o=app.doc.asks[i];													// Point at ask
-				$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
-				}
-			$("#addPaneBut").on("click", ()=> {  									// Add new pane
-				app.doc.AddNewLob(app.tree.curPaneId); 								// Add lob
-				Sound("ding"); 														// Ding
+		if (app.doc.lobs.length < 2)												// If not loaded yet
+			return
+		$("#courseTitle").html(app.doc.lobs[0].name);								// Show course name
+		var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";				// Tree label
+		str+="<div id='treeDiv' class='wm-tree'></div>";							// Add div to hold tree
+		str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
+		str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
+		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
+		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose a question"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
+		str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
+		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose a rule"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
+		str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
+		str+="</table>";
+		str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
+		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
+		str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
+		str+="<div id='redoBut' class='wm-bs'>Redo</div>";
+		$("#navDiv").html(str);														// Draw nav part
+		app.tree=new Tree();														// Show lobs tree				
+		app.doc.SetCurVars(2);														// Set current areas																								
+		for (i=0;i<app.rul.rules.length;++i) {										// For each rule
+			o=app.rul.rules[i];														// Point at rule
+			$("#rulesBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
+			}
+		for (i=0;i<app.doc.asks.length;++i) {										// For each ask
+			o=app.doc.asks[i];														// Point at ask
+			$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
+			}
+		$("#addPaneBut").on("click", ()=> {  										// Add new pane
+			app.doc.AddNewLob(app.tree.curPaneId); 									// Add lob
+			Sound("ding"); 															// Ding
+			app.tree.Init();														// Remake tree
+			});
+
+		$("#removePaneBut").on("click", ()=> {  									// Remove pane
+			ConfirmBox("Are you sure?", "This will remove any underlying panes!", ()=> {	// If sure
+				app.doc.UnlinkLob(app.tree.curPaneId) 								// Remove it
+				Sound("delete");													// Delete sound
 				app.tree.Init();													// Remake tree
 				});
-			}
+			});
 	}	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,8 +260,6 @@ class App  {
 	
 }																						// Class closure
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TREE  
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,12 +277,13 @@ class App  {
 			var str="<ul><li class='parent active'><a id='tr-10'>Student Flourishing</a>";
 	str+="<ul><li><a id='tr--2'>Week 2</a></ul>";	str+="<ul><li><a id='tr--3'>Week 3</a></ul>";	str+="<ul><li><a id='tr--4'>Week 4</a></ul>";	str+="<ul><li><a id='tr--5'>Week 5</a></ul>"; str+="<ul><li><a id='tr--6'>Week 6</a></ul>";	str+="<ul><li><a id='tr--7'>Week 7</a></ul>";	str+="<ul><li><a id='tr--8'>Week 8</a></ul>";
 			$("#treeDiv").html(str+"</ul>");												// Add to tree div
-			this.AddChildren($("#tr-10"),0);													// Add children to tree
-			$("#tr-10").parent().children('ul').slideToggle('fast');            				// Open course
+			this.AddChildren($("#tr-10"),0);												// Add children to tree
+			$("#tr-10").parent().children('ul').slideToggle('fast');            			// Open course
 			$("[id^=tr-]").draggable( {	revert:true });										// Make lines draggable to change parent
 			$("[id^=tr-]").droppable( {														// Make lines droppable to change parent
 				drop: function(e,ui) {														// On drop
-					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3)); // Rearrange
+					var mode=e.shiftKey ? "shift" : "move";									// Move or shift
+					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3),mode); // Rearrange
 					_this.Init();															// Re-init tree	
 					Sound("ding");															// Ding
 					}
@@ -322,14 +332,35 @@ class App  {
 		for (i=0;i<o.children.length;++i) 													// For each child
 			this.AddChildren($("#tr-"+o.children[i]),o.kids[i]);							// Recurse
 		}
-
 }																						// Class closure
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	function ConfirmBox(title, content, callback)										// CONFIRMATION BOX
+	{
+		Sound("ding");																		// Ding sound
+		$("#confirmBoxDiv").remove();														// Remove 
+		$("body").append("<div class='wm-confirm' id='confirmBoxDiv'></div>");														
+		var str="<img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px; color:#666'><b>"+title+"</b></span><br>";
+		str+="<p>"+content+"<p>";
+		str+="<div style='float:right'><div id='confirmOK' class='wm-bs'>OK</div>";
+		str+="<div id='confirmCancel' class='wm-bs' style='margin-left:8px;background-color:#999'>Cancel</div></div>";
+		$("#confirmBoxDiv").html(str);	
 	
+		$("#confirmOK").on("click", function() {											// ON OK BUT
+				$("#confirmBoxDiv").remove();												// Remove 
+				if (callback)	callback();													// If callback defines, run it
+				});
+
+		$("#confirmCancel").on("click", function() {										// ON CANCEL BUT
+				$("#confirmBoxDiv").remove();												// Remove 
+				Sound("delete");															// Delete sound
+				});
+	}
+
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
 		var	str="<select class='wm-is' id='"+id+"'";							// Header

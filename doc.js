@@ -67,17 +67,27 @@ class Doc {
 		parent.kids.push(this.lobs.length-1);																		// Add lob index to kids	
 	}
 
-	RemoveLob(id)																								// REMOVE LOB
+	UnlinkLob(id)																								// UNLINK LOB
 	{
+		var i=this.FindLobIndexById(id);																			// Get index
+		if (i <= 0)	return;																							// Root or invalid index
+		var o=this.FindLobById(this.lobs[i].parent);																// Get pointer parent
+		if (!o)			return;																						// Invalid parent
+		for (i=0;i<o.children.length;++i) 																			// For each child
+			if (o.children[i] == id)  {																				// Matches this id
+				o.kids.splice(i,1);																					// Remove from from kids
+				o.children.splice(i,1);																				// Remove from from children
+				break;
+				}
 	}
 
-	ChangeOrder(lobId, parent)																					// CHANGE LOB'S ORDER VIA PARENT OR PLACE IN CHILDREN
+	ChangeOrder(lobId, parent, mode)																			// CHANGE LOB'S ORDER VIA PARENT OR PLACE IN CHILDREN
 	{
 		var i=this.FindLobIndexById(lobId);																			// Get index of lob to move	
 		if (i < 0)	return;																							// Quit if invalid
 		var j=this.FindLobIndexById(parent);																		// Get index of lob to move to	
 		if (j < 0)	return;																							// Quit if invalid
-		if (this.lobs[j].parent == this.lobs[i].parent)	{															// Pointing to same parent
+		if ((this.lobs[j].parent == this.lobs[i].parent) && (mode == "shift"))	{									// Pointing to same parent
 			var ii,fromKid,fromChild;
 			var o=this.FindLobById(this.lobs[j].parent);															// Point at parent lob
 			for (ii=0;ii<o.children.length;++ii) 																	// For reach child
