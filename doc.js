@@ -10,6 +10,7 @@ class Doc {
 	constructor(id)																								// CONSTRUCTOR
 	{
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
+		this.map=[];																								// Map of mobs in order
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
 		this.curPos=0;																								// Start at lesson
@@ -59,7 +60,7 @@ class Doc {
 	AddNewLob(parent, id, name)																					// ADD NEW LOB
 	{
 		if (parent < 0)	return;
-		if (!id)	id=this.UniqueId();																				// If not spec'd add unique id
+		if (!id)	id=this.UniqueLobId(parent);																	// If not spec'd add unique id based on parent
 		if (!name)	name="Rename this";																				// And name
 		this.lobs.push({ name:name, id:id, status:0, body:"", parent:parent, kids:[], children:[]});				// Add lob
 		parent=this.FindLobById(parent);																			// Point at parent lob
@@ -111,7 +112,6 @@ class Doc {
 		}
 	}
 
-
 	GetMastery(num) 																							// GET MASTERY OF LOB AT POSITION
 	{	
 		var numNodes=-1,done=0;
@@ -134,9 +134,13 @@ class Doc {
 
 	NextLob() 																									// ADVANCE THROUGH LOB
 	{	
-		if (this.curPos < this.lobs.length-1)																		// If not last
-			this.curPos++;																							// Advance
-		else																										// Last
+		var i;
+		this.IterateLobs();																							// Make new mob map						
+		for (i=0;i<this.map.length;++i)																				// Find index of active mob
+			if (this.map[i] == this.curLobId) 																		// A match
+				break;																								// Quit looking
+		this.curPos=i+1;																							// Advance to next
+		if (this.curPos >= this.map.length-1)																		// If last
 			this.curPos=0;																							// Loop around
 	}
 
@@ -194,36 +198,51 @@ class Doc {
 			}
 		return null;																								// Not found
 	}
+
+	FindAskIndexById(id) {																						// FIND INDEX OF ASK FROM ID
+		var i,n=this.asks.length;
+		for (i=0;i<n;++i) {																							// For each lob
+			if (id == this.laskss[i].id) 																			// A match
+				return i;																							// Return ptr to lob
+			}
+		return -1;																									// Not found
+		}
 	
 	IterateLobs(callback) 																						// ITERATE THROUGH FLAT LOB LIST
 	{
 		var _this=this;																								// Context
+		this.map=[];																								// Clear mob map
 		iterate(0);																									// Start process																					
-		
+
 		function iterate(index) {																				// RECURSIVE FUNCTION
 			var i;
 			var o=_this.lobs[index];																				// Point at lob
-			callback(index,o.id);																					// Show progress
+			_this.map.push(o.id);																					// Save map
+			if (callback) 	callback(index,o.id);																	// Show progress, if a callback defined
 			for (i=0;i<o.children.length;i++) 																		// For each child 
 				iterate(o.kids[i]);																					// Recurse using cild index
 			}
-	}	
+
+		}	
 
 /// MISC //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	UniqueId() 																									// MAKE UNIQUE ID
+	UniqueLobId(id) 																							// MAKE UNIQUE LOB ID BASED ON PARENT
 	{	
-		var i,index;
-		var ts=+new Date;																							// Get date
-		var id=ts.toString();																						// Start with timestamp				
-		var parts=id.split("").reverse();																			// Mix them up
-		var n=parts.length-1;																						// Max
-		var s=id.length;																							// Start digit
-		for (i=s;i<s+8;++i) {																						// Add 8 random digits
-			index=Math.floor(Math.random()*n);																		// Get index
-			id+=parts[index];																						// Add to id 
-			}
-		return ""+id;																								// Return unique id	as string													
+		var nid,add=1;																								// Add number																				
+		nid=id+""+add;																								// Add number to parent
+		while (this.FindLobById(nid))																				// While not unique
+			nid=id+"."+(++add);																						// Add to count until it is																					
+		return nid;																									// Return unique id												
+	}
+
+	UniqueAskId(id) 																							// MAKE UNIQUE ASK ID BASED ON PARENT
+	{	
+		var nid,add=1;																								// Add number																				
+		nid=id+""+add;																								// Add number to parent
+		while (this.FindAskById(nid))																				// While not unique
+			nid=id+"."+(++add);																						// Add to count until it is																					
+		return nid;																									// Return unique id												
 	}
 
 	GDriveLoad(id) 																								// LOAD FROM GOOGLE DRIVE

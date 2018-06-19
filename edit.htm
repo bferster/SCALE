@@ -13,9 +13,9 @@
 	<script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; box-sizing: border-box;	}
-		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none; min-width:1600px;
+		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none; min-width:1500px;
 							}
-		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px); min-width:500px;
+		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px); min-width:400px;
 							}
 		.wm-confirm {		position: absolute;  width: 300px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
 							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
@@ -32,12 +32,15 @@
 							}
 		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
+		.wm-stepEditor {	width:500px; overflow:hidden; margin:24px; background-color: #fff; border: 1px solid #999;
+							padding:32px; border-radius: 16px;
+							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
 							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
 							text-align:center; display: none;
 							}
-		.wm-is {			border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
-							border:1px solid #999;font-size:12px;height:20px;
+		.wm-is {			border-radius:10px; padding-left:8px; padding-right:8px; padding-top:1px;
+							border:1px solid #999; font-size:12px; height:20px; width:200px;
 							}
 		.wm-bs {			border-radius: 16px; padding-left: 8px; padding-right: 8px; display: inline-block; height: 17px; padding-top: 1px;
 							font-size: 12px; background-color: #27ae5fb2; cursor: pointer; text-align: center; color:#fff; user-select: none;
@@ -142,7 +145,7 @@ class App  {
 	
 	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
-			app.doc.IterateLobs(function(a) { trace(a); });						
+			app.doc.IterateLobs();													// Make mo						
 			}
 		});
 
@@ -172,14 +175,11 @@ class App  {
 		str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
 		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
 		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose a question"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
-		str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
 		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose a rule"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
-		str+="<td>&nbsp;<img id='removeAskBut' style='vertical-align:-5px' src='img/trashbut.gif'></td></td></tr>";	// Trash button
 		str+="</table>";
 		str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
-		str+="<div id='redoBut' class='wm-bs'>Redo</div>";
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
 		app.doc.SetCurVars(2);														// Set current areas																								
@@ -191,6 +191,12 @@ class App  {
 			o=app.doc.asks[i];														// Point at ask
 			$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
 			}
+
+		$("#asksBut").on("change", function() {  									// Edit ask
+			Sound("click"); 														// Click
+			app.con.Draw("ask",$(this)[0].selectedIndex-1);							// Show pane
+			});
+
 		$("#addPaneBut").on("click", ()=> {  										// Add new pane
 			app.doc.AddNewLob(app.tree.curPaneId); 									// Add lob
 			Sound("ding"); 															// Ding
@@ -252,13 +258,110 @@ class App  {
 				$("#paneId").text(id+" - "+o.id);											// Show index - id
 				$("#editorDiv").show();														// Show editor
 				}
-			else if (type == "rule") {														// Draw rule
-				}
 			else if (type == "ask") {														// Draw question
+				o=app.doc.asks[id];															// Point at lob
+				if (!o) { 																	// Invalid pane
+					this.Draw("splash");													// Show splash																								
+					return;																	// Quit
+					}
+				this.curEditId=id;															// Save id
+				this.AskEditor(o);															// Run editor
+				$("#paneId").text(id+" - "+o.id);											// Show index - id
+				}
+			else if (type == "rule") {														// Draw rule
 				}
 		}
 	
+	AskEditor(ask) 																// ASK STEP EDITOR
+	{
+		var i;
+		var o=$.parseJSON(ask.step);														// Convert to obj
+		var str="<div class='wm-stepEditor'>"
+		str+="<table style='font-size:12px'>";	
+		str+="<tr><td><b>Question name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
+		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","draw","findtime","write","notes","match","sort"],o.optionType)+"</td></tr>";	// Get setting
+		str+="<tr><td><b>Title</b></td><td><input class='wm-is' type='text' id='title' value='"+(o.title ? o.title :'')+"'></td></tr>";	// Get setting
+		str+="<tr><td><b>Text</b></td><td><textarea class='wm-is' id='text'>"+(o.text ? o.text :'')+"</textarea></td></tr>";	// Get setting
+		str+="<tr><td><b>Prompt</b></td><td><textarea class='wm-is' id='prompt'>"+(o.prompt ? o.prompt :'')+"</textarea></td></tr>";	// Get setting
+		str+="<tr><td><b>Image</b></td><td><input class='wm-is' type='text' id='pic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	// Get setting
+		str+="<tr><td><b>If right answer</b></td><td><textarea class='wm-is' id='whyRight'>"+(o.whyRight ? o.whyRight :'')+"</textarea></td></tr>";	// Get setting
+		str+="<tr><td><b>If wrong answer</b></td><td><textarea class='wm-is' id='whyWrong'>"+(o.whyWrong ? o.whyWrong :'')+"</textarea></td></tr>";	// Get setting
+		str+="<tr><td><b>If partial answer</b>&nbsp;</td><td><textarea class='wm-is' id='whyPartial'>"+(o.whyPartial ? o.whyPartial :'')+"</textarea></td></tr>";	// Get setting
+		str+="<tr><td><b>If partial answer</b>&nbsp;&nbsp;</td><td><textarea class='wm-is' id='whyPartial'>"+(o.whyPartial ? o.whyPartial :'')+"</textarea></td></tr>";	// Get setting
+		str+="<tr><td><b>Number of tries</b></td><td><input class='wm-is' type='text' id='numTries' value='"+(o.numTries ? o.numTries :'')+"'></td></tr>";	// Get setting
+		str+="<tr><td><b>Allow skipping</b></td><td>"+MakeSelect("skip",false,["true","false"],o.skip)+"</td></tr>";	// Get setting
+		str+="<tr><td><b>Font size</b></td><td><input class='wm-is' type='text' id='fontSize' value='"+(o.fontSize ? o.fontSize :'Default (12)')+"'></td></tr>";	// Get setting
+		str+="<tr><td><b>Id</b></td><td><input class='wm-is' type='text' id='askId' value='"+(ask.id ? ask.id :'')+"'></td></tr>";	// Get setting
+		str+="<tr><td colspan=2><p><hr></p></td></tr>";
+		str+="<tr><td><b>Options</b></td><td><dl id='optionsTable'>";
+		if (o.options) {
+			str+="";
+			for (i=0;i<o.options.length;++i) {
+				str+="<dt id='ido"+i+"'style='height:28px'><input class='wm-is' type='text' id='idr"+i+"' value='"+(o.options[i] ? o.options[i] :'')+"'>"; 	// Add option
+				str+="&nbsp;&nbsp;&nbsp;&nbsp;&uarr;&darr;&nbsp";																			// Add arrows
+				str+="&nbsp;&nbsp;&nbsp;<img id='idd"+i+"' style='vertical-align:middle;cursor:pointer' src='img/trashbut.gif' onclick='onDeleteOption(this.id)'</dt>"
+				}
+			}		
+		str+="<dt><p><div id='addNewOptionBut' class='wm-bs'>Add new option</div></p></td><td><dt>";	
+		str+="</dl></td></tr>";																			
+		str+="<tr><td colspan=2><hr></td></tr>";
+
+		str+="</table></div><div style='margin-left:48px;margin-top:-15px'>";																		
+		str+="<div id='saveStepBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
+		str+="<img id='removeAskBut' title='Delete this question' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
+		$("#contentDiv").html(str);	
+		$("#optionsTable").sortable();
+	
+		$("#optionType").on("change", function() { o.optionType=$(this).val();});		// Extract values	
+		$("#title").on("change", function() { o.title=$(this).val(); });									
+		$("#text").on("change", function() { o.text=$(this).val(); });										
+		$("#prompt").on("change", function() { o.prompt=$(this).val(); });									
+		$("#pic").on("change",function() { o.pic=$(this).val(); });											
+		$("#whyRight").on("change", function() { o.whyRight=$(this).val(); });								
+		$("#whyWrong").on("change", function() { o.whyWrong=$(this).val(); });		
+		$("#whyPartial").on("change", function() { o.whyPartial=$(this).val()});	
+		$("#fontSize").on("change", function() { o.fontSize=$(this).val(); });		
+		$("#numTries").on("change", function() { o.numTries=$(this).val(); });	
+		$("#skip").on("change", function() { o.skip=$(this).val(); });			
+
+
+$("#askName").on("change", function() { ask.name=$(this).val(); });		
+$("#askId").on("change", function() { ask.id=$(this).val(); });			
+
+		$("#optionsTable").on("sortstop", function(e, ui) {								// If sorted
+			var v=$("#optionsTable").sortable("toArray");								// Get new order
+ 			for (i=0;i<v.length-1;++i)													// For each option, less add but
+ 				o.options[i]=$("#idr"+v[i].substr(3)).val();							// Reorder array
+ 			});
+		
+		 if (o.options)																	// If options set
+			for (i=0;i<o.options.length;++i)											// For each option
+		 		$("#idr"+i).on("change", function() { 									// Extract value	
+		 			var id=$(this)[0].id.substr(3);										// Extract id
+		 			o.options[id]=$(this).val(); 										// Set it
+		 			});
+
+	}
+
 }																						// Class closure
+
+	function onDeleteOption(id) 												// ON DELETE ASSESS
+	{	
+		id=id.substr(3);														// Strip off prefix
+		o.options.splice(id,1);													// Remove from step
+		Sound("delete");														// Delete sound
+		this.EditPage();														// Redraw page
+	}
+
+	function onAddOption() 														// ON DELETE ASSESS
+	{	
+		if (!o.options)															// First one
+			o.options=[];														// Alloc array
+		o.options.push("");														// Add new option from json
+		Sound("click");															// Delete sound
+		this.EditPage();														// Redraw page
+	}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // TREE  

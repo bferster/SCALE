@@ -8,7 +8,6 @@
 	<script src="lib/jquery.min.js"></script>
 	<script src="lib/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
-	<script src="app.js"></script>
 	<script src="doc.js"></script>
 	<script src="content.js"></script>
 	<script src="messaging.js"></script>
@@ -23,8 +22,7 @@
 							}
 		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%;  display:none;
 							}
-		.wm-header { 		background-color: #bbb; width:100%; color:#fff;
-							padding: 8px 0px;
+		.wm-header { 		background-color: #bbb; width:100%; color:#fff;	padding: 8px 0px; user-select: none;
 							}
 		.wm-logo { 			height:40px; vertical-align: top; margin:0px 16px; cursor:pointer;
 							}
@@ -37,18 +35,17 @@
 		.wm-lessonTri { 	width: 0; height: 0; border-left: 7px solid transparent;  border-right: 7px solid transparent;
    							border-top: 7px solid #fff; cursor:pointer; display:inline-block;
 							}
-		.wm-content { 		width:100%; max-width:1000px;  margin: 8px auto; 
-							border: 1px solid #ccc;background-color: #fff;
+		.wm-content { 		width:100%; max-width:1000px;  margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
 							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden;
 							}
 		.wm-contentBody { 	overflow:auto; height:calc(100% - 128px); width:calc(100% - 48px); padding:24px; 
 							padding-top:8px; line-height: 1.5; font-size:14px;
 							} 
 		.wm-nextBut { 		position: absolute; left:calc(50% - 34px); top:calc(100% - 190px); border-radius: 128px;
-							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 64px;
+							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 64px; user-select: none;
 							}
 		.wm-navigation { 	position: relative; height:100px; width:100%; top: calc(100% + 16px);
-							max-width:924px;  margin: 0px auto;
+							max-width:924px;  margin: 0px auto; user-select: none;
 							}
 		.wm-topicBar { 		position: absolute; width:calc(100% - 32px); height:3px; top:29px; left:16px;
 							background-color: #999; border-radius:4px;
@@ -167,6 +164,35 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		app.msg.OnMessage(e);												// Route
 }
   
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// APP
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class App  {																								 // APP
+
+	constructor(id)   																							// CONSTRUCTOR
+	{
+		app=this;
+		this.allowResize=true;																						// Redraw after a resize
+		this.doc=new Doc(id);																						// Alloc doc w/ course id
+		this.con=new Content();																						// Content
+		this.nav=new Navigation();																					// Navigation
+		this.msg=new Messaging();																					// Messaging
+		this.rul=new Rules();																						// Rules
+		this.Draw(); 																								// Draw app
+	}
+
+	Draw(index) 																								// REDRAW
+	{
+		if ((index != undefined) && (index >= 0))																	// A valid index
+			this.doc.curPos=index;																					// Set new index
+		this.wid=$(window).width();																					// Get window width			
+		this.hgt=$(window).height();																				// Height
+		app.doc.Draw();																								// Reset various params
+		this.con.Draw();																							// Draw container
+		this.nav.Draw();																							// Draw navigator and header
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
