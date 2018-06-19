@@ -13,9 +13,9 @@
 	<script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; box-sizing: border-box;	}
-		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none; min-width:1500px;
+		.wm-main { 			width:100%; height:calc(100vh - 4px); overflow:auto; background-color: #eee; display:none; min-width:1450px;
 							}
-		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px); min-width:400px;
+		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px); min-width:360px; 
 							}
 		.wm-confirm {		position: absolute;  width: 300px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
 							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
@@ -32,7 +32,7 @@
 							}
 		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
-		.wm-stepEditor {	width:500px; overflow:hidden; margin:24px; background-color: #fff; border: 1px solid #999;
+		.wm-stepEditor {	width:525px; overflow:hidden; margin:24px; background-color: #fff; border: 1px solid #999;
 							padding:32px; border-radius: 16px;
 							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
@@ -40,7 +40,7 @@
 							text-align:center; display: none;
 							}
 		.wm-is {			border-radius:10px; padding-left:8px; padding-right:8px; padding-top:1px;
-							border:1px solid #999; font-size:12px; height:20px; width:200px;
+							border:1px solid #999; font-size:12px; height:20px; width:300px;
 							}
 		.wm-bs {			border-radius: 16px; padding-left: 8px; padding-right: 8px; display: inline-block; height: 17px; padding-top: 1px;
 							font-size: 12px; background-color: #27ae5fb2; cursor: pointer; text-align: center; color:#fff; user-select: none;
@@ -174,8 +174,8 @@ class App  {
 		str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
 		str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
 		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
-		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose a question"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
-		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose a rule"])+"</td><td>&nbsp;<div class='wm-bs'>Add</div></td>";
+		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAskBut' class='wm-bs'>Add</div></td>";
+		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose"])+"</td><td>&nbsp;<div id='addRuleBut'  class='wm-bs'>Add</div></td>";
 		str+="</table>";
 		str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
@@ -210,6 +210,15 @@ class App  {
 				app.tree.Init();													// Remake tree
 				});
 			});
+
+		$("addAskBut").on("click", function() { 									// ON ADD QUESTION
+			_this.asks.push({ id="000", name:"Change this!", step:{ optionType:"radio"}});
+			$("#asksBut").append("<option>000 - Change this!</option>");			// Add option
+			$("#asksBut")[0].selectedIndex=_this.asks.length-1;						// Select it
+			Sound("ding");															// Ding sound
+			_this.Draw("ask",_this.asks.length-1);									// Show editor																							
+			});
+
 	}	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,10 +281,11 @@ class App  {
 				}
 		}
 	
-	AskEditor(ask) 																// ASK STEP EDITOR
+	AskEditor(ask) 																	// ASK STEP EDITOR
 	{
 		var i;
-		var o=$.parseJSON(ask.step);														// Convert to obj
+		var o=$.parseJSON(ask.step);													// Convert to obj
+		var _this=this;																	// Save context		
 		var str="<div class='wm-stepEditor'>"
 		str+="<table style='font-size:12px'>";	
 		str+="<tr><td><b>Question name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
@@ -287,7 +297,6 @@ class App  {
 		str+="<tr><td><b>If right answer</b></td><td><textarea class='wm-is' id='whyRight'>"+(o.whyRight ? o.whyRight :'')+"</textarea></td></tr>";	// Get setting
 		str+="<tr><td><b>If wrong answer</b></td><td><textarea class='wm-is' id='whyWrong'>"+(o.whyWrong ? o.whyWrong :'')+"</textarea></td></tr>";	// Get setting
 		str+="<tr><td><b>If partial answer</b>&nbsp;</td><td><textarea class='wm-is' id='whyPartial'>"+(o.whyPartial ? o.whyPartial :'')+"</textarea></td></tr>";	// Get setting
-		str+="<tr><td><b>If partial answer</b>&nbsp;&nbsp;</td><td><textarea class='wm-is' id='whyPartial'>"+(o.whyPartial ? o.whyPartial :'')+"</textarea></td></tr>";	// Get setting
 		str+="<tr><td><b>Number of tries</b></td><td><input class='wm-is' type='text' id='numTries' value='"+(o.numTries ? o.numTries :'')+"'></td></tr>";	// Get setting
 		str+="<tr><td><b>Allow skipping</b></td><td>"+MakeSelect("skip",false,["true","false"],o.skip)+"</td></tr>";	// Get setting
 		str+="<tr><td><b>Font size</b></td><td><input class='wm-is' type='text' id='fontSize' value='"+(o.fontSize ? o.fontSize :'Default (12)')+"'></td></tr>";	// Get setting
@@ -299,68 +308,79 @@ class App  {
 			for (i=0;i<o.options.length;++i) {
 				str+="<dt id='ido"+i+"'style='height:28px'><input class='wm-is' type='text' id='idr"+i+"' value='"+(o.options[i] ? o.options[i] :'')+"'>"; 	// Add option
 				str+="&nbsp;&nbsp;&nbsp;&nbsp;&uarr;&darr;&nbsp";																			// Add arrows
-				str+="&nbsp;&nbsp;&nbsp;<img id='idd"+i+"' style='vertical-align:middle;cursor:pointer' src='img/trashbut.gif' onclick='onDeleteOption(this.id)'</dt>"
+				str+="&nbsp;&nbsp;&nbsp;<img id='idd"+i+"' style='vertical-align:middle;cursor:pointer' src='img/trashbut.gif'</dt>"
 				}
 			}		
-		str+="<dt><p><div id='addNewOptionBut' class='wm-bs'>Add new option</div></p></td><td><dt>";	
-		str+="</dl></td></tr>";																			
-		str+="<tr><td colspan=2><hr></td></tr>";
-
-		str+="</table></div><div style='margin-left:48px;margin-top:-15px'>";																		
+		str+="</dl></td></tr></table>";																			
+		str+="<div style='text-align:center'><div id='addNewOptionBut' class='wm-bs'>Add new option</div></div>";	
+		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
 		str+="<div id='saveStepBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
-		str+="<img id='removeAskBut' title='Delete this question' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
+		str+="<img id='removeStepBut' title='Delete this question' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
 		$("#contentDiv").html(str);	
 		$("#optionsTable").sortable();
 	
-		$("#optionType").on("change", function() { o.optionType=$(this).val();});		// Extract values	
-		$("#title").on("change", function() { o.title=$(this).val(); });									
-		$("#text").on("change", function() { o.text=$(this).val(); });										
-		$("#prompt").on("change", function() { o.prompt=$(this).val(); });									
-		$("#pic").on("change",function() { o.pic=$(this).val(); });											
-		$("#whyRight").on("change", function() { o.whyRight=$(this).val(); });								
-		$("#whyWrong").on("change", function() { o.whyWrong=$(this).val(); });		
-		$("#whyPartial").on("change", function() { o.whyPartial=$(this).val()});	
-		$("#fontSize").on("change", function() { o.fontSize=$(this).val(); });		
-		$("#numTries").on("change", function() { o.numTries=$(this).val(); });	
-		$("#skip").on("change", function() { o.skip=$(this).val(); });			
-
-
-$("#askName").on("change", function() { ask.name=$(this).val(); });		
-$("#askId").on("change", function() { ask.id=$(this).val(); });			
-
-		$("#optionsTable").on("sortstop", function(e, ui) {								// If sorted
-			var v=$("#optionsTable").sortable("toArray");								// Get new order
- 			for (i=0;i<v.length-1;++i)													// For each option, less add but
- 				o.options[i]=$("#idr"+v[i].substr(3)).val();							// Reorder array
+		$("#optionsTable").on("sortstop", function(e, ui) {									// If sorted
+			var v=$("#optionsTable").sortable("toArray");									// Get new order
+ 			for (i=0;i<v.length-1;++i)														// For each option, less add but
+ 				o.options[i]=$("#idr"+v[i].substr(3)).val();								// Reorder array
  			});
 		
-		 if (o.options)																	// If options set
-			for (i=0;i<o.options.length;++i)											// For each option
-		 		$("#idr"+i).on("change", function() { 									// Extract value	
-		 			var id=$(this)[0].id.substr(3);										// Extract id
-		 			o.options[id]=$(this).val(); 										// Set it
-		 			});
+		 if (o.options)																		// If options set
+			for (i=0;i<o.options.length;++i) {												// For each option
+				 $("#idd"+i).on("click", function() { 										// Extract value	
+					var id=$(this)[0].id.substr(3);											// Extract id
+					$("#ido"+id).remove();													// Remove option from menu
+					Sound("delete");														// Delete sound
+					});
+				}
+	
+		$("#addNewOptionBut").on("click", function() { 										// ON ADD NEW OPTION	
+			if (!o.options)	o.options=[];													// First one, so alloc array
+			o.options.push("");																// Add new option
+			var i=o.options.length-1;														// Index	
+			var str="<dt id='ido"+i+"'style='height:28px'><input class='wm-is' type='text' id='idr"+i+"' value=''>"; 	
+			str+="&nbsp;&nbsp;&nbsp;&nbsp;&uarr;&darr;&nbsp";														
+			str+="&nbsp;&nbsp;&nbsp;<img id='idd"+i+"' style='vertical-align:middle;cursor:pointer' src='img/trashbut.gif'</dt>";
+			$("#optionsTable").append(str);													// Add line to table
+			Sound("click");																	// Delete sound
+			
+			$("#idd"+i).on("click", function() { 											// ADD TRASH HANDLER	
+					var id=$(this)[0].id.substr(3);											// Extract id
+					o.options.splice(id,1);													// Remove from step
+					$("#ido"+id).remove();													// Remove option from menu
+					Sound("delete");														// Delete sound
+					});
+			});
 
-	}
+		$("#saveStepBut").on("click", function() { 											// ON SAVE STEP
+				var i;
+				o.optionType=$("#optionType").val();	o.title=$("#title").val();								
+				o.text=$("#text").val();				o.prompt=$("#text").val();									
+				o.pic=$("#pic").val();					o.whyRight=$("#whyRight").val();								
+				o.whyWrong=$("#whyWrong").val();		o.whyPartial=$("#whyPartial").val();	
+				o.fontSize=$("#fontSize").val();		o.numTries=$("#numTries").val();	
+				o.skip=$("#skip").val();				ask.name=$("#askName").val();
+				ask.id=$("#askId").val();
+				for (i=0;i<o.options.length;++i) 	o.options[i]=$("#idr"+i).val();			// Get options
+				ask.step=JSON.stringify(o);													// Copy at JSON string
+				$('#asksBut').find(":selected").text(ask.id+" - "+ask.name);				// Rename pulldown			
+				$("#asksBut")[0].selectedIndex=0;											// Clear selection
+				Sound("ding");																// Ding sound
+				_this.Draw("splash");														// Show splash																								
+				});
+		
+		$("#removeStepBut").on("click", function() { 										// ON REMOVE STEP
+				ConfirmBox("Are you sure?","This will remove this question from your course.", ()=> {	// If sure
+				app.doc.asks.splice($('#asksBut')[0].selectedIndex-1,1);					// Remove from rules
+				$('#asksBut').find(":selected").remove();									// Remove from pulldown			
+				$("#asksBut")[0].selectedIndex=0;											// Clear selection
+				Sound("delete");															// Delete sound
+				_this.Draw("splash");														// Show splash																								
+				});
+			});
+		}																					// EditStep() closure
+	}																						// Class closure
 
-}																						// Class closure
-
-	function onDeleteOption(id) 												// ON DELETE ASSESS
-	{	
-		id=id.substr(3);														// Strip off prefix
-		o.options.splice(id,1);													// Remove from step
-		Sound("delete");														// Delete sound
-		this.EditPage();														// Redraw page
-	}
-
-	function onAddOption() 														// ON DELETE ASSESS
-	{	
-		if (!o.options)															// First one
-			o.options=[];														// Alloc array
-		o.options.push("");														// Add new option from json
-		Sound("click");															// Delete sound
-		this.EditPage();														// Redraw page
-	}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,7 +486,7 @@ $("#askId").on("change", function() { ask.id=$(this).val(); });
 
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
-		var	str="<select class='wm-is' id='"+id+"'";							// Header
+		var	str="<select class='wm-is' style='width:200px' id='"+id+"'";		// Header
 		if (multi)																// Multi select
 			str+="multiple='multiple' size='"+multi+"'";						// Add flag
 		if (extra)																// If extra param
