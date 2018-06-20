@@ -176,6 +176,7 @@ class App  {
 		str+="<div id='treeDiv' class='wm-tree'></div>";							// Add div to hold tree
 		str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
 		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
+		str+="<tr><td><b>Floats&nbsp;</b></td><td>"+MakeSelect("floatsBut",false,["Choose"])+"</td><td>&nbsp;<div id='addFloatBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAskBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose"])+"</td><td>&nbsp;<div id='addRuleBut'  class='wm-bs'>Add</div></td>";
 		str+="</table>";
@@ -193,6 +194,11 @@ class App  {
 			o=app.doc.asks[i];														// Point at ask
 			$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
 			}
+		for (i=0;i<app.doc.floats.length;++i) {										// For each float
+			o=app.doc.FindLobById(app.doc.floats[i]);								// Point at float lob
+			if (o)																	// If valid
+				$("#floatsBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
+			}
 
 		$("#asksBut").on("change", function() {  									// Edit ask
 			app.con.Draw("ask",$(this)[0].selectedIndex-1);							// Show pane
@@ -202,6 +208,22 @@ class App  {
 		$("#addPaneBut").on("click", ()=> {  										// Add new pane
 			app.doc.AddNewLob(app.tree.curPaneId); 									// Add lob
 			app.tree.Init();														// Remake tree
+			Sound("ding"); 															// Ding
+			});
+
+		$("#floatsBut").on("change", function() {  									// Edit float
+			o=app.doc.FindLobById($(this).val());									// Point at float lob
+			if (o)	app.con.Draw("pane",o.id);										// Show float pane if valid
+			Sound("click"); 														// Click
+			});
+
+		$("#addFloatBut").on("click", ()=> {  										// Add new floating pane
+			app.doc.AddNewLob("float");			 									// Add lob
+			var id=app.doc.lobs[app.doc.lobs.length-1].id;							// Get id
+			app.doc.floats.push(id);												// Add to floats
+			$("#floatsBut").append("<option value='"+id+"'>"+id+" - Rename this</option>");	// Add to pulldown
+			$("#floatsBut")[0].selectedIndex=app.doc.floats.length;					// Select it
+			app.con.Draw("pane",id);												// Edit new float
 			Sound("ding"); 															// Ding
 			});
 
@@ -228,15 +250,33 @@ class App  {
 			this.Draw("splash");															// Draw content
 
 			$("#savePaneBut").on("click", ()=> {											// ON SAVE CHANGES
-				var o=app.doc.lobs[_this.curEditId];										// Point at lob
+				var o=app.doc.lobs[this.curEditId];											// Point at lob
 				o.body=CKEDITOR.instances.editor1.getData();								// Get body
 				o.name=$("#pageTitle").text();												// Get name
-				$("#tr-"+o.id).text(o.name)                             					// Reset tree name
+				var id=$("#paneId").val();													// Get current id value
+				if (id != o.id) {															// Reset
+					o.id=id;																// Set new id
+					app.doc.AddChildList();													// Remake childen/kids arrays
+					app.tree.Init();														// Remake tree
+					}
+				else																		// Same id
+					$("#tr-"+o.id).text(o.name)                             				// Reset tree name
+				if (o.parent && o.parent.match(/float/i)) {									// A floating lob
+					$('#floatsBut').find(":selected").text(o.id+" - "+o.name);				// Rename pulldown			
+					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
+					this.Draw("splash");													// Draw splash
+					}
 				Sound("ding");																// Ding
 				});
 
 			$("#removePaneBut").on("click", ()=> {  										// ON REMOVE PANE
 				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
+					var o=app.doc.lobs[this.curEditId];										// Point at lob
+					if (o.parent && o.parent.match(/float/i)) {								// A floating lob
+						app.doc.floats.splice($("#floatsBut")[0].selectedIndex,1);			// Remove from array
+						$('#floatsBut').find(":selected").remove();							// Remove from pulldown			
+						$("#floatsBut")[0].selectedIndex=0;									// Clear selection
+						}
 					app.doc.UnlinkLob(app.tree.curPaneId) 									// Remove it
 					app.tree.Init();														// Remake tree
 					this.Draw("splash");													// Draw splash
