@@ -207,7 +207,7 @@ class App  {
 
 		$("#addPaneBut").on("click", ()=> {  										// Add new pane
 			app.doc.AddNewLob(app.tree.curPaneId); 									// Add lob
-			app.tree.Init();														// Remake tree
+			app.tree.Init(app.doc.lobs[app.doc.lobs.length-1].id);					// Remake tree
 			Sound("ding"); 															// Ding
 			});
 
@@ -256,7 +256,7 @@ class App  {
 				var id=$("#paneId").val();													// Get current id value
 				if (id != o.id) {															// Reset
 					app.doc.RenameLobId(o.id,id);											// Rename lob id
-					app.tree.Init();														// Remake tree
+					app.tree.Init(id);														// Remake tree
 					}
 				else																		// Same id
 					$("#tr-"+o.id).text(o.name)                             				// Reset tree name
@@ -437,31 +437,57 @@ class App  {
 			this.Init();																	// Init tree
 		}
 
-		Init() 																			// INIT TREE
+		Init(id) 																			// INIT TREE
 		{
 			var _this=this;																	// Save context		
-			var str="<ul><li class='parent active'><a id='tr-10'>Student Flourishing</a>";
-	str+="<ul><li><a id='tr--2'>Week 2</a></ul>";	str+="<ul><li><a id='tr--3'>Week 3</a></ul>";	str+="<ul><li><a id='tr--4'>Week 4</a></ul>";	str+="<ul><li><a id='tr--5'>Week 5</a></ul>"; str+="<ul><li><a id='tr--6'>Week 6</a></ul>";	str+="<ul><li><a id='tr--7'>Week 7</a></ul>";	str+="<ul><li><a id='tr--8'>Week 8</a></ul>";
+			var o=app.doc.lobs[0];															// Point at root												
+			if (!o)	return;																	// If invalid, quit
+			var str="<ul><li class='parent active'><a id='tr-"+o.id+"'>"+o.name+"</a></li>"; // Add root tree node
+	for (var i=2;i<9;++i)	str+="<ul><li><a id='tr--"+i+"'>Week "+i+"</a></li></ul>";
 			$("#treeDiv").html(str+"</ul>");												// Add to tree div
-			this.AddChildren($("#tr-10"),0);												// Add children to tree
-			$("#tr-10").parent().children('ul').slideToggle('fast');            			// Open course
+			this.AddChildren($("#tr-"+o.id),0);												// Add children to tree
+			$("#tr-"+o.id).parent().children('ul').slideToggle('fast');            			// Open course
 			$("[id^=tr-]").draggable( {	revert:true });										// Make lines draggable to change parent
 			$("[id^=tr-]").droppable( {														// Make lines droppable to change parent
 				drop: function(e,ui) {														// On drop
 					var mode=e.shiftKey ? "shift" : "move";									// Move or shift
 					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3),mode); // Rearrange
-					_this.Init();															// Re-init tree	
+					_this.Init(ui.draggable[0].id.substr(3));								// Re-init tree	
 					Sound("ding");															// Ding
 					}
 			});
 
+
+
+
+			if (id != undefined) this.Open(id);	
 
 			$('.wm-tree li > a').on("click", function(e) {									// ON CLICK OF NODE TEXT
 				_this.handleTreeClick($(this),e);  											// Handle
 				});      
 		
 		}
+/*
+	Init2(id) 																			// INIT TREE
+		{
+			var _this=this;																	// Save context		
+			var str="<ul><li class='parent active'><a id='tr-'"+o.id+"'>"+o.name+"</a></li>";	// Root tree node
 
+				//	str+="<ul><li><a id='tr--2'>Week 2</a></ul>";	str+="<ul><li><a id='tr--3'>Week 3</a></ul>";	str+="<ul><li><a id='tr--4'>Week 4</a></ul>";	str+="<ul><li><a id='tr--5'>Week 5</a></ul>"; str+="<ul><li><a id='tr--6'>Week 6</a></ul>";	str+="<ul><li><a id='tr--7'>Week 7</a></ul>";	str+="<ul><li><a id='tr--8'>Week 8</a></ul>";
+			$("#treeDiv").html(str+"</ul>");												// Add to tree div
+			this.AddChildren($("#tr-"+o.id),0);												// Add children to tree
+			$("#tr-10").parent().children('ul').slideToggle('fast');            			// Open course
+			$("[id^=tr-]").draggable( {	revert:true });										// Make lines draggable to change parent
+			$("[id^=tr-]").droppable( {														// Make lines droppable to change parent
+				drop: function(e,ui) {														// On drop
+					var mode=e.shiftKey ? "shift" : "move";									// Move or shift
+					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3),mode); // Rearrange
+					_this.Init(ui.draggable[0].id.substr(3));								// Re-init tree	
+					Sound("ding");															// Ding
+					}
+			});
+
+*/
 		Open(id)																		// OPEN TREE AT ID
 		{
 			var i;
