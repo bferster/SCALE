@@ -65,27 +65,31 @@
 </head>
 <body>
 
-<div id="mainDiv" class="wm-main">
-		<div id="headerDiv" class="wm-header">
-			<img src="img/scaleLogoWhite.png"class="wm-logo">
-				<span id="courseTitle" class="wm-courseTitle">Course</span>
-				<span id="menuMsg" style="display:none;margin-left:32px"></span>
-				<img id="showgdoc" style="cursor:pointer;float:right;margin-right:8px" src="img/gdrive.png">
+	<div id='mainDiv' class='wm-main'>
+		<div id='headerDiv' class='wm-header'>
+			<img src='img/scaleLogoWhite.png' class='wm-logo'>
+				<span id='courseTitle' class='wm-courseTitle'>Course</span>
+				<span id='menuMsg' style='display:none;margin-left:32px'></span>
+				<img id='showgdoc' style='cursor:pointer;float:right;margin-right:8px' src='img/gdrive.png'>
 			</div>
-		<div id="navDiv" class="wm-nav"></div>
-		<div class="wm-content">
-			<div id="contentDiv"></div>
-			<div id="editorDiv">
-				<textarea class="ckeditor" id="editor1" name="editor1"></textarea>
-				<div id='savePaneBut' style='text-align:center;cursor:pointer'><img src='img/savepane.gif'></div>
-				<div style="float:right" id='paneId'></div>
+		<div id='navDiv' class='wm-nav'></div>
+		<div class='wm-content'>
+			<div id='contentDiv'></div>
+			<div id='editorDiv'>
+				<textarea class='ckeditor' id='editor1' name='editor1'></textarea>
+				<br><div style='float:right'>id: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='paneId'></div>
+				<div style='margin-left:470px'>
+					<div id='savePaneBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;
+					<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>	
+				</div>
+				<div style='float:right' id='paneId'></div>
 			</div>
 		</div>
 	</div>
-	<div id="splashDiv" class="wm-splash">
-		<img src="img/scaleLogo.png"><br><br>
-		<h1 style="font-size:18pt;font-family:trebuchet ms,sans-serif"><p></p>S C A L E &nbsp;Editor</p>Student-Centered Adaptive Learning Environment</h1>
-		<p style="font-weight:bold;font-size:48px"><b>Course editor</p>
+	<div id='splashDiv' class='wm-splash'>
+		<img src='img/scaleLogo.png'><br><br>
+		<h1 style='font-size:18pt;font-family:trebuchet ms,sans-serif'><p></p>S C A L E &nbsp;Editor</p>Student-Centered Adaptive Learning Environment</h1>
+		<p style='font-weight:bold;font-size:48px'><b>Course editor</p>
 	</div>
 		
 <script>
@@ -165,14 +169,12 @@ class App  {
 	
 	function DrawNav()															// DRAW COURSE NAVIGATION
 	{
-		var i,o
-		if (app.doc.lobs.length < 2)												// If not loaded yet
-			return
+		var i,o;
+		if (app.doc.lobs.length < 2)	return;										// Quit if not loaded yet
 		$("#courseTitle").html(app.doc.lobs[0].name);								// Show course name
 		var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";				// Tree label
 		str+="<div id='treeDiv' class='wm-tree'></div>";							// Add div to hold tree
 		str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
-		str+="<img id='removePaneBut' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
 		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
 		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAskBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose"])+"</td><td>&nbsp;<div id='addRuleBut'  class='wm-bs'>Add</div></td>";
@@ -193,30 +195,23 @@ class App  {
 			}
 
 		$("#asksBut").on("change", function() {  									// Edit ask
-			Sound("click"); 														// Click
 			app.con.Draw("ask",$(this)[0].selectedIndex-1);							// Show pane
+			Sound("click"); 														// Click
 			});
 
 		$("#addPaneBut").on("click", ()=> {  										// Add new pane
 			app.doc.AddNewLob(app.tree.curPaneId); 									// Add lob
-			Sound("ding"); 															// Ding
 			app.tree.Init();														// Remake tree
+			Sound("ding"); 															// Ding
 			});
 
-		$("#removePaneBut").on("click", ()=> {  									// Remove pane
-			ConfirmBox("Are you sure?", "This will remove any underlying panes!", ()=> {	// If sure
-				app.doc.UnlinkLob(app.tree.curPaneId) 								// Remove it
-				Sound("delete");													// Delete sound
-				app.tree.Init();													// Remake tree
-				});
-			});
-
-		$("addAskBut").on("click", function() { 									// ON ADD QUESTION
-			_this.asks.push({ id="000", name:"Change this!", step:{ optionType:"radio"}});
+		$("#addAskBut").on("click", ()=> { 											// ON ADD QUESTION
+			var o={id:"000", name:"Change this!", step:"{\"optionType\":\"radio\",\"options\":[]}"};	// Step
+			app.doc.asks.push(o);													// Add to asks
 			$("#asksBut").append("<option>000 - Change this!</option>");			// Add option
-			$("#asksBut")[0].selectedIndex=_this.asks.length-1;						// Select it
+			$("#asksBut")[0].selectedIndex=app.doc.asks.length-1;					// Select it
+			app.con.Draw("ask",app.doc.asks.length-1);								// Show editor																							
 			Sound("ding");															// Ding sound
-			_this.Draw("ask",_this.asks.length-1);									// Show editor																							
 			});
 
 	}	
@@ -229,17 +224,26 @@ class App  {
 
 		constructor()  																	// CONSTRUCTOR
 		{
-			var _this=this;																	// Save context		
 			this.curEditId=0;																// Id of current pane
 			this.Draw("splash");															// Draw content
 
-			$("#savePaneBut").on("click", function() {										// Save edits
+			$("#savePaneBut").on("click", ()=> {											// ON SAVE CHANGES
 				var o=app.doc.lobs[_this.curEditId];										// Point at lob
 				o.body=CKEDITOR.instances.editor1.getData();								// Get body
 				o.name=$("#pageTitle").text();												// Get name
 				$("#tr-"+o.id).text(o.name)                             					// Reset tree name
 				Sound("ding");																// Ding
 				});
+
+			$("#removePaneBut").on("click", ()=> {  										// ON REMOVE PANE
+				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
+					app.doc.UnlinkLob(app.tree.curPaneId) 									// Remove it
+					app.tree.Init();														// Remake tree
+					this.Draw("splash");													// Draw splash
+					Sound("delete");														// Delete sound
+					});
+			});
+
 		}
 
 		Draw(type, id)																	// DRAW
@@ -264,7 +268,7 @@ class App  {
 				$("#contentDiv").html(str);													// Add page title
 				CKEDITOR.instances.editor1.setData(o.body);									// Add body data
 				this.curEditId=id;															// Save id
-				$("#paneId").text(id+" - "+o.id);											// Show index - id
+				$("#paneId").val(o.id);														// Show  id
 				$("#editorDiv").show();														// Show editor
 				}
 			else if (type == "ask") {														// Draw question
@@ -275,8 +279,7 @@ class App  {
 					}
 				this.curEditId=id;															// Save id
 				this.AskEditor(o);															// Run editor
-				$("#paneId").text(id+" - "+o.id);											// Show index - id
-				}
+					}
 			else if (type == "rule") {														// Draw rule
 				}
 		}
