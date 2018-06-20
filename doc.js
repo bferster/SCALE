@@ -84,6 +84,18 @@ class Doc {
 				}
 	}
 
+	RenameLobId(oldId, newId)																					// RENAME LOB's ID
+	{
+		var i;
+		var o=this.FindLobById(oldId);																				// Get pointer to lob
+		if (!o) return;																								// Quit if bad
+		o.id=newId;																									// Set new id
+		for (i=0;i<this.lobs.length;++i)																			// For each lob
+			if (this.lobs[i].parent == oldId)																		// If parent is this old id
+				this.lobs[i].parent=newId;																			// Change it to the new one
+		this.AddChildList();																						// Remake chilrens/kids
+		}
+
 	ChangeOrder(lobId, parent, mode)																			// CHANGE LOB'S ORDER VIA PARENT OR PLACE IN CHILDREN
 	{
 		var i=this.FindLobIndexById(lobId);																			// Get index of lob to move	

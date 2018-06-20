@@ -149,7 +149,7 @@ class App  {
 	
 	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
-			app.doc.IterateLobs();													// Make mo						
+			app.tree.Open(30);																		
 			}
 		});
 
@@ -255,14 +255,14 @@ class App  {
 				o.name=$("#pageTitle").text();												// Get name
 				var id=$("#paneId").val();													// Get current id value
 				if (id != o.id) {															// Reset
-					o.id=id;																// Set new id
-					app.doc.AddChildList();													// Remake childen/kids arrays
+					app.doc.RenameLobId(o.id,id);											// Rename lob id
 					app.tree.Init();														// Remake tree
 					}
 				else																		// Same id
 					$("#tr-"+o.id).text(o.name)                             				// Reset tree name
 				if (o.parent && o.parent.match(/float/i)) {									// A floating lob
 					$('#floatsBut').find(":selected").text(o.id+" - "+o.name);				// Rename pulldown			
+					$('#floatsBut').find(":selected").val(o.id);							// Rename pulldown value		
 					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
 					this.Draw("splash");													// Draw splash
 					}
@@ -456,10 +456,29 @@ class App  {
 			});
 
 
-			$('.wm-tree li > a').on("click", function(e) {								// ON CLICK OF NODE TEXT
+			$('.wm-tree li > a').on("click", function(e) {									// ON CLICK OF NODE TEXT
 				_this.handleTreeClick($(this),e);  											// Handle
 				});      
 		
+		}
+
+		Open(id)																		// OPEN TREE AT ID
+		{
+			var i;
+			var row=$("#tr-"+id);															// Trace row
+			var par=row.parent();															// Point at previous line
+			$('.wm-tree li a').each( function() {                          					// For each line
+				$(this).css({"color":"#000","font-weight":"normal"});      					// Normal
+				}); 
+			row.css({"color":"#009900","font-weight":"bold"});          					// Bold and green   
+			for (i=0;i<20;++i) {															// Iterate upwards
+				if ($(par).attr("class") == "wm-tree")	break;								// Quit at top of tree
+				if ($(par).attr("class") == "parent") {										// Has children
+					par.addClass('active');                         						// Active class on 
+					par.children('ul').slideToggle('fast');            						// Slide into place
+					}
+				par=par.parent();															// Up a level
+				}
 		}
 
 	handleTreeClick(row, e)																// HANDLE TREE CLICK
