@@ -236,6 +236,22 @@ class App  {
 			Sound("ding");															// Ding sound
 			});
 
+		$("#rulesBut").on("change", function() {  									// Edit ask
+			app.con.Draw("rule",$(this)[0].selectedIndex-1);						// Show pane
+			Sound("click"); 														// Click
+			});
+		
+		$("#addRuleBut").on("click", ()=> { 										// ON ADD RULE
+			var o={id:"000", name:"Change this!", verb:"=", do:"show"};				// Rule
+			app.rul.rules.push(o);													// Add to rules
+			$("#rulesBut").append("<option>000 - Change this!</option>");			// Add option
+			$("#rulesBut")[0].selectedIndex=app.rul.rules.length-1;					// Select it
+			app.con.Draw("rule",app.rul.rules.length-1);							// Show editor																							
+			Sound("ding");															// Ding sound
+			});
+
+
+
 	}	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,25 +328,80 @@ class App  {
 				$("#editorDiv").show();														// Show editor
 				}
 			else if (type == "ask") {														// Draw question
-				o=app.doc.asks[id];															// Point at lob
+				o=app.doc.asks[id];															// Point at ask
 				if (!o) { 																	// Invalid pane
 					this.Draw("splash");													// Show splash																								
 					return;																	// Quit
 					}
 				this.curEditId=id;															// Save id
-				this.AskEditor(o);															// Run editor
-					}
+				this.QuestionEditor(o);														// Run editor
+				}
 			else if (type == "rule") {														// Draw rule
+				o=app.rul.rules[id];														// Point at rule
+				if (!o) { 																	// Invalid pane
+					this.Draw("splash");													// Show splash																								
+					return;																	// Quit
+					}
+				this.curEditId=id;															// Save id
+				this.RuleEditor(o);															// Run editor
 				}
 		}
 	
-	AskEditor(ask) 																	// ASK STEP EDITOR
+	RuleEditor(r)																		// RULE EDITOR
+	{
+		var str="<div class='wm-stepEditor'>";
+		str+="<table>";
+		str+="<tr><td><img src='img/scalelogo.png' width='32'/></td><td><span style='font-size:30px'><b>Rule Editor</b></span><br><b</td></tr>";	
+		str+="<tr><td colspan='2'><br></td></tr>";	
+		str+="<tr><td><b>IF</b></td><td><input class='wm-is' type='text' id='ruleSub' value='"+(r.subject ? r.subject :'')+"'></td></tr>";	
+		str+="<tr><td><b>IS</b></td><td>"+MakeSelect("ruleVerb",false,["Equal","Not equal","Less than","Less than or equal","Greater than","Greater than or equal"],r.verb,"",["=","!=","<","<=",">",">="])+"</td></tr>";	
+		str+="<tr><td><b>TO</b></td><td><input class='wm-is' type='text' id='ruleSub' value='"+(r.trigger ? r.trigger :'')+"'></td></tr>";	
+		str+="<tr><td><b>THEN&nbsp;</b></td><td>"+MakeSelect("ruleDo",false,["Show pane","Set status","Set var name"],r.do,"",["SHOW","STATUS","VAR"])+"</td></tr>";	
+		str+="<tr><td><b>OF</b></td><td><input class='wm-is' type='text' id='ruleObj' value='"+(r.object ? r.object :'')+"'></td></tr>";	
+		str+="<tr><td colspan='2'><br></td></tr>";	
+		str+="<tr><td><b>Name</b></td><td><input class='wm-is' type='text' id='nameId' value='"+(r.name ? r.name :'')+"'></td></tr>";	
+		str+="<tr><td><b>Id</b></td><td><input class='wm-is' type='text' id='RuleId' value='"+(r.id ? r.id :'')+"'></td></tr>";	
+		str+="</table>";																			
+		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
+		str+="<div id='saveRuleBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
+		str+="<img id='removeRuleBut' title='Delete this rule' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
+		$("#contentDiv").html(str);	
+
+		$("#saveRulepBut").on("click", function() { 										// ON SAVE RULE
+				var i;
+				o.optionType=$("#optionType").val();	o.title=$("#title").val();								
+				o.text=$("#text").val();				o.prompt=$("#text").val();									
+				o.pic=$("#pic").val();					o.whyRight=$("#whyRight").val();								
+				o.whyWrong=$("#whyWrong").val();		o.whyPartial=$("#whyPartial").val();	
+				o.fontSize=$("#fontSize").val();		o.numTries=$("#numTries").val();	
+				o.skip=$("#skip").val();				ask.name=$("#askName").val();
+				ask.id=$("#askId").val();
+				for (i=0;i<o.options.length;++i) 	o.options[i]=$("#idr"+i).val();			// Get options
+				$('#asksBut').find(":selected").text(ask.id+" - "+ask.name);				// Rename pulldown			
+				$("#asksBut")[0].selectedIndex=0;											// Clear selection
+				Sound("ding");																// Ding sound
+				_this.Draw("splash");														// Show splash																								
+				});
+		
+		$("#removeRuleBut").on("click", function() { 										// ON REMOVE RULE
+				ConfirmBox("Are you sure?","This will remove this question from your course.", ()=> {	// If sure
+				app.doc.asks.splice($('#asksBut')[0].selectedIndex-1,1);					// Remove from rules
+				$('#asksBut').find(":selected").remove();									// Remove from pulldown			
+				$("#asksBut")[0].selectedIndex=0;											// Clear selection
+				Sound("delete");															// Delete sound
+				_this.Draw("splash");														// Show splash																								
+				});
+			});
+
+}
+
+	QuestionEditor(ask) 																	// ASK STEP EDITOR
 	{
 		var i;
 		var o=$.parseJSON(ask.step);													// Convert to obj
 		var _this=this;																	// Save context		
-		var str="<div class='wm-stepEditor'>"
-		str+="<table style='font-size:12px'>";	
+		var str="<div class='wm-stepEditor'><table style='font-size:12px'>";
+		str+="<tr><td><img src='img/scalelogo.png' width='32'/></td><td><span style='font-size:30px'><b>Question Editor</b></span><br><br><b</td></tr>";	
 		str+="<tr><td><b>Question name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
 		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","draw","findtime","write","notes","match","sort"],o.optionType)+"</td></tr>";	// Get setting
 		str+="<tr><td><b>Title</b></td><td><input class='wm-is' type='text' id='title' value='"+(o.title ? o.title :'')+"'></td></tr>";	// Get setting
