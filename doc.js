@@ -10,7 +10,6 @@ class Doc {
 	constructor(id)																								// CONSTRUCTOR
 	{
 		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
-		this.floats=[];																								// Floating lobs
 		this.map=[];																								// Map of mobs in order
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
@@ -57,18 +56,56 @@ class Doc {
 	}
 	
 /// MANAGEMENT //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
+
+	MakeTabFile()																							// MAKE TAB-DELINEATED FILE OF COURSE
+	{
+		var i,o,str=""
+		this.IterateLobs((i,id)=> {																					// Iterate through list in order
+			var o=this.lobs[i];																						// Point at lob
+			str+=makeTSVLine("lob",o.id,o.name,o.parent,o.body);													// Add connected lob
+			});		
+		str+="\n";																									// Add blank line
+		for (i=1;i<this.lobs.length;++i) {																			// For each lob	
+			var o=this.lobs[i];																						// Point at lob
+			if (!this.FindLobById(o.parent))																		// Not connected anywhere
+				str+=makeTSVLine("lob",o.id,o.name,o.parent,o.body);												// Add un connected connected lob
+			}
+		str+="\n";																									// Add blank line
+		for (i=0;i<app.rul.rules.length;++i) {																		// For each rule	
+			var o=app.rul.rules[i];																					// Point at rule
+			var s="IF "+o.subject+" "+o.verb+" "+o.trigger+" THEN "+o.do+" "+o.object;								// Remake text rule
+			str+=makeTSVLine("rul",o.id,o.name,"",s);																// Add rule
+			}
+		str+="\n";																									// Add blank line
+		for (i=0;i<app.doc.asks.length;++i) {																		// For each ask	
+			var o=app.doc.asks[i];																					// Point at ask
+			str+=makeTSVLine("ask",o.id,o.name,"",o.step);															// Add ask
+			}
+
+		function makeTSVLine(type, id, name, parent, body) {														// CREATE TSV OF LOB																				
+			var s=type+"\t";																						// Save type
+			s+=(id ? (""+id).replace(/(\n|\r|\t)/g,"") : "")+"\t";													// Id, remove CRs/LFs/TABs
+			s+=(name ? (""+name).replace(/(\n|\r|\t)/g,"") : "")+"\t";												// Name 
+			s+=(parent ? (""+parent).replace(/(\n|\r|\t)/g,"") : "")+"\t";											// Parent 
+			s+=(body ? (""+body).replace(/(\n|\r|\t)/g,"") : "")+"\n";												// Body 
+			return s;																								// Return TSV line
+			}
+		return str;																									// Return tab-delimited version
+		}
+
 	AddNewLob(parent, id, name)																					// ADD NEW LOB
 	{
 		if (parent < 0)	return;																						// Quit on invalid parent
 		if (!id)	id=this.UniqueLobId(parent);																	// If not spec'd add unique id based on parent
 		if (!name)	name="Rename this";																				// And name
 		this.lobs.push({ name:name, id:id, status:0, body:"", parent:parent, kids:[], children:[]});				// Add lob
-		if (parent == "float")	return;																				// Floters don't need to be connected
 		parent=this.FindLobById(parent);																			// Point at parent lob
-		parent.children.push(id);																					// Add lob id to children	
-		parent.kids.push(this.lobs.length-1);																		// Add lob index to kids	
-	}
+		if (parent) {																								// If has a parent
+			parent.children.push(id);																				// Add id to children	
+			parent.kids.push(this.lobs.length-1);																	// Add index to kids	
+			}
+		}
 
 	UnlinkLob(id)																								// UNLINK LOB
 	{
@@ -271,14 +308,11 @@ class Doc {
 			csv=csv.split("\n");																					// Split into lines
 			_this.lobs=[];																							// Init lobs
 			_this.asks=[];																							// Init assessment
-			_this.floats=[];																						// Init floats
 			app.rules=[];
 			for (i=1;i<csv.length;++i) {																			// For each line
 				v=csv[i].split("\t");																				// Split into fields
-				if (v[0] == "lob") {																				// A lob
+				if (v[0] == "lob") 																				// A lob
 					_this.lobs.push({ name:v[2], id:v[1]-0, parent:v[3], body:v[4], status:0 });					// Add learning object
-					if (v[3] && v[3].match(/float/i))	_this.floats.push(v[1])										// Add to floats if a float
-					}	
 				else if (v[0] == "ask")																				// An assessment step
 					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add ask
 				else if (v[0] == "rule")	{																		// A Rule

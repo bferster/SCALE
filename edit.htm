@@ -108,6 +108,7 @@ class App  {
 		this.doc=new Doc(id);														// Alloc doc w/ course id
 		this.rul=new Rules();														// Rules
 		this.con=new Content();														// Alloc content
+		this.floats=[];																// Holds floats
 		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
 	}
@@ -185,6 +186,7 @@ class App  {
 		str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
+		str+="<br><br><textarea id='outputDiv' class='wm-is'style='height:50px;width:auto;overflow:hidden'></textarea>";
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
 		app.doc.SetCurVars(2);														// Set current areas																								
@@ -196,11 +198,17 @@ class App  {
 			o=app.doc.asks[i];														// Point at ask
 			$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
 			}
-		for (i=0;i<app.doc.floats.length;++i) {										// For each float
-			o=app.doc.FindLobById(app.doc.floats[i]);								// Point at float lob
-			if (o)																	// If valid
+		for (i=1;i<app.doc.lobs.length;++i) {										// For each lob
+			o=app.doc.lobs[i];														// Point at  lob
+			if (!app.doc.FindLobById(o.parent))										// If no parent
 				$("#floatsBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
 			}
+
+		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
+			str=app.doc.MakeTabFile();												// Create TSV file
+			$("#outputDiv").val(str);												// Show it
+			Sound("ding"); 															// Ding
+			});
 
 		$("#asksBut").on("change", function() {  									// Edit ask
 			app.con.Draw("ask",$(this)[0].selectedIndex-1);							// Show pane
@@ -220,11 +228,11 @@ class App  {
 			});
 
 		$("#addFloatBut").on("click", ()=> {  										// Add new floating pane
-			app.doc.AddNewLob("float");			 									// Add lob
+			app.doc.AddNewLob("000");			 									// Add lob
 			var id=app.doc.lobs[app.doc.lobs.length-1].id;							// Get id
-			app.doc.floats.push(id);												// Add to floats
+			app.floats.push(id);													// Add to floats
 			$("#floatsBut").append("<option value='"+id+"'>"+id+" - Rename this</option>");	// Add to pulldown
-			$("#floatsBut")[0].selectedIndex=app.doc.floats.length;					// Select it
+			$("#floatsBut")[0].selectedIndex=app.floats.length+1;					// Select it
 			app.con.Draw("pane",id);												// Edit new float
 			Sound("ding"); 															// Ding
 			});
@@ -278,7 +286,7 @@ class App  {
 					}
 				else																		// Same id
 					$("#tr-"+o.id).text(o.name)                             				// Reset tree name
-				if (o.parent && o.parent.match(/float/i)) {									// A floating lob
+				if (!app.doc.FindLobById(o.parent)) {										// A floating lob
 					$('#floatsBut').find(":selected").text(o.id+" - "+o.name);				// Rename pulldown			
 					$('#floatsBut').find(":selected").val(o.id);							// Rename pulldown value		
 					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
@@ -291,7 +299,7 @@ class App  {
 				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
 					var o=app.doc.lobs[this.curEditId];										// Point at lob
 					if (o.parent && o.parent.match(/float/i)) {								// A floating lob
-						app.doc.floats.splice($("#floatsBut")[0].selectedIndex,1);			// Remove from array
+						app.floats.splice($("#floatsBut")[0].selectedIndex,1);			// Remove from array
 						$('#floatsBut').find(":selected").remove();							// Remove from pulldown			
 						$("#floatsBut")[0].selectedIndex=0;									// Clear selection
 						}
