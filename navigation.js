@@ -80,7 +80,7 @@ class Navigation {
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
-				str+=`<span id='stepBar-${i}' class='wm-stepBarItem' style='`;
+				str+=`<span id='stepBar-${i}' class='wm-stepBarItem' style='`;										// Use ES6 templates!
 				id=app.doc.lobs[app.doc.curConcept].children[i];													// Get concept id
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color

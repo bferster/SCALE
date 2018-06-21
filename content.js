@@ -36,7 +36,7 @@ class Content  {
 			str+=l.body ? l.body : "";																				// Add body
 			if (ifr=str.match(/scalemedia\((.+)\)/i)) {																// If a media tag
 				var w=99.5,b=0;																						// Assume full width
-				var h=$("#contentDiv").height()-216;																// Set default height												
+				var h=$("#contentDiv").height()-180;																// Set default height												
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				if (ifr[1])		h=h*ifr[1]/100;																		// Calc height based on height percentage
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too

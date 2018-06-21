@@ -38,17 +38,17 @@
 		.wm-content { 		width:100%; max-width:1000px;  margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
 							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden;
 							}
-		.wm-contentBody { 	overflow:auto; height:calc(100% - 128px); width:calc(100% - 48px); padding:24px; 
-							padding-top:8px; line-height: 1.5; font-size:14px;
+		.wm-contentBody { 	overflow:auto; height:calc(100% - 110px); width:calc(100% - 48px); padding:8px 24px 0px 24px; 
+							line-height: 1.5; font-size:14px;
 							} 
-		.wm-nextBut { 		position: absolute; left:calc(50% - 34px); top:calc(100% - 190px); border-radius: 128px;
-							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 64px; user-select: none;
+		.wm-nextBut { 		position: absolute; left:calc(50% - 16px); top:calc(100% - 155px); border-radius: 32px;
+							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 32px; user-select: none;
 							}
 		.wm-navigation { 	position: relative; height:100px; width:100%; top: calc(100% + 16px);
-							max-width:924px;  margin: 0px auto; user-select: none;
+							max-width:924px;  margin: 0px auto; user-select: none; white-space:nowrap;
 							}
 		.wm-topicBar { 		position: absolute; width:calc(100% - 32px); height:3px; top:29px; left:16px;
-							background-color: #999; border-radius:4px;
+							background-color: #999; border-radius:4px; 
 							}
 		.wm-topicDotDiv { 	position:absolute; top:4px;
 							}
@@ -65,7 +65,7 @@
 							}
 		.wm-conceptBar:hover{ border:1px solid #6699ff;
 							}
-		.wm-stepBar { 		position: absolute; text-align:center; top: 80px; font-size: 11px; width:100%;
+		.wm-stepBar { 		position: absolute; text-align:center; top: 80px; font-size: 11px; width:100%; 
 							}
 		.wm-stepBarItem { 	color:#333; padding: 0 16px;  cursor:pointer;
 							}
@@ -130,7 +130,7 @@ $(window).resize(function() {                                         	// ON WIN
 	});
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
-	if (window.location.host != "loocalhost") {								// Not in debug
+	if (window.location.host != "localhost") {								// Not in debug
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();						// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);								// Wait, and fade in main
 		}	
@@ -198,6 +198,17 @@ class App  {																								 // APP
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	function GetTypicalCharWidth()											// GET PIXELS PER DEFAULT CHAR	
+	{
+		
+		var o=$("<div>Abc defhig</div>")										// A "typical" string
+			.css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hiddeen' })
+            .appendTo($('body'));
+    	 var w=o.width();														// Get width
+		 o.remove();															// Kill div
+		 return w/10;																// Return average size
+	}
+	
 	function DialogBox(title, content, width, callback, callback2) 			// DIALOG BOX
 	{
 		$("#dialogDiv").remove();												
