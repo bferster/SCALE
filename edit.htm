@@ -4,6 +4,7 @@
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
 	<title>S C A L E &nbsp;Course Editor</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -38,14 +39,14 @@
 							padding:32px; border-radius: 16px;
 							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
-							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
+							border-radius: 8px; background-color: #fff; border: 1px solid #009900; box-shadow: 4px 2px 12px 2px #aaa; 
 							text-align:center; display: none;
 							}
 		.wm-is {			border-radius:10px; padding-left:8px; padding-right:8px; padding-top:1px;
 							border:1px solid #999; font-size:12px; height:20px; width:300px;
 							}
 		.wm-bs {			border-radius: 16px; padding-left: 8px; padding-right: 8px; display: inline-block; height: 17px; padding-top: 1px;
-							font-size: 12px; background-color: #27ae5fb2; cursor: pointer; text-align: center; color:#fff; user-select: none;
+							font-size: 12px; background-color: #27ae5f; cursor: pointer; text-align: center; color:#fff; user-select: none;
 							}
 		.wm-tree {      	user-select: none; width: 100%; margin-left:40px;
 							padding: 0px 0; font-size: 14px; text-align: left; 
@@ -90,8 +91,8 @@
 	</div>
 	<div id='splashDiv' class='wm-splash'>
 		<img src='img/scalelogo.png'><br><br>
-		<h1 style='font-size:18pt;font-family:trebuchet ms,sans-serif'><p></p>S C A L E &nbsp;Editor</p>Student-Centered Adaptive Learning Environment</h1>
-		<p style='font-weight:bold;font-size:48px'><b>Course editor</p>
+		<h1 style='font-size:18pt;font-family:trebuchet ms,sans-serif'><p>S C A L E &nbsp;Editor</p>Student-Centered Adaptive Learning Environment</h1>
+		<p style='font-weight:bold;font-size:48px'><b>Course editor</b></p>
 	</div>
 		
 <script>
@@ -134,7 +135,7 @@ class App  {
 			window.attachEvent("message",eventHandler);								// Add handler
 
 	var h=$(window).height()-300;													// Editor height
-	if (window.location.host != "localhost") {										// Not in debug
+	if (window.location.host != "loocalhost") {										// Not in debug
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();								// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);										// Wait, and fade in main
 		}	
@@ -142,6 +143,7 @@ class App  {
 		$("#mainDiv").fadeIn(0),h+=44;												// Load fast (account for CK sizing bug)
 	
 	var url=window.location.search.substring(1);						   			// Get query string
+	if (url == "demo") url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";			// Demo url
 	if (!url)	url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// If id set, use it
 	app=new App(url);																// Alloc doc w/ course id
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
@@ -207,7 +209,13 @@ class App  {
 		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
 			str=app.doc.MakeTabFile();												// Create TSV file
 			$("#outputDiv").val(str);												// Show it
-			Sound("ding"); 															// Ding
+			$("#outputDiv")[0].select();											// Select div
+			try {
+				if (document.execCommand('copy')) {									// Copy to clipboard
+					Sound("ding");													// Ding
+					PopUp("Course<br>spreadsheet<br>copied to clipboard");			// Show popup
+					}
+				} catch (err) { console.log("Clipboard copy error")}				// Show error
 			});
 
 		$("#asksBut").on("change", function() {  									// Edit ask
@@ -536,6 +544,7 @@ class App  {
 
 			$('.wm-tree li > a').on("click", function(e) {									// ON CLICK OF NODE TEXT
 				_this.handleTreeClick($(this),e);  											// Handle
+				Sound("click"); 															// Click
 				});      
 		}
 
@@ -689,6 +698,21 @@ class App  {
 			snd=new Audio("img/"+sound+".mp3");									// Use mp3
 		if (!mute)																// If not initing or muting	
 			snd.play();															// Play sound
+	}
+	
+	function PopUp(msg, time, div)											// TIMED POPUP
+	{
+		var str="";
+		$("#popupDiv").remove();												// Kill old one, if any
+		str+="<div id='popupDiv' class='wm-popup'>"; 							// Add div
+		if (time == -1) {														// If has close but
+			time=100000;														// Increase time
+			str+="<img id='pu-close' src='img/closedot.gif' style='float:right;cursor:pointer'>";	// Add close button
+			}
+		str+=msg+"</div>"; 														// Add div
+		$(div ? "#"+div : "body").append(str);									// Add popup to div or body
+		$("#pu-close").click(function() { $("#popupDiv").remove(); });			// Remove on click of close but
+		$("#popupDiv").fadeIn(500).delay(time ? time : 2000).fadeOut(500)		// Animate in and out		
 	}
 
 </script>

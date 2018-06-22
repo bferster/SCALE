@@ -18,7 +18,7 @@
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px; box-sizing:border-box; 
 							padding:0;margin:0; 
 							}
-		.wm-main { 			position:relative; width:100%; height:100%; overflow:hidden; background-color: #ddd; display:none;
+		.wm-main { 			position:relative; width:100%; height:100%; background-color: #ddd; display:none;
 							}
 		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%;  display:none;
 							}
@@ -35,8 +35,8 @@
 		.wm-lessonTri { 	width: 0; height: 0; border-left: 7px solid transparent;  border-right: 7px solid transparent;
    							border-top: 7px solid #fff; cursor:pointer; display:inline-block;
 							}
-		.wm-content { 		width:100%; max-width:1000px;  margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
-							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden;
+		.wm-content { 		width:100%; max-width:1000px; margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
+							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden; height:100%; min-height:500px;
 							}
 		.wm-contentBody { 	overflow:auto; height:calc(100% - 110px); width:calc(100% - 48px); padding:8px 24px 0px 24px; 
 							line-height: 1.5; font-size:14px;
@@ -138,6 +138,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		$("#mainDiv").fadeIn(0);											// Load fast
 	
 	var url=window.location.search.substring(1);						   	// Get query string
+	if (url =="demo") url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";	// Demo url
 	if (!url)																// No lobs id set
 		url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// Use this one
 	app=new App(url);                                                      	// Alloc app

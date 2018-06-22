@@ -60,7 +60,8 @@ class Doc {
 
 	MakeTabFile()																							// MAKE TAB-DELINEATED FILE OF COURSE
 	{
-		var i,o,str=""
+		var i,o;
+		var str=makeTSVLine("type","id","name","parent","body");													// Add header
 		this.IterateLobs((i,id)=> {																					// Iterate through list in order
 			var o=this.lobs[i];																						// Point at lob
 			str+=makeTSVLine("lob",o.id,o.name,o.parent,o.body);													// Add connected lob
@@ -296,48 +297,52 @@ class Doc {
 		return nid;																									// Return unique id												
 	}
 
-	GDriveLoad(id) 																								// LOAD FROM GOOGLE DRIVE
+	InitFromTSV(tsv)																							// INIT APP DATA FROM TSV FILE
+	{
+		var i,v;
+		this.lobs=[];																								// Init lobs
+		this.asks=[];																								// Init assessment
+		app.rul.rules=[];																							// Init rules
+		tsv=tsv.replace(/\\r/,"");																					// Remove CRs
+		tsv=tsv.split("\n");																						// Split into lines
+		for (i=1;i<tsv.length;++i) {																				// For each line
+			v=tsv[i].split("\t");																					// Split into fields
+			if (v[0] == "lob") 																						// A lob
+				this.lobs.push({ name:v[2], id:v[1]-0, parent:v[3], body:v[4], status:0 });							// Add learning object
+			else if (v[0] == "ask")																					// An assessment step
+				this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});													// Add ask
+			else if (v[0] == "rul")	{																				// A Rule
+				var o={id:v[1]-0, name:v[2] };																		// Base
+				v[4]=v[4].replace(/ +/g," ");																		// Single space
+				v=v[4].split(" ");																					// Split by space														
+				if (v.length < 6)	continue;																		// Skip if now well formed
+				o.subject=v[1];		o.verb=v[2];  	o.trigger=v[3];													// Left
+				o.do=v[5];			o.object=v[6];																	// Right
+				app.rul.rules.push(o);																				// Add step
+				}
+			}
+this.lobs[2].status=this.lobs[5].status=this.lobs[7].status=this.lobs[8].status=10;
+		this.AddChildList();																						// Add children	
+		app.Draw();																									// Reset data positions
+	}
+
+	GDriveLoad(id) 																								// LOAD DOC FROM GOOGLE DRIVE
 	{
 		var _this=this;																								// Save context
 		var str="https://docs.google.com/spreadsheets/d/"+id+"/export?format=tsv";									// Access tto
 		var xhr=new XMLHttpRequest();																				// Ajax
 		xhr.open("GET",str);																						// Set open url
-		xhr.onload=function() { 																					// On successful load
-			var i,v,csv;
-			if (xhr.responseText) csv=xhr.responseText.replace(/\\r/,"");											// Remove CRs
-			csv=csv.split("\n");																					// Split into lines
-			_this.lobs=[];																							// Init lobs
-			_this.asks=[];																							// Init assessment
-			app.rules=[];
-			for (i=1;i<csv.length;++i) {																			// For each line
-				v=csv[i].split("\t");																				// Split into fields
-				if (v[0] == "lob") 																				// A lob
-					_this.lobs.push({ name:v[2], id:v[1]-0, parent:v[3], body:v[4], status:0 });					// Add learning object
-				else if (v[0] == "ask")																				// An assessment step
-					_this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});											// Add ask
-				else if (v[0] == "rule")	{																		// A Rule
-					var o={id:v[1]-0, name:v[2] };																	// Base
-					v[4]=v[4].replace(/ +/g," ");																	// Single space
-					v=v[4].split(" ");																				// Split by space														
-					if (v.length < 6)	continue;																	// Skip if now well formed
-					o.subject=v[1];		o.verb=v[2];  	o.trigger=v[3];												// Left
-					o.do=v[5];			o.object=v[6];																// Right
-					app.rul.rules.push(o);																			// Add step
-					}
-				}
-_this.lobs[2].status=_this.lobs[5].status=_this.lobs[7].status=_this.lobs[8].status=10;
-			_this.AddChildList();																					// Add children	
-			app.Draw();																								// Redraw
-			};			
-		xhr.onreadystatechange=function(e)  { 																		// On readystate change
+		xhr.onload=function() { _this.InitFromTSV(xhr.responseText); };												// On successful load, init app from TSV file
+		xhr.send();																									// Do it
+		
+		xhr.onreadystatechange=function(e) { 																		// ON AJAX STATE CHANGE
 			if ((xhr.readyState === 4) && (xhr.status !== 200)) {  													// Ready, but no load
 				Sound("delete");																					// Delete sound
 				PopUp("<p style='color:#990000'><b>Couldn't load Google Doc!</b></p>Make sure that <i>anyone</i><br>can view it in Google",5000); // Popup warning
 				}
 			};		
-		xhr.send();																										// Do it
 		}
-	}																												// Class closur
+	}																												// CLASS CLOSURE
 	
 	
 
