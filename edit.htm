@@ -202,8 +202,10 @@ class App  {
 			}
 		for (i=1;i<app.doc.lobs.length;++i) {										// For each lob
 			o=app.doc.lobs[i];														// Point at  lob
-			if (!app.doc.FindLobById(o.parent))										// If no parent
+			if (!app.doc.FindLobById(o.parent))	{									// If no parent
 				$("#floatsBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
+				app.floats.push(o.id);												// Add to floats
+				}
 			}
 
 		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
