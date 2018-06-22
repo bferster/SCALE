@@ -12,6 +12,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','RemoveFormat',
 			'NumberedList','BulletedList','Outdent','Indent',
 			'JustifyLeft','JustifyCenter','JustifyRight', ] },
-		{ name: 'styles', items : [	'-','Styles','Font','FontSize','TextColor' ] },
+		{ name: 'scale', items : [ 'scale' ] },
 		];
-};
+	config.extraPlugins = 'scale';	
+	};
