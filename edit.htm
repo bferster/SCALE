@@ -112,6 +112,7 @@ class App  {
 		this.floats=[];																// Holds floats
 		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
+		this.previewWin=false;														// If preview window is open or closed
 	}
 
 	Draw() 																		// REDRAW
@@ -126,8 +127,8 @@ class App  {
 // INIT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	var app=null;																// Hold course data 
-
+	var app=null;																	// Hold course data 
+	win=window.open("index.html?preview","scalePreview");
 	$(document).ready(function() {												// WHEN PAGE LOADED
 		if (window.addEventListener) 												// If supported this way
 			window.addEventListener("message",eventHandler,false);					// Add event handler
@@ -146,6 +147,7 @@ class App  {
 	if (url == "demo") url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";			// Demo url
 	if (!url)	url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// If id set, use it
 	app=new App(url);																// Alloc doc w/ course id
+	app.previewWin=window.open("index.html?preview","scalePreview");				// Open preview tab
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
 
 	$("#showgdoc").on("click",function() {											// Show google doc
@@ -154,7 +156,7 @@ class App  {
 	
 	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
-			app.tree.Open(30);																		
+			app.previewWin.focus();
 			}
 		});
 
@@ -218,6 +220,19 @@ class App  {
 					PopUp("Course<br>spreadsheet<br>copied to clipboard");			// Show popup
 					}
 				} catch (err) { console.log("Clipboard copy error")}				// Show error
+			});
+
+		$("#previewBut").on("click", ()=> {  										// ON PREVIEW COURSE
+			str=app.doc.MakeTabFile();												// Create TSV file
+			$("#outputDiv").val(str);												// Show it
+			$("#outputDiv")[0].select();											// Select div
+			if (app.previewWin && app.previewWin.closed)							// No longer open
+				app.previewWin=false;												// Force a reopen
+			if (!app.previewWin)													// No window open
+				app.previewWin=window.open("index.html?preview","scalePreview");	// Open preview tab
+			app.previewWin.postMessage("ScalePreview|"+str,"*");					// Send message						
+			app.previewWin.focus();													// Show it
+			Sound("ding"); 															// Ding
 			});
 
 		$("#asksBut").on("change", function() {  									// Edit ask

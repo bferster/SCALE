@@ -138,7 +138,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		$("#mainDiv").fadeIn(0);											// Load fast
 	
 	var url=window.location.search.substring(1);						   	// Get query string
-	if (url =="demo") url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";	// Demo url
+	if (url == "demo") url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";	// Demo url
 	if (!url)																// No lobs id set
 		url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// Use this one
 	app=new App(url);                                                      	// Alloc app
@@ -154,12 +154,14 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	$(window).on("keydown",function(e) {								// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {						// Test key (Ctrl+Alt+T)
 //			SendToIframe("ScaleAct=seek|20");
-			}
+
+
+}
 		});
  
  });									
 
- function html5MessageHandler(e)										// ON HTML5 MESSAGE
+function html5MessageHandler(e)										// ON HTML5 MESSAGE
 {
 	if (e && e.data) 														// If a valid message				
 		app.msg.OnMessage(e);												// Route

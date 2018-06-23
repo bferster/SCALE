@@ -58,6 +58,10 @@ class Messaging {
 				app.con.Draw(v[1]);																					// Draw content
 				}
 			}
+		else if (msg.match(/ScalePreview/)) {																		// Preview call
+			app.doc.InitFromTSV(msg.substr(13));																	// Init show
+			a00.Draw();																								// Redraw
+			}														
 		else
 			trace(msg)
 		}

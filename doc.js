@@ -15,9 +15,19 @@ class Doc {
 		this.vars=[];																								// Associative array to hold
 		this.curPos=0;																								// Start at lesson
 		this.courseId=id;																							// Default course id
-		this.GDriveLoad(this.courseId);																				// Load default lobs
-		this.firstName="Jerry";		this.lastName="Bruner";
-	}
+		if (id == "preview") {																						// Preview instructions
+			var str="<br><br><p style='text-align:center'><img src='img/scalelogo.png'>";
+			str+="<br>This tab will show previews of your course.";
+			str+="<br>Return on the <b> SCALE Course Editor tab</b> to begin editing</p>";
+			this.lobs[0].name="Preview";
+			this.lobs[0].body=str;
+			this.firstName=this.lastName="";
+			}
+		else{																										// Normal load
+			this.GDriveLoad(this.courseId);																			// Load default lobs
+			this.firstName="Jerry";		this.lastName="Bruner";
+			}
+		}
 
 	AddChildList()																								// ADD LIST OF CHILDREN
 	{	
