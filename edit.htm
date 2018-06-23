@@ -113,7 +113,9 @@ class App  {
 		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
 		this.previewWin=false;														// If preview window is open or closed
-	}
+		this.undos=[];
+		this.curUndo=0;																// Undo counter
+		}
 
 	Draw() 																		// REDRAW
 	{
@@ -121,7 +123,24 @@ class App  {
 		this.con.Draw();															// Reset various params
 		DrawNav();																	// Draw navigation
 	}
-}
+
+	Do()																		// DO
+	{
+		this.undos[this.curUndo]=app.doc.MakeTabFile();								// Save undo
+		this.curUndo++;																// Inc undo count
+trace(this.curUndo)
+	}
+	
+	UnDo()																		// UNDO
+	{
+		if (this.curUndo < 1)														// Nothing to undo
+			return;																	// Quit
+		app.doc.InitFromTSV(this.undos[this.curUndo-1]);							// Init show from undo
+		app.Draw();																	// Redraw
+		this.curUndo--;																// Dec undo count
+	}
+
+}																					// CLASS CLOSURE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // INIT
@@ -209,6 +228,10 @@ class App  {
 				app.floats.push(o.id);												// Add to floats
 				}
 			}
+		$("#undoBut").on("click", ()=> {  											// ON UNDO
+			app.UnDo();																// Undo action
+			Sound("ding");															// Ding
+			});
 
 		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
 			str=app.doc.MakeTabFile();												// Create TSV file
@@ -235,24 +258,26 @@ class App  {
 			Sound("ding"); 															// Ding
 			});
 
-		$("#asksBut").on("change", function() {  									// Edit ask
+		$("#asksBut").on("change", function() {  									// ON EDIT ASK
 			app.con.Draw("ask",$(this)[0].selectedIndex-1);							// Show pane
 			Sound("click"); 														// Click
 			});
 
-		$("#addPaneBut").on("click", ()=> {  										// Add new pane
+		$("#addPaneBut").on("click", ()=> {  										// ON ADD NEW PANE
 			app.doc.AddNewLob(app.tree.curPaneId); 									// Add lob
-			app.tree.Init(app.doc.lobs[app.doc.lobs.length-1].id);					// Remake tree
+			var id=app.doc.lobs[app.doc.lobs.length-1].id;							// New id
+			app.tree.Init(id);														// Remake tree
+			app.con.Draw("pane",id);												// Edit new pane
 			Sound("ding"); 															// Ding
 			});
 
-		$("#floatsBut").on("change", function() {  									// Edit float
+		$("#floatsBut").on("change", function() {  									// ON EDIT FLOATING PANE
 			o=app.doc.FindLobById($(this).val());									// Point at float lob
 			if (o)	app.con.Draw("pane",o.id);										// Show float pane if valid
 			Sound("click"); 														// Click
 			});
 
-		$("#addFloatBut").on("click", ()=> {  										// Add new floating pane
+		$("#addFloatBut").on("click", ()=> {  										// ON ADD NEW FLOATING PANE
 			app.doc.AddNewLob("000");			 									// Add lob
 			var id=app.doc.lobs[app.doc.lobs.length-1].id;							// Get id
 			app.floats.push(id);													// Add to floats
@@ -271,7 +296,7 @@ class App  {
 			Sound("ding");															// Ding sound
 			});
 
-		$("#rulesBut").on("change", function() {  									// Edit ask
+		$("#rulesBut").on("change", function() {  									// ON EDIT ASK
 			app.con.Draw("rule",$(this)[0].selectedIndex-1);						// Show pane
 			Sound("click"); 														// Click
 			});
@@ -284,9 +309,6 @@ class App  {
 			app.con.Draw("rule",app.rul.rules.length-1);							// Show editor																							
 			Sound("ding");															// Ding sound
 			});
-
-
-
 	}	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,6 +339,7 @@ class App  {
 					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
 					this.Draw("splash");													// Draw splash
 					}
+				app.Do();																	// Save for undo
 				Sound("ding");																// Ding
 				});
 
@@ -324,13 +347,14 @@ class App  {
 				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
 					var o=app.doc.lobs[this.curEditId];										// Point at lob
 					if (o.parent && o.parent.match(/float/i)) {								// A floating lob
-						app.floats.splice($("#floatsBut")[0].selectedIndex,1);			// Remove from array
+						app.floats.splice($("#floatsBut")[0].selectedIndex,1);				// Remove from array
 						$('#floatsBut').find(":selected").remove();							// Remove from pulldown			
 						$("#floatsBut")[0].selectedIndex=0;									// Clear selection
 						}
 					app.doc.UnlinkLob(app.tree.curPaneId) 									// Remove it
 					app.tree.Init();														// Remake tree
 					this.Draw("splash");													// Draw splash
+					app.Do();																// Save for undo
 					Sound("delete");														// Delete sound
 					});
 			});
@@ -411,8 +435,9 @@ class App  {
 			$('#rulesBut').find(":selected").text(o.id+" - "+o.name);						// Rename pulldown			
 			app.rul.rules[$("#rulesBut")[0].selectedIndex-1]=o;								// Set new rule
 			$("#rulesBut")[0].selectedIndex=0;												// Clear selection
-			Sound("ding");																	// Ding sound
 			this.Draw("splash");															// Show splash																								
+			app.Do();																		// Save for undo
+			Sound("ding");																	// Ding sound
 			});
 		
 		$("#removeRuleBut").on("click", ()=> { 												// ON REMOVE RULE
@@ -420,8 +445,9 @@ class App  {
 				app.rul.rules.splice($('#rulesBut')[0].selectedIndex-1,1);					// Remove from rules
 				$('#rulesBut').find(":selected").remove();									// Remove from pulldown			
 				$("#rulesBut")[0].selectedIndex=0;											// Clear selection
-				Sound("delete");															// Delete sound
 				this.Draw("splash");														// Show splash																								
+				app.Do();																	// Save for undo
+				Sound("delete");															// Delete sound
 				});
 			});
 	}
@@ -510,8 +536,9 @@ class App  {
 				ask.step=JSON.stringify(o);													// Copy at JSON string
 				$('#asksBut').find(":selected").text(ask.id+" - "+ask.name);				// Rename pulldown			
 				$("#asksBut")[0].selectedIndex=0;											// Clear selection
-				Sound("ding");																// Ding sound
+				app.Do();																	// Save for undo
 				_this.Draw("splash");														// Show splash																								
+				Sound("ding");																// Ding sound
 				});
 		
 		$("#removeStepBut").on("click", function() { 										// ON REMOVE STEP
@@ -519,8 +546,9 @@ class App  {
 				app.doc.asks.splice($('#asksBut')[0].selectedIndex-1,1);					// Remove from rules
 				$('#asksBut').find(":selected").remove();									// Remove from pulldown			
 				$("#asksBut")[0].selectedIndex=0;											// Clear selection
-				Sound("delete");															// Delete sound
 				_this.Draw("splash");														// Show splash																								
+				app.Do();																	// Save for undo
+				Sound("delete");															// Delete sound
 				});
 			});
 		}																					// EditStep() closure
@@ -553,6 +581,7 @@ class App  {
 					var mode=e.shiftKey ? "shift" : "move";									// Move or shift
 					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3),mode); // Rearrange
 					_this.Init(ui.draggable[0].id.substr(3));								// Re-init tree	
+					app.Do();																// Save for undo
 					Sound("ding");															// Ding
 					}
 			});
