@@ -150,6 +150,7 @@ class Doc {
 		if (i < 0)	return;																							// Quit if invalid
 		var j=this.FindLobIndexById(parent);																		// Get index of lob to move to	
 		if (j < 0)	return;																							// Quit if invalid
+	
 		if ((this.lobs[j].parent == this.lobs[i].parent) && (mode == "shift"))	{									// Pointing to same parent
 			var ii,fromKid,fromChild;
 			var o=this.FindLobById(this.lobs[j].parent);															// Point at parent lob
@@ -169,8 +170,9 @@ class Doc {
 					}
 		}
 	else{	
-		this.lobs[i].parent=parent;																					// Set new parent
-		this.AddChildList();																						// Remake childen/kids arrays
+		if (!this.DescendedFrom(this.lobs[i].id,this.lobs[j].id))													// If this log is not a descendant
+			this.lobs[i].parent=parent;																				// Set new parent
+			this.AddChildList();																						// Remake childen/kids arrays
 		}
 	}
 
@@ -207,6 +209,17 @@ class Doc {
 	}
 
 /// DATA HELPERS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	DescendedFrom(lobId, testId) 																				// FIND IF  IS A DESCENDENT
+	{		
+		var par=this.FindLobById(testId);																			// Point at pareent
+		while (par) {																								// While still a parent
+			if (par.parent == lobId)	return true;																// It's in the chain
+			par=this.FindLobById(par.parent);																		// Go up a level
+			}
+		return false;																								// Not in the chain
+	}
 
 	FindLobParent(level, index) 																				// FIND INDEX OF LOB PARENT
 	{		
@@ -270,17 +283,20 @@ class Doc {
 		return -1;																									// Not found
 		}
 	
-	IterateLobs(callback) 																						// ITERATE THROUGH FLAT LOB LIST
+	IterateLobs(callback, start) 																				// ITERATE THROUGH FLAT LOB LIST
 	{
 		var _this=this;																								// Context
 		this.map=[];																								// Clear mob map
-		iterate(0);																									// Start process																					
-
-		function iterate(index) {																				// RECURSIVE FUNCTION
+		start= start ? start : 0;																					// If  start not defined, use -
+		var run=start ? false : true;																				// Don't run CB if a start defined
+		iterate(start);																								// Start process																					
+	
+		function iterate(index) {																					// RECURSIVE FUNCTION
 			var i;
 			var o=_this.lobs[index];																				// Point at lob
+			if (start == o.id)	run=true;																			// We're at the start to report
 			_this.map.push(o.id);																					// Save map
-			if (callback) 	callback(index,o.id);																	// Show progress, if a callback defined
+			if (run && callback) 	callback(index,o.id);															// Show progress, if a callback defined
 			for (i=0;i<o.children.length;i++) 																		// For each child 
 				iterate(o.kids[i]);																					// Recurse using cild index
 			}
@@ -318,11 +334,11 @@ class Doc {
 		for (i=1;i<tsv.length;++i) {																				// For each line
 			v=tsv[i].split("\t");																					// Split into fields
 			if (v[0] == "lob") 																						// A lob
-				this.lobs.push({ name:v[2], id:v[1]-0, parent:v[3], body:v[4], status:0 });							// Add learning object
+				this.lobs.push({ name:v[2], id:v[1], parent:v[3], body:v[4], status:0 });							// Add learning object
 			else if (v[0] == "ask")																					// An assessment step
-				this.asks.push({ id:v[1]-0, name:v[2], step:v[4]});													// Add ask
+				this.asks.push({ id:v[1], name:v[2], step:v[4]});													// Add ask
 			else if (v[0] == "rul")	{																				// A Rule
-				var o={id:v[1]-0, name:v[2] };																		// Base
+				var o={id:v[1], name:v[2] };																		// Base
 				v[4]=v[4].replace(/ +/g," ");																		// Single space
 				v=v[4].split(" ");																					// Split by space														
 				if (v.length < 6)	continue;																		// Skip if now well formed
@@ -331,7 +347,7 @@ class Doc {
 				app.rul.rules.push(o);																				// Add step
 				}
 			}
-this.lobs[2].status=this.lobs[5].status=this.lobs[7].status=this.lobs[8].status=10;
+//this.lobs[2].status=this.lobs[5].status=this.lobs[7].status=this.lobs[8].status=10;
 		this.AddChildList();																						// Add children	
 		app.Draw();																									// Reset data positions
 	}

@@ -9,10 +9,11 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'clipboard', items : [ 'Source','Undo','Redo' ] },
 		{ name: 'editing', items : [ 'SpellChecker', 'Scayt' ] },
 		{ name: 'insert', items : ['Table','SpecialChar','HorizontalRule','Image','Link'] },
-		{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','RemoveFormat',
-			'NumberedList','BulletedList','Outdent','Indent',
+		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Superscript','RemoveFormat',
+			'-','NumberedList','BulletedList','-','Outdent','Indent',
 			'JustifyLeft','JustifyCenter','JustifyRight', ] },
-		{ name: 'scale', items : [ 'scale' ] },
-		];
-	config.extraPlugins = 'scale';	
+		{ name: 'styles', items : ['TextColor','Font','FontSize'] },
+		{ name: 'scale', items : [ 'scale' ] }
+		]
+//	config.extraPlugins = 'scale';	
 	};

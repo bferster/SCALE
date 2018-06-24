@@ -128,7 +128,6 @@ class App  {
 	{
 		this.undos[this.curUndo]=app.doc.MakeTabFile();								// Save undo
 		this.curUndo++;																// Inc undo count
-trace(this.curUndo)
 	}
 	
 	UnDo()																		// UNDO
@@ -138,6 +137,7 @@ trace(this.curUndo)
 		app.doc.InitFromTSV(this.undos[this.curUndo-1]);							// Init show from undo
 		app.Draw();																	// Redraw
 		this.curUndo--;																// Dec undo count
+		Sound("ding");																// Ding
 	}
 
 }																					// CLASS CLOSURE
@@ -155,16 +155,16 @@ trace(this.curUndo)
 			window.attachEvent("message",eventHandler);								// Add handler
 
 	var h=$(window).height()-300;													// Editor height
-	if (window.location.host != "loocalhost") {										// Not in debug
+/*	if (window.location.host != "localhost") {										// Not in debug
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();								// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);										// Wait, and fade in main
 		}	
 	else																			// Debug
-		$("#mainDiv").fadeIn(0),h+=44;												// Load fast (account for CK sizing bug)
+*/		$("#mainDiv").fadeIn(0),h+=44;												// Load fast (account for CK sizing bug)
 	
 	var url=window.location.search.substring(1);						   			// Get query string
-	if (url == "demo") url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";			// Demo url
-	if (!url)	url="1qj6dQCS0DDR8VLHm9qpRYsS2NXtQ_7zmS2x5kMIp7Z4";					// If id set, use it
+	if (!url)																		// No lobs id set
+		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";							// Use this one
 	app=new App(url);																// Alloc doc w/ course id
 	app.previewWin=window.open("index.html?preview","scalePreview");				// Open preview tab
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
@@ -230,7 +230,6 @@ trace(this.curUndo)
 			}
 		$("#undoBut").on("click", ()=> {  											// ON UNDO
 			app.UnDo();																// Undo action
-			Sound("ding");															// Ding
 			});
 
 		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
