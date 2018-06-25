@@ -25,6 +25,7 @@ class Content  {
 
 	GetContentBody()																							// ADD LOB CONTENT
 	{	
+		var margin=0;
 		var ifr,ifs,str="";
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
@@ -34,7 +35,7 @@ class Content  {
 		str+="<div id='contentBodyDiv' class='wm-contentBody'>";													// Container div
 		if (l) {																									// Valid lob
 			str+=l.body ? l.body : "";																				// Add body
-			if (ifr=str.match(/scalemedia\((.+)\)/i)) {																// If a media tag
+			if (ifr=str.match(/scalemedia\((.+)\)/i)) {															// If a media tag
 				var w=99.5,b=0;																						// Assume full width
 				var h=$("#contentDiv").height()-180;																// Set default height												
 				ifr=(""+ifr[1]).split(",");																			// Get params
@@ -55,7 +56,21 @@ class Content  {
 				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+url+"' style='height:"+h+"px;width:66%'></iframe></div>";	// Load in iframe
 				str=str.replace(/assess\(.+\)/i,ifs);																// Get tag and replace it with iframe
 				}
+			else if (ifr=str.match(/margin\((.+)\)/i)) {															// If a margin tag
+				margin=ifr[1];																						// Set margin
+				str=str.replace(/margin\(.+\)/i,"");																// Kill tag
+				}
+			else if (ifr=str.match(/rule\((.+)\)/i)) {																// If a rule tag
+				trace(ifr[1]);																						// Set rule
+				str=str.replace(/rule\(.+\)/i,"");																	// Kill tag
+				}
 			$("#contentDiv").append(str+"</div>");																	// Set content
+	
+			if (margin)	{																							// If a margin set
+				var pct=100-margin-margin;																			// Width
+				margin+="%";																						// Add %
+				$("#contentBodyDiv").css({ "padding-left":margin,"padding-right":margin,width:pct+"%" });			// Set margin	
+				}	
 		}
 	}
 }

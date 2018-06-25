@@ -18,7 +18,7 @@
 							}
 		.wm-main { 			width:100%;  overflow:auto;  display:none; min-width:1450px;
 							}
-		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1075px); min-width:360px; 
+		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1100px); min-width:360px; 
 							}
 		.wm-confirm {		position: absolute;  width: 300px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
 							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
@@ -645,8 +645,10 @@ class App  {
 			str+"</a></li>";																// Add label
 			}
 		row.after(str+"</ul>");																// Add to tree
-		for (i=0;i<o.children.length;++i) 													// For each child
-			this.AddChildren($("#tr-"+o.children[i]),o.kids[i]);							// Recurse
+		for (i=0;i<o.children.length;++i) {													// For each child
+			row=$("#tr-"+o.children[i])
+			this.AddChildren(row,o.kids[i]);												// Recurse
+			}
 		}
 }																						// Class closure
 

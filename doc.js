@@ -172,7 +172,7 @@ class Doc {
 	else{	
 		if (!this.DescendedFrom(this.lobs[i].id,this.lobs[j].id))													// If this log is not a descendant
 			this.lobs[i].parent=parent;																				// Set new parent
-			this.AddChildList();																						// Remake childen/kids arrays
+		this.AddChildList();																						// Remake childen/kids arrays
 		}
 	}
 
@@ -204,7 +204,7 @@ class Doc {
 			if (this.map[i] == this.curLobId) 																		// A match
 				break;																								// Quit looking
 		this.curPos=i+1;																							// Advance to next
-		if (this.curPos >= this.map.length-1)																		// If last
+		if (this.curPos >= this.map.length)																			// If last
 			this.curPos=0;																							// Loop around
 	}
 
@@ -310,7 +310,7 @@ class Doc {
 		var nid,add=1;																								// Add number																				
 		nid=id+""+add;																								// Add number to parent
 		while (this.FindLobById(nid))																				// While not unique
-			nid=id+"."+(++add);																						// Add to count until it is																					
+			nid=id+""+(++add);																						// Add to count until it is																					
 		return nid;																									// Return unique id												
 	}
 
@@ -347,7 +347,6 @@ class Doc {
 				app.rul.rules.push(o);																				// Add step
 				}
 			}
-//this.lobs[2].status=this.lobs[5].status=this.lobs[7].status=this.lobs[8].status=10;
 		this.AddChildList();																						// Add children	
 		app.Draw();																									// Reset data positions
 	}
