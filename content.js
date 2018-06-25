@@ -60,10 +60,6 @@ class Content  {
 				margin=ifr[1];																						// Set margin
 				str=str.replace(/margin\(.+\)/i,"");																// Kill tag
 				}
-			else if (ifr=str.match(/rule\((.+)\)/i)) {																// If a rule tag
-				trace(ifr[1]);																						// Set rule
-				str=str.replace(/rule\(.+\)/i,"");																	// Kill tag
-				}
 			$("#contentDiv").append(str+"</div>");																	// Set content
 	
 			if (margin)	{																							// If a margin set

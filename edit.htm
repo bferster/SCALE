@@ -113,9 +113,10 @@ class App  {
 		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
 		this.previewWin=false;														// If preview window is open or closed
-		this.undos=[];
+		this.undos=[];																// Holds undos
 		this.curUndo=0;																// Undo counter
-		}
+		this.editorChange=0;														// Tracks edits
+	}
 
 	Draw() 																		// REDRAW
 	{
@@ -168,6 +169,7 @@ class App  {
 	app=new App(url);																// Alloc doc w/ course id
 	app.previewWin=window.open("index.html?preview","scalePreview");				// Open preview tab
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
+	CKEDITOR.instances.editor1.on('change', function(e) { app.editorChange++});		// We've changed something
 
 	$("#showgdoc").on("click",function() {											// Show google doc
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
@@ -322,6 +324,7 @@ class App  {
 			this.Draw("splash");															// Draw content
 
 			$("#savePaneBut").on("click", ()=> {											// ON SAVE CHANGES
+				app.editorChange=0;															// Changes saved
 				var o=app.doc.lobs[this.curEditId];											// Point at lob
 				o.body=CKEDITOR.instances.editor1.getData();								// Get body
 				o.name=$("#pageTitle").text();												// Get name
@@ -364,7 +367,15 @@ class App  {
 		{
 			var o;
 			var str="";
-			$("#editorDiv").hide();															// Hide editor
+			if (app.editorChange > 1) {														// If changes still active
+				ConfirmBox("You have unsaved edits!","To save them, click on this <i><b>Cancel</b></i> button and then save them before exiting the editor.",	// Sure?
+						()=>{ 	app.editorChange=0;											// Forget changes
+								this.Draw(type,id);											// Do it anyway
+							
+						});
+				return;																		// Quit (let confirm retry if OK)
+				}	
+				$("#editorDiv").hide();														// Hide editor
 			if (type == "splash") {															// Draw splash
 				str+="<div style='text-align:center;color:#000'><br><br><br><br><br>";
 				str+="<img src='img/scalelogo.png'><br>";
@@ -381,6 +392,7 @@ class App  {
 				str+=o.name ? "<div id='pageTitle' class='wm-pageTitle' contentEditable='true'> "+o.name+"</div>" : "";			// Get page title
 				$("#contentDiv").html(str);													// Add page title
 				CKEDITOR.instances.editor1.setData(o.body);									// Add body data
+				app.editorChange=0;															// Reset change flag
 				this.curEditId=id;															// Save id
 				$("#paneId").val(o.id);														// Show  id
 				$("#editorDiv").show();														// Show editor
@@ -656,7 +668,7 @@ class App  {
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	function ConfirmBox(title, content, callback)										// CONFIRMATION BOX
+	function ConfirmBox(title, content, callback, callback2)							// CONFIRMATION BOX
 	{
 		Sound("ding");																		// Ding sound
 		$("#confirmBoxDiv").remove();														// Remove 
@@ -670,11 +682,12 @@ class App  {
 	
 		$("#confirmOK").on("click", function() {											// ON OK BUT
 				$("#confirmBoxDiv").remove();												// Remove 
-				if (callback)	callback();													// If callback defines, run it
+				if (callback)	callback();													// If callback defined, run it
 				});
 
 		$("#confirmCancel").on("click", function() {										// ON CANCEL BUT
 				$("#confirmBoxDiv").remove();												// Remove 
+				if (callback2)	callback();													// If callback defined, run it
 				Sound("delete");															// Delete sound
 				});
 	}
