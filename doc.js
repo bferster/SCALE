@@ -9,7 +9,7 @@ class Doc {
 
 	constructor(id)																								// CONSTRUCTOR
 	{
-		this.lobs=[ { name:"", id:0, status:0, body:""}];															// Lob
+		this.lobs=[ { name:"", id:0, status:0, body:"", children:[], kids:[]}];										// Lob
 		this.map=[];																								// Map of mobs in order
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
@@ -105,6 +105,20 @@ class Doc {
 		return str;																									// Return tab-delimited version
 		}
 
+	SetStatus(index) 																							// SET LOB'S STATUS
+	{
+		var i;
+		var o=this.lobs[index];																						// Point at lob
+		while (o) {																									// Look at kids
+			for (i=0;i<o.children.length;++i) {																		// For each child
+				if (this.lobs[o.kids[i]].status != 10)																// Not complete yet
+					return;																							// Quit
+				}
+			o.status=10;																							// This mob complete
+			o=this.FindLobById(o.parent);																			// Point at parent
+			}
+		}
+
 	AddNewLob(parent, id, name)																					// ADD NEW LOB
 	{
 		if (parent < 0)	return;																						// Quit on invalid parent
@@ -176,33 +190,20 @@ class Doc {
 		}
 	}
 
-	GetMastery(num) 																							// GET MASTERY OF LOB AT POSITION
-	{	
-		var numNodes=-1,done=0;
-		var _this=this;																								// Context
-		if (_this.FindLobById(this.lobs[num].id).status == DONE)													// If it's already done
-			return DONE;																							// Return done
-		
-		function iterate(node) {																					// RECURSIVE FUNCTION
-			var i;
-			++numNodes;																								// Add to count
-			if (_this.FindLobById(node.id).status == DONE)															// If lob is done
-				++done;																								// Add to count																		
-			for (i=0;i<node.kids.length;i++) 																		// For each child
-				iterate(node.kids[i]);																				// Recurse
-			}
-		
-		iterate(this.lobs[num]);																					// Start looking
-		return ((done == numNodes) && numNodes) ? DONE : TODO;														// Return mastery for node
-	}
-
 	NextLob() 																									// ADVANCE THROUGH LOB
 	{	
-		var i;
+		var i,o;
+		var here=this.curLobId;																						// Start where we are now
 		this.IterateLobs();																							// Make new mob map						
-		for (i=0;i<this.map.length;++i)																				// Find index of active mob
-			if (this.map[i] == this.curLobId) 																		// A match
-				break;																								// Quit looking
+		for (i=0;i<this.map.length;++i)	{																			// Find index of active mob
+			o=this.FindLobById(this.map[i]);																		// Point at lob	in map														
+			if (!o)	continue;																						// Skip invalid mob			
+			if (this.map[i] == here) {																				// A match
+				break;			
+				if (o.status == 10) 	here=this.map[i];															// This one's already done, keep looking
+				else					break;																		// Stop looking
+				}
+			}
 		this.curPos=i+1;																							// Advance to next
 		if (this.curPos >= this.map.length)																			// If last
 			this.curPos=0;																							// Loop around

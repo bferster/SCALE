@@ -101,15 +101,15 @@ class Navigation {
 			for (i=0;i<children.length;++i) {																		// For each topic 
 					$("#topicDot-"+i).on("click",function(e) {														// ON TOPIC CLICK
 						var id=e.currentTarget.id.substr(9);														// Extract id
-						id=app.doc.lobs[app.doc.curLesson].children[id];												// Get topic id
+						id=app.doc.lobs[app.doc.curLesson].children[id];											// Get topic id
 						app.Draw(app.doc.FindLobIndexById(id));														// Set new index and redraw
 						Sound("click");																				// Click
 						});
 					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
 					var id=app.doc.lobs[app.doc.curLesson].children[i];												// Get topic is
 					if (app.doc.FindLobById(id).status == DONE)	{													// If done
-						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
-//						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
+//						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
+						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
 						}
 					l+=ww;																							// Next pos
 					}
