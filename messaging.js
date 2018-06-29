@@ -15,7 +15,7 @@ class Messaging {
 			return;																									// Quit			
 		v=msg.split("|");																							// Chop into params
 		if (msg.match(/ShivaGraph=click/)) 																			// On graph click
-			MenuBarMsg("You clicked on "+v[2]);																		// React							
+			app.rul.CheckRules("click",app.doc.curLobId,v[2]);														// Send to rules
 		else if (msg.match(/ShivaChart=click/)) 																	// On chart click
 			MenuBarMsg("You clicked on "+v[2]);																		// React							
 		else if (msg.match(/ShivaMap=click/)) 																		// On map click

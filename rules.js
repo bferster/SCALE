@@ -29,12 +29,13 @@ class Rules {
 				continue;																							// Next																			
 			v=o.object.split(":");																					// Split object
 			switch(o.do.toUpperCase()) {																			// Route on verb
-				case "SHOW": 	app.con.Draw(o.object);				break;											// SHOW							
-				case "GOTO": 	app.Draw(o.object);					break;											// GOTO index						
-				case "VAR": 	app.doc.vars[v[0]]=v[1];			break;											// SET VAR						
+				case "SHOW": 	app.con.Draw(o.object-0);						break;								// SHOW							
+				case "GOTO": 	app.Draw(app.doc.FindLobIndexById(o.object-0));	break;								// GOTO index						
+				case "VAR": 	app.doc.vars[v[0]]=v[1];						break;								// SET VAR						
 				case "STATUS": 																						// STATUS
 					var l=app.doc.FindLobById(v[0]);																// Point at lob
 					if (l)	l.status=v[1];																			// Set status
+					app.nav.Draw();																					// Redraw nav
 					break;		
 					}
 			}

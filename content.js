@@ -6,7 +6,6 @@ class Content  {
 	
 	constructor()   																							// CONSTRUCTOR
 	{	
-		this.lobId;																									// Currently drawn lob id
 		this.resumeId=0;																							// Id of triggered lob
 		this.resumeTime=0;																							// Time of trigger
 	}
@@ -18,24 +17,24 @@ class Content  {
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
 		$("#contentDiv").html(str);																					// Set content
-		this.lobId=id ? id : app.doc.curLobId;																		// Get lob id
-		this.GetContentBody();																						// Add content
+		this.GetContentBody(id);																					// Add content
 		$("#nextBut").on("click",()=> { app.doc.NextLob(); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
 	}
 
-	GetContentBody()																							// ADD LOB CONTENT
+	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
 		var margin=0;
 		var ifr,ifs,str="";
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
-		var l=app.doc.FindLobById(this.lobId);																		// Point at lob
+		if (id == undefined)	id=app.doc.curLobId;																// Use curent
+		var l=app.doc.FindLobById(id);																				// Point at lob
 		if (app.doc.curPos)																							// If not splash page
 			str+=l.name ? "<div class='wm-pageTitle'>"+l.name+"</div>" : "";										// Add page title
 		str+="<div id='contentBodyDiv' class='wm-contentBody'>";													// Container div
 		if (l) {																									// Valid lob
 			str+=l.body ? l.body : "";																				// Add body
-			if (ifr=str.match(/scalemedia\((.+)\)/i)) {															// If a media tag
+			if (ifr=str.match(/scalemedia\((.+)\)/i)) {																// If a media tag
 				var w=99.5,b=0;																						// Assume full width
 				var h=$("#contentDiv").height()-180;																// Set default height												
 				ifr=(""+ifr[1]).split(",");																			// Get params
