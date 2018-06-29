@@ -195,12 +195,13 @@ class Doc {
 		var i,o;
 		var here=this.curLobId;																						// Start where we are now
 		this.IterateLobs();																							// Make new mob map						
-		for (i=0;i<this.map.length;++i)	{																			// Find index of active mob
+		for (i=0;i<this.map.length-1;++i)	{																		// Find index of active mob
 			o=this.FindLobById(this.map[i]);																		// Point at lob	in map														
 			if (!o)	continue;																						// Skip invalid mob			
 			if (this.map[i] == here) {																				// A match
-				break;			
-				if (o.status == 10) 	here=this.map[i];															// This one's already done, keep looking
+				o=this.FindLobById(this.map[i+1]);																	// Point at nextlob	in map														
+				if (!app.skipDone)		break;																		// If skipping done [anes
+				if (o.status == 10) 	here=this.map[i+1];															// This one's already done, keep looking
 				else					break;																		// Stop looking
 				}
 			}
@@ -346,6 +347,12 @@ class Doc {
 				o.subject=v[1];		o.verb=v[2];  	o.trigger=v[3];													// Left
 				o.do=v[5];			o.object=v[6];																	// Right
 				app.rul.rules.push(o);																				// Add step
+				}
+			else if (v[0] == "set")	{																				// A Setting
+				trace(v[4])
+				if (v[4] && v[4].match(/noSplash/i))	app.noSplash=true;											// No splash
+				if (v[4] && v[4].match(/setDone/i))		app.setDone=false;											// No status set
+				if (v[4] && v[4].match(/skipDone/i))	app.skipDone=true;											// No skip
 				}
 			}
 		this.AddChildList();																						// Add children	

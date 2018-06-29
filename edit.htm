@@ -200,7 +200,7 @@ class App  {
 		var i,o;
 		if (app.doc.lobs.length < 2)	return;										// Quit if not loaded yet
 		$("#courseTitle").html(app.doc.lobs[0].name);								// Show course name
-		var str="<b>Learning panes:</b><i> (Click to edit)</i>)<br>";				// Tree label
+		var str="<b>Learning panes:</b><i> (Click to edit)</i><br>";				// Tree label
 		str+="<div id='treeDiv' class='wm-tree'></div>";							// Add div to hold tree
 		str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
 		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
@@ -339,9 +339,9 @@ class App  {
 					$('#floatsBut').find(":selected").text(o.id+" - "+o.name);				// Rename pulldown			
 					$('#floatsBut').find(":selected").val(o.id);							// Rename pulldown value		
 					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
-					this.Draw("splash");													// Draw splash
-					}
+				}
 				app.Do();																	// Save for undo
+				this.Draw("splash");														// Draw splash
 				Sound("ding");																// Ding
 				});
 
