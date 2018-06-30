@@ -105,7 +105,7 @@ class Doc {
 		return str;																									// Return tab-delimited version
 		}
 
-	SetStatus(index) 																							// SET LOB'S STATUS
+	SetStatus(index, amount) 																							// SET LOB'S STATUS
 	{
 		var i;
 		var o=this.lobs[index];																						// Point at lob
@@ -114,7 +114,7 @@ class Doc {
 				if (this.lobs[o.kids[i]].status != 10)																// Not complete yet
 					return;																							// Quit
 				}
-			o.status=10;																							// This mob complete
+			o.status=amount;																						// This mob complete
 			o=this.FindLobById(o.parent);																			// Point at parent
 			}
 		}
@@ -350,9 +350,9 @@ class Doc {
 				}
 			else if (v[0] == "set")	{																				// A Setting
 				trace(v[4])
-				if (v[4] && v[4].match(/noSplash/i))	app.noSplash=true;											// No splash
-				if (v[4] && v[4].match(/setDone/i))		app.setDone=false;											// No status set
-				if (v[4] && v[4].match(/skipDone/i))	app.skipDone=true;											// No skip
+				if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
+				if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// No skip
+				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
 				}
 			}
 		this.AddChildList();																						// Add children	

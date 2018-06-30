@@ -52,6 +52,7 @@ class Content  {
 				var h=$("#contentDiv").height()-250;																// Set default height												
 				ifs="<div style='text-align:center'>";																// For centering
 				var url="assess.htm?"+ifr[1];
+				url+="|"+l.id;																						// Add overall assessment id
 				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+url+"' style='height:"+h+"px;width:66%'></iframe></div>";	// Load in iframe
 				str=str.replace(/assess\(.+\)/i,ifs);																// Get tag and replace it with iframe
 				}

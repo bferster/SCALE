@@ -69,6 +69,7 @@
 	
 	var aData=null;																// Holds assessment data
 	var curPage=0;																// Current page of assessment
+	var curAssess=0;															// Current assessment id
 	var numTries=0;																// Number of tries at page
 	var curTime;																// Current player time
 	var qe=new ScaleEvents("ScaleAssess");										// Alloc events library
@@ -76,6 +77,9 @@
 	var fontSize=12;
 	
 	$(document).ready(function() {											// WHEN PAGE LOADED
+		
+		var v=window.location.search.substring(1).split("|");					// Split into parts													
+		curAssess=v[v.length-1];												// Get last id as session id
 		qe.SendMessage("ready",window.location.search.substring(1));			// Send ready message
 		$("body").on("keydown", function(e) {									// Handle key down
 				if (e.which == 27) 												// Esc key
@@ -144,7 +148,7 @@
 	{
 		var i,lab,str="",col="#000",sliAns=-1;												
 		if (num >= aData.pages.length) {										// Past last page
-			qe.SendMessage("done",""+numCorrect/numAnswers);					// Send done message
+			qe.SendMessage("done",curAssess+"|"+numCorrect/numAnswers);		// Send done message
 			return;																// Quit
 			}
 		if (curPage != num)														// If a new page
@@ -212,14 +216,6 @@
 				}
 			str+="<br><br>";	
 			}
-		else if (d.optionType == "notes") {										// Notes option
-			qe.SendMessage("notes","start");									// Send start message
-			if (d.pic) str+="<img src='"+d.pic+"' height=75><br>";				// Add pic
-			}	
-		else if (d.optionType == "draw")	{									// Draw option
-			qe.SendMessage("draw","start|bottom|"+d.background);				// Send start message
-			if (d.pic) str+="<img src='"+d.pic+"' height=75><br>";				// Add pic
-			}	
 		str+="<br><p style='text-align:center'><input id='nextBut' type='button' value='OK' class='nextbutSty'>"; 	// Add button
 		if (d.skip != "false")													// If allowing skip button
 			str+="&nbsp;&nbsp;<input id='skipBut' type='button' value='Skip' class='nextbutSty'>"; 	// Add button
@@ -263,13 +259,8 @@
 			if (d.optionType == "write") {										// Draw style
 				ans=$("#opt").val();											// Get answer
 				}	
-			else if (d.optionType == "notes") {									// Notes style
-				qe.SendMessage("answer",curPage+"|personalNotes");				// Send answer message
-				Draw(curPage+1);												// Move on
-				return;															// Quit
-				}
 			else if (d.optionType == "slider") {								// Slider style
-				qe.SendMessage("answer",curPage+"|"+sliAns);					// Send answer message
+				qe.SendMessage("answer",curAssess+"|"+curPage+"|"+sliAns);		// Send answer message
 				Draw(curPage+1);												// Move on
 				return;															// Quit
 				}
@@ -374,15 +365,11 @@
 				}																// End feedback
 			else
 				Draw(curPage+1);												// Show next
-			qe.SendMessage("answer",curPage+"|"+ans);							// Send answer message
+			qe.SendMessage("answer",curAssess+"|"+curPage+"|"+ans);				// Send answer message
 			});																	// End nextbut
 			
 		$("#skipBut").on("click",function() {									// SKIP BUTTON HANDLER
-			if (d.optionType == "draw") 										// Draw style
-				qe.SendMessage("draw","done");									// Send done message
-			else if (d.optionType == "notes") 									// Notes style
-				qe.SendMessage("answer",curPage+"|personalNotes");				// Send answer message
-			qe.SendMessage("answer",curPage+"|skip");							// Send answer message
+			qe.SendMessage("answer",curAssess+"|"+curPage+"|skip");				// Send answer message
 			Draw(curPage+1);													// Move on
 			});
 		
@@ -454,7 +441,7 @@
 		{
 		if (cmd == "answer") {													// An answer
 			numAnswers++;														// Add to count
-			if (msg.split("|")[1] == "right")	numCorrect++;					// Add to correct
+			if (msg.split("|")[2] == "right")	numCorrect++;					// Add to correct
 			}
 		var str=this.header+cmd;												// Add header				
 		if (msg) str+="|"+msg;													// If more to it, add

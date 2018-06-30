@@ -178,6 +178,7 @@ class App  {																								 // APP
 		this.allowResize=true;																						// Redraw after a resize
 		this.setDone=true;																							// Controls if we set status just by viewing pane
 		this.skipDone=false;																						// Controls if panes are skipped if status == 10
+		this.assessLevel=.5;																						// Level to pass assessment
 		this.doc=new Doc(id);																						// Alloc doc w/ course id
 		this.con=new Content();																						// Content
 		this.nav=new Navigation();																					// Navigation
@@ -195,7 +196,7 @@ class App  {																								 // APP
 		app.doc.Draw();																								// Reset various params
 		this.con.Draw();																							// Draw container
 		this.nav.Draw();																							// Draw navigator and header
-		if (this.setDone)		app.doc.SetStatus(this.doc.curPos);													// Set lob's status
+		if (this.setDone)		app.doc.SetStatus(this.doc.curPos,10);												// Set lob's status
 	}
 }
 

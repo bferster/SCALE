@@ -503,14 +503,15 @@ class App  {
 	
 		$("#optionsTable").on("sortstop", function(e, ui) {									// If sorted
 			var v=$("#optionsTable").sortable("toArray");									// Get new order
- 			for (i=0;i<v.length-1;++i)														// For each option, less add but
+			for (i=0;i<v.length-1;++i)														// For each option, less add but
  				o.options[i]=$("#idr"+v[i].substr(3)).val();								// Reorder array
- 			});
+			});
 		
 		 if (o.options)																		// If options set
 			for (i=0;i<o.options.length;++i) {												// For each option
 				 $("#idd"+i).on("click", function() { 										// Extract value	
 					var id=$(this)[0].id.substr(3);											// Extract id
+					o.options.splice(id,1);													// Remove from list
 					$("#ido"+id).remove();													// Remove option from menu
 					Sound("delete");														// Delete sound
 					});
@@ -536,14 +537,18 @@ class App  {
 
 		$("#saveStepBut").on("click", function() { 											// ON SAVE STEP
 				var i;
-				o.optionType=$("#optionType").val();	o.title=$("#title").val();								
+				o.optionType=$("#optionType").val();	o.title=$("#title").val();			// Get values from inputs						
 				o.text=$("#text").val();				o.prompt=$("#text").val();									
 				o.pic=$("#pic").val();					o.whyRight=$("#whyRight").val();								
 				o.whyWrong=$("#whyWrong").val();		o.whyPartial=$("#whyPartial").val();	
 				o.fontSize=$("#fontSize").val();		o.numTries=$("#numTries").val();	
 				o.skip=$("#skip").val();				ask.name=$("#askName").val();
 				ask.id=$("#askId").val();
-				for (i=0;i<o.options.length;++i) 	o.options[i]=$("#idr"+i).val();			// Get options
+				var v=$("#optionsTable").sortable("toArray");								// Get new order
+				for (i=0;i<v.length;++i) {													// For each option		
+					v[i]="idr"+v[i].substr(3);												// Replace sort id with input id
+					o.options[i]=$("#"+v[i]).val();											// Get option value
+					}
 				ask.step=JSON.stringify(o);													// Copy at JSON string
 				$('#asksBut').find(":selected").text(ask.id+" - "+ask.name);				// Rename pulldown			
 				$("#asksBut")[0].selectedIndex=0;											// Clear selection
