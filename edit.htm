@@ -106,17 +106,23 @@ class App  {
 	constructor(id)   															// CONSTRUCTOR
 	{
 		app=this;
-		this.doc=new Doc(id);														// Alloc doc w/ course id
-		this.rul=new Rules();														// Rules
 		this.con=new Content();														// Alloc content
-		this.floats=[];																// Holds floats
-		this.Draw(); 																// Draw app
 		this.tree=null;																// Holds lobs tree
 		this.previewWin=false;														// If preview window is open or closed
 		this.undos=[];																// Holds undos
 		this.curUndo=0;																// Undo counter
-		this.editorChange=0;														// Tracks edits
+		this.InitCourse(id)															// Init course
 	}
+
+	InitCourse(id)
+	{
+		this.doc=new Doc(id);														// Alloc doc w/ course id
+		this.rul=new Rules();														// Rules
+		this.floats=[];																// Holds floats
+		this.editorChange=0;														// Tracks edits
+		this.setDone=true; this.skipDone=false; this.assessLevel=.5;				// Defaults
+		this.Draw(); 																// Draw app
+}
 
 	Draw() 																		// REDRAW
 	{
@@ -148,7 +154,6 @@ class App  {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	var app=null;																	// Hold course data 
-	win=window.open("index.html?preview","scalePreview");
 	$(document).ready(function() {												// WHEN PAGE LOADED
 		if (window.addEventListener) 												// If supported this way
 			window.addEventListener("message",eventHandler,false);					// Add event handler
@@ -198,7 +203,6 @@ class App  {
 	function DrawNav()															// DRAW COURSE NAVIGATION
 	{
 		var i,o;
-		if (app.doc.lobs.length < 2)	return;										// Quit if not loaded yet
 		$("#courseTitle").html(app.doc.lobs[0].name);								// Show course name
 		var str="<b>Learning panes:</b><i> (Click to edit)</i><br>";				// Tree label
 		str+="<div id='treeDiv' class='wm-tree'></div>";							// Add div to hold tree
@@ -211,10 +215,12 @@ class App  {
 		str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
+		str+="<div id='settingsBut' class='wm-bs'>Settings</div>";
 		str+="<br><br><textarea id='outputDiv' class='wm-is'style='height:50px;width:auto;overflow:hidden'></textarea>";
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
-		app.doc.SetCurVars(2);														// Set current areas																								
+		if (app.doc.lobs.length > 1)												// If loaded
+			app.doc.SetCurVars(2);													// Set current areas																								
 		for (i=0;i<app.rul.rules.length;++i) {										// For each rule
 			o=app.rul.rules[i];														// Point at rule
 			$("#rulesBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
@@ -232,6 +238,10 @@ class App  {
 			}
 		$("#undoBut").on("click", ()=> {  											// ON UNDO
 			app.UnDo();																// Undo action
+			});
+
+		$("#settingsBut").on("click", ()=> {  										// ON SETTINGS
+			app.con.Draw("setting");												// Run settings
 			});
 
 		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
@@ -415,6 +425,8 @@ class App  {
 				this.curEditId=id;															// Save id
 				this.RuleEditor(o);															// Run editor
 				}
+			else if (type == "setting") 													// Draw settings
+				this.SettingsEditor();														// Run editor
 		}
 	
 	RuleEditor(r)																		// RULE EDITOR
@@ -462,6 +474,38 @@ class App  {
 				});
 			});
 	}
+	
+	
+	SettingsEditor()																	// SETTINGS EDITOR
+	{
+		var str="<div class='wm-stepEditor'>";
+		str+="<img src='img/scalelogo.png' style='vertical-align:-6px' width='32'><span style='font-size:30px;margin-left:16px'><b>Settings</b></span><br><br>";	
+		str+="<table>";
+		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
+		str+="<tr><td>Skip done if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
+		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel :'')+"'></td></tr>";	
+		str+="<tr><td>Delete entire course</td><td><div id='deleteCourseBut' class='wm-bs'>Delete</div></td></tr>";	
+		str+="</table>";																			
+		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
+		str+="<div id='saveSetBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
+		$("#contentDiv").html(str);	
+
+		$("#deleteCourseBut").on("click", ()=> { 											// ON DELETE COURSE		
+			ConfirmBox("Are you sure?","This will remove the entire course!", ()=> {		// If sure
+				app.InitCourse();															// Init	
+				app.doc.AddNewLob(1, 10, "Week 1");											// Add week				
+			});
+		});
+
+		$("#saveSetBut").on("click", ()=> { 												// ON SAVE SETTINGS
+			app.setDone=$("#setDone").prop("checked");										// Get vals			
+			app.skipDone=$("#setSkip").prop("checked");								
+			app.assessLevel=$("#setPass").val();	
+			this.Draw("splash");															// Show splash																								
+			app.Do();																		// Save for undo
+			Sound("ding");																	// Ding sound
+			});
+		}
 
 	QuestionEditor(ask) 																	// ASK STEP EDITOR
 	{

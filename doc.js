@@ -9,12 +9,13 @@ class Doc {
 
 	constructor(id)																								// CONSTRUCTOR
 	{
-		this.lobs=[ { name:"", id:0, status:0, body:"", children:[], kids:[]}];										// Lob
+		this.lobs=[ { name:"", id:1, status:0, body:"", children:[], kids:[]}];										// Lob
 		this.map=[];																								// Map of mobs in order
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
 		this.curPos=0;																								// Start at lesson
 		this.courseId=id;																							// Default course id
+		
 		if (id == "preview") {																						// Preview instructions
 			var str="<br><br><p style='text-align:center'><img src='img/scalelogo.png'>";
 			str+="<br>This tab will show previews of your course.";
@@ -23,7 +24,7 @@ class Doc {
 			this.lobs[0].body=str;
 			this.firstName=this.lastName="";
 			}
-		else{																										// Normal load
+		else if (id) {																								// Normal load
 			this.GDriveLoad(this.courseId);																			// Load default lobs
 			this.firstName="Jerry";		this.lastName="Bruner";
 			}
@@ -93,6 +94,10 @@ class Doc {
 			var o=app.doc.asks[i];																					// Point at ask
 			str+=makeTSVLine("ask",o.id,o.name,"",o.step);															// Add ask
 			}
+		var s="assessLevel="+app.assessLevel;																		// Add assessment level
+		if (!app.setDone) 	s+=" setDone";																			// Don't set done
+		if (app.skipDone) 	s+=" setSkip";																			// Set skipping when done
+		str+=makeTSVLine("set","","Settings","",s);																	// Add set
 
 		function makeTSVLine(type, id, name, parent, body) {														// CREATE TSV OF LOB																				
 			var s=type+"\t";																						// Save type
@@ -349,7 +354,6 @@ class Doc {
 				app.rul.rules.push(o);																				// Add step
 				}
 			else if (v[0] == "set")	{																				// A Setting
-				trace(v[4])
 				if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
 				if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// No skip
 				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
