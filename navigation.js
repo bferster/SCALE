@@ -9,13 +9,22 @@ class Navigation {
 		$("#lessonBut").on("click",()=> { this.ChangeLesson() } );													// Click on lesson button
 		}
 	
-	ChangeLesson() {																							// CLICK ON CHANGE LESSON BUTTON
+	ChangeLesson() 																							// CLICK ON CHANGE LESSON BUTTON
+	{	
+		var i;
+		var o=app.doc.lobs[0].children;																				// Point at children of root (lessons)
 		if ($("#menuSlotDiv").length) {																				// If already open
 			$("#menuSlotDiv").remove();																				// Close it																
 			return;																									// Quit
 			}
 		var str="<div class='wm-pullDown' id='menuSlotDiv'>";														// Add menu div
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 1 &#10003;</div>";
+		for (i=0;i<o.length;++i) {																					// For each lesson
+			str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'><span";						// Add header
+			if (app.doc.FindLobById(o[i]).status > 9)	str+=" style='color:#08aa08'";								// Green if done
+			str+=">"+app.doc.FindLobById(o[i]).name;																// Add name
+			if (app.doc.FindLobById(o[i]).status > 9)	str+=" &#10003;";											// Add check if done
+			str+="</span></div>";															
+			}		
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 2 &#10003;</div>";
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 3 &#10003;</div>";
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 4</div>";

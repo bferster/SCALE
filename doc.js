@@ -9,7 +9,7 @@ class Doc {
 
 	constructor(id)																								// CONSTRUCTOR
 	{
-		this.lobs=[ { name:"", id:1, status:0, body:"", children:[], kids:[]}];										// Lob
+		this.lobs=[ { name:"Course name", id:1, status:0, body:"", children:[], kids:[]}];							// Lob
 		this.map=[];																								// Map of mobs in order
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
@@ -56,6 +56,7 @@ class Doc {
 
 	SetCurVars(id)																								// SET CURRENT AREAS
 	{
+		id=Math.min(id,this.lobs.length-1);																			// Cap at max
 		this.curLevel=this.lobs[id].level;																			// Current level
 		this.curLobId=this.lobs[id].id;																				// Current lob id
 		this.curLob=this.FindLobById(this.lobs[id].id);																// Current lob pointer

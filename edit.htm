@@ -219,8 +219,7 @@ class App  {
 		str+="<br><br><textarea id='outputDiv' class='wm-is'style='height:50px;width:auto;overflow:hidden'></textarea>";
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
-		if (app.doc.lobs.length > 1)												// If loaded
-			app.doc.SetCurVars(2);													// Set current areas																								
+		app.doc.SetCurVars(2);														// Set current areas																								
 		for (i=0;i<app.rul.rules.length;++i) {										// For each rule
 			o=app.rul.rules[i];														// Point at rule
 			$("#rulesBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
@@ -351,6 +350,7 @@ class App  {
 					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
 				}
 				app.Do();																	// Save for undo
+				$("#courseTitle").html(app.doc.lobs[0].name);								// Show course name
 				this.Draw("splash");														// Draw splash
 				Sound("ding");																// Ding
 				});
@@ -494,6 +494,7 @@ class App  {
 			ConfirmBox("Are you sure?","This will remove the entire course!", ()=> {		// If sure
 				app.InitCourse();															// Init	
 				app.doc.AddNewLob(1, 10, "Week 1");											// Add week				
+				app.Draw();
 			});
 		});
 
@@ -631,7 +632,6 @@ class App  {
 			var o=app.doc.lobs[0];															// Point at root												
 			if (!o)	return;																	// If invalid, quit
 			var str="<ul><li class='parent active'><a id='tr-"+o.id+"'>"+o.name+"</a></li>"; // Add root tree node
-	for (var i=2;i<9;++i)	str+="<ul><li><a id='tr--"+i+"'>Week "+i+"</a></li></ul>";
 			$("#treeDiv").html(str+"</ul>");												// Add to tree div
 			this.AddChildren($("#tr-"+o.id),0);												// Add children to tree
 			$("#tr-"+o.id).parent().children('ul').slideToggle('fast');            			// Open course
