@@ -51,7 +51,7 @@ class Navigation {
 	Draw() 																										// REDRAW
 	{
 		var str="";
-		var i,id,ww,name,children;
+		var i,j,id,ww,name,children;
 		var w=$("#navDiv").width()+16;																				// Content width
 		var l=$("#navDiv").offset().left;																			// Left
 		this.UpdateHeader();																						// Update header																						
@@ -62,8 +62,9 @@ class Navigation {
 			children=app.doc.lobs[app.doc.curLesson].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get topic name
+				j=app.doc.FindLobIndexById(children[i]);															// Get topic index
 				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div  id='topicDotLab-"+i+"'class='wm-topicDotLab'";	// Add dot container
-				if (app.doc.curLobId == children[i]) 	str+=" style='color:#c57117'";								// Highlight if current						
+				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+=" style='color:#c57117'";	// Highlight if current						
 				str+=`>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div></div>";								// Add dot
 				}
@@ -73,14 +74,15 @@ class Navigation {
 			children=app.doc.lobs[app.doc.curTopic].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
+				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
+				if ((app.doc.curLobId == children[i]) || (j == app.doc.curConcept))									// If current Topic
+				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color
-				if (app.doc.curLobId == children[i]) 																// If current Topic
-				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				str+=`'>${name}</div>`;
 				}
 			}
