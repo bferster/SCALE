@@ -11,7 +11,7 @@
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<script src="doc.js"></script>
 	<script src="rules.js"></script>
-	<script src="ckeditor/ckeditor.js"></script>
+	<script src="ckeditor/ckeditor.js"></script>777
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; 
 		 					box-sizing: border-box; background-color: #eee;	
@@ -288,7 +288,7 @@ class App  {
 			});
 
 		$("#addFloatBut").on("click", ()=> {  										// ON ADD NEW FLOATING PANE
-			app.doc.AddNewLob("000");			 									// Add lob
+			app.doc.AddNewLob("-");			 										// Add lob
 			var id=app.doc.lobs[app.doc.lobs.length-1].id;							// Get id
 			app.floats.push(id);													// Add to floats
 			$("#floatsBut").append("<option value='"+id+"'>"+id+" - Rename this</option>");	// Add to pulldown
@@ -357,8 +357,9 @@ class App  {
 
 			$("#removePaneBut").on("click", ()=> {  										// ON REMOVE PANE
 				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
-					var o=app.doc.lobs[this.curEditId];										// Point at lob
-					if (o.parent && o.parent.match(/float/i)) {								// A floating lob
+					var o=app.doc.lobs[this.curEditId].parent;								// Point at lob
+					if (!o.parent) {														// A floating lob
+						app.doc.lobs.splice(this.curEditId,1);								// Remove lob
 						app.floats.splice($("#floatsBut")[0].selectedIndex,1);				// Remove from array
 						$('#floatsBut').find(":selected").remove();							// Remove from pulldown			
 						$("#floatsBut")[0].selectedIndex=0;									// Clear selection

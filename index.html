@@ -151,7 +151,9 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		});
 
 	$(window).on("keydown",function(e) {								// HANDLE KEYPRESS
-		if ((e.which == 84) && e.altKey && e.ctrlKey) {						// Test key (Ctrl+Alt+T)
+		if ((e.keyCode == 40) || (e.keyCode == 34)) 						// Down arrow, pg-dn
+			$("#nextBut").trigger("click");									// Simulate next button clcik
+		else if ((e.which == 84) && e.altKey && e.ctrlKey) {				// Test key (Ctrl+Alt+T)
 //			SendToIframe("ScaleAct=seek|20");
 
 
