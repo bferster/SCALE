@@ -150,10 +150,18 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
-	$(window).on("keydown",function(e) {								// HANDLE KEYPRESS
-		if ((e.keyCode == 40) || (e.keyCode == 34)) 						// Down arrow, pg-dn
-			$("#nextBut").trigger("click");									// Simulate next button clcik
-		else if ((e.which == 84) && e.altKey && e.ctrlKey) {				// Test key (Ctrl+Alt+T)
+	$(window).on("keydown",function(e) {									// HANDLE KEYPRESS
+		if ((e.keyCode == 40) || (e.keyCode == 34)) {						// Down arrow, pg-dn
+			app.doc.NextLob(1); app.Draw(); Sound("click");					// Advance
+			}
+		else if ((e.keyCode == 38) || (e.keyCode == 33)) {					// Up arrow, pg-up
+			app.doc.NextLob(-1); app.Draw(); Sound("click");				// Recede
+			}
+		else if (e.keyCode == 36) {											// Home
+			app.doc.curPos=0; app.Draw(); Sound("click");					// Stert over
+			}
+
+else if ((e.which == 84) && e.altKey && e.ctrlKey) {				// Test key (Ctrl+Alt+T)
 //			SendToIframe("ScaleAct=seek|20");
 
 

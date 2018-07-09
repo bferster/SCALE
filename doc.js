@@ -196,9 +196,10 @@ class Doc {
 		}
 	}
 
-	NextLob() 																									// ADVANCE THROUGH LOB
+	NextLob(dir) 																								// ADVANCE THROUGH LOB
 	{	
 		var i,o;
+		if (!dir)	dir=1;																							// Assume forward
 		var here=this.curLobId;																						// Start where we are now
 		this.IterateLobs();																							// Make new mob map						
 		for (i=0;i<this.map.length-1;++i)	{																		// Find index of active mob
@@ -211,11 +212,14 @@ class Doc {
 				else					break;																		// Stop looking
 				}
 			}
-		this.curPos=i+1;																							// Advance to next
-		if (this.curPos >= this.map.length)																			// If last
+		this.curPos=i+dir;																							// Advance to next
+		if (this.curPos < 0 )																						// If first
+			this.curPos=this.map.length-1;																			// Loop around
+		else if (this.curPos >= this.map.length)																	// If last
 			this.curPos=0;																							// Loop around
 	}
 
+	
 /// DATA HELPERS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

@@ -9,9 +9,9 @@ class Navigation {
 		$("#lessonBut").on("click",()=> { this.ChangeLesson() } );													// Click on lesson button
 		}
 	
-	ChangeLesson() 																							// CLICK ON CHANGE LESSON BUTTON
+	ChangeLesson() 																								// CLICK ON CHANGE LESSON BUTTON
 	{	
-		var i;
+		var i,id;
 		var o=app.doc.lobs[0].children;																				// Point at children of root (lessons)
 		if ($("#menuSlotDiv").length) {																				// If already open
 			$("#menuSlotDiv").remove();																				// Close it																
@@ -19,7 +19,8 @@ class Navigation {
 			}
 		var str="<div class='wm-pullDown' id='menuSlotDiv'>";														// Add menu div
 		for (i=0;i<o.length;++i) {																					// For each lesson
-			str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'><span";						// Add header
+			id=app.doc.lobs[0].kids[i];																				// Point at id of start
+			str+="<div class='wm-pullDownItem' id='lessonId-"+id+"'><span";											// Add header
 			if (app.doc.FindLobById(o[i]).status > 9)	str+=" style='color:#08aa08'";								// Green if done
 			str+=">"+app.doc.FindLobById(o[i]).name;																// Add name
 			if (app.doc.FindLobById(o[i]).status > 9)	str+=" &#10003;";											// Add check if done
@@ -33,6 +34,16 @@ class Navigation {
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 7</div>";
 		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 8</div>";
 		$("body").append(str);																						// Add menu to body
+		$("[id^=lessonId-]").on("click", function(e) {																// Lesson click handler
+			var id=e.currentTarget.id.substr(9);																	// Extract id
+			app.doc.curPos=id;																						// Go to start of lesson
+			app.Draw();																								// Redraw
+			trace(id);
+			Sound("click");																							// Click
+			$("#menuSlotDiv").remove();																				// Close menu	
+		});
+
+		
 		var x=$("#lessonTitle").offset().left-8+"px";																// Left
 		var y=$("#contentDiv").offset().top-20+"px";																// Top
 		var w=$("#lessonTitle").width()+26+"px";																	// Width

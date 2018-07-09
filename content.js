@@ -18,7 +18,7 @@ class Content  {
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
 		$("#contentDiv").html(str);																					// Set content
 		this.GetContentBody(id);																					// Add content
-		$("#nextBut").on("click",()=> { app.doc.NextLob(); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
+		$("#nextBut").on("click",()=> { app.doc.NextLob(1); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
 	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
