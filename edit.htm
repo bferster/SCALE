@@ -5,13 +5,14 @@
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
 	<title>S C A L E &nbsp;Course Editor</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://apis.google.com/js/api.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<script src="doc.js"></script>
 	<script src="rules.js"></script>
-	<script src="ckeditor/ckeditor.js"></script>777
+	<script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; 
 		 					box-sizing: border-box; background-color: #eee;	
@@ -182,7 +183,7 @@ class App  {
 	
 	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
-			app.previewWin.focus();
+			GoogleDriveLoad(true, function(e) {trace(e)})
 			}
 		});
 
@@ -357,8 +358,7 @@ class App  {
 
 			$("#removePaneBut").on("click", ()=> {  										// ON REMOVE PANE
 				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
-					var o=app.doc.lobs[this.curEditId].parent;								// Point at lob
-					if (!o.parent) {														// A floating lob
+					if ($("#floatsBut")[0].selectedIndex) {									// A floating lob
 						app.doc.lobs.splice(this.curEditId,1);								// Remove lob
 						app.floats.splice($("#floatsBut")[0].selectedIndex,1);				// Remove from array
 						$('#floatsBut').find(":selected").remove();							// Remove from pulldown			
@@ -713,6 +713,73 @@ class App  {
 			}
 		}
 }																						// Class closure
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GOOGLE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function GoogleDriveLoad(allFiles, callback)											// GOOGLE IMPORTER
+{
+	var _this=this;																			// Save context
+ 	
+	LoadGoogleDrive(true, function(s) {
+		if (callback) callback(s.url);
+		});
+	
+ 	function LoadGoogleDrive(allFiles, callback)										// LOAD PICKER FOR GOOGLE DRIVE
+	{
+	  	var pickerApiLoaded=false;
+		var oauthToken;
+		var key="AIzaSyCYHoa3mQ56qcp0E6gDHXdDhU1rsvtsNCI";
+		var id="802670590549-r0sj486pl33jo2pfbod6jkt3hjslt1iq.apps.googleusercontent.com";
+			gapi.load('auth', { 'callback': function() {
+				window.gapi.auth.authorize( {
+	              	'client_id': id,
+	             	'scope': ['https://www.googleapis.com/auth/drive'],
+	              	'immediate': false }, function(authResult) {
+							if (authResult && !authResult.error) {
+	          					oauthToken=authResult.access_token;
+	          					createPicker();
+	          					}
+	          				});
+				}
+			});
+		
+		gapi.load('picker', {'callback': function() {
+				pickerApiLoaded=true;
+		        createPicker();
+	    	   	}
+			});
+	
+		function createPicker() {
+	        if (pickerApiLoaded && oauthToken) {
+	//         	var upview=new google.picker.DocsUploadView();
+	           	var view=new google.picker.DocsView().
+	           		setOwnedByMe(allFiles).
+					setIncludeFolders(true);
+	          	var picker=new google.picker.PickerBuilder().
+	          		addView(view).
+	//         		addView(upview).
+					setOAuthToken(oauthToken).
+					setDeveloperKey(key).
+					setCallback(pickerCallback).
+					build();
+				picker.setVisible(true);
+	       		}
+	    	}
+	
+		function pickerCallback(data) {
+	        if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+         		var doc=data[google.picker.Response.DOCUMENTS][0];
+				if (callback)	 callback(doc)
+	       		}
+			}
+	   
+	}	// End closure
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
