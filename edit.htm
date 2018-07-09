@@ -218,6 +218,8 @@ class App  {
 		str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='settingsBut' class='wm-bs'>Settings</div>";
 		str+="<br><br><textarea id='outputDiv' class='wm-is'style='height:50px;width:auto;overflow:hidden'></textarea>";
+		str+="<br><br>Help <img src='img/helpicon.gif' style='vertical-align:-4px;cursor:pointer' id='showHelp'>"; 
+
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
 		app.doc.SetCurVars(2);														// Set current areas																								
@@ -236,6 +238,10 @@ class App  {
 				app.floats.push(o.id);												// Add to floats
 				}
 			}
+		$("#showHelp").on("click",function() { 										// ON HELP
+			window.open("https://docs.google.com/document/d/1QC4T1dE7xtjCM9C43AyUNiSPl-gKxjj4xziqm4JLd4I/edit?usp=sharing","_blank");
+			});
+		
 		$("#undoBut").on("click", ()=> {  											// ON UNDO
 			app.UnDo();																// Undo action
 			});
@@ -494,7 +500,7 @@ class App  {
 		$("#deleteCourseBut").on("click", ()=> { 											// ON DELETE COURSE		
 			ConfirmBox("Are you sure?","This will remove the entire course!", ()=> {		// If sure
 				app.InitCourse();															// Init	
-				app.doc.AddNewLob(1, 10, "Week 1");											// Add week				
+				app.doc.AddNewLob("", 1, "Course name");									// Add course				
 				app.Draw();
 			});
 		});
