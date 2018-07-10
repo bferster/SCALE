@@ -523,7 +523,7 @@ class App  {
 		var str="<div class='wm-stepEditor'><table style='font-size:12px'>";
 		str+="<tr><td><img src='img/scalelogo.png' width='32'></td><td><span style='font-size:30px'><b>Question Editor</b></span><br><br><b</td></tr>";	
 		str+="<tr><td><b>Question name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
-		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","draw","findtime","write","notes","match","sort"],o.optionType)+"</td></tr>";	// Get setting
+		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","write","match","sort"],o.optionType)+"</td></tr>";	// Get setting
 		str+="<tr><td><b>Title</b></td><td><input class='wm-is' type='text' id='title' value='"+(o.title ? o.title :'')+"'></td></tr>";	// Get setting
 		str+="<tr><td><b>Text</b></td><td><textarea class='wm-is' id='text'>"+(o.text ? o.text :'')+"</textarea></td></tr>";	// Get setting
 		str+="<tr><td><b>Prompt</b></td><td><textarea class='wm-is' id='prompt'>"+(o.prompt ? o.prompt :'')+"</textarea></td></tr>";	// Get setting
