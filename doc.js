@@ -131,7 +131,7 @@ class Doc {
 		if (!id)	id=this.UniqueLobId(parent);																	// If not spec'd add unique id based on parent
 		if (!name)	name="Rename this";																				// And name
 		if (this.FindLobLevelById(parent) > 2)																		// If too deep
-			parent=this.FindLobById(parent).parent;																	// Go up a level
+			parent=this.FindLobById(parent).parent;																	// Get parent's parent
 		this.lobs.push({ name:name, id:id, status:0, body:"", parent:parent, kids:[], children:[]});				// Add lob
 		
 		parent=this.FindLobById(parent);																			// Point at parent lob
@@ -251,19 +251,6 @@ class Doc {
 			}
 	}
 
-	FindLobLevelById(id) 																						// FIND LEVEL OF LOB
-	{		
-
-		var i,par,level=0;
-		var index=this.FindLobIndexById(id);																		// Get index
-		while (1) {																									// Loop
-			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
-			if (par == -1)																							// If at root
-				return level;																						// Return root
-			index=par;																								// Go up a level
-			++level;																								// Inc level
-			}
-	}
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
 		for (i=0;i<n;++i) {																							// For each lob
@@ -285,6 +272,7 @@ class Doc {
 	FindLobLevelById(id) {																						// FIND LEVEL OF LOB FROM ID
 		var level=0;
 		var o=this.FindLobById(id);																					// Point at lob
+		if (!o)	return 0;																							// A floater
 		while (o.parent) {																							// While not root
 			o=this.FindLobById(o.parent);																			// Set id to parent and go up hierarchy
 			if (!o)	return 0;																						// At root level
