@@ -130,7 +130,10 @@ class Doc {
 		if (parent < 0)	return;																						// Quit on invalid parent
 		if (!id)	id=this.UniqueLobId(parent);																	// If not spec'd add unique id based on parent
 		if (!name)	name="Rename this";																				// And name
+		if (this.FindLobLevelById(parent) > 2)																		// If too deep
+			parent=this.FindLobById(parent).parent;																	// Go up a level
 		this.lobs.push({ name:name, id:id, status:0, body:"", parent:parent, kids:[], children:[]});				// Add lob
+		
 		parent=this.FindLobById(parent);																			// Point at parent lob
 		if (parent) {																								// If has a parent
 			parent.children.push(id);																				// Add id to children	
@@ -146,6 +149,7 @@ class Doc {
 		if (!o)			return;																						// Invalid parent
 		for (i=0;i<o.children.length;++i) 																			// For each child
 			if (o.children[i] == id)  {																				// Matches this id
+
 				o.kids.splice(i,1);																					// Remove from from kids
 				o.children.splice(i,1);																				// Remove from from children
 				break;
@@ -223,7 +227,7 @@ class Doc {
 /// DATA HELPERS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	DescendedFrom(lobId, testId) 																				// FIND IF  IS A DESCENDENT
+	DescendedFrom(lobId, testId) 																				// FIND IF IS A DESCENDENT
 	{		
 		var par=this.FindLobById(testId);																			// Point at pareent
 		while (par) {																								// While still a parent
@@ -238,7 +242,7 @@ class Doc {
 		var i,par;
 		while (1) {																									// Loop
 			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
-			if (par == -1)																						// If at root
+			if (par == -1)																							// If at root
 				return -1;																							// Return root
 			if (this.lobs[index].level == level) 																	// At desired level
 				return index;																						// Return index
@@ -247,6 +251,19 @@ class Doc {
 			}
 	}
 
+	FindLobLevelById(id) 																						// FIND LEVEL OF LOB
+	{		
+
+		var i,par,level=0;
+		var index=this.FindLobIndexById(id);																		// Get index
+		while (1) {																									// Loop
+			par=this.FindLobIndexById(this.lobs[index].parent);														// Get parent object
+			if (par == -1)																							// If at root
+				return level;																						// Return root
+			index=par;																								// Go up a level
+			++level;																								// Inc level
+			}
+	}
 	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
 		var i,n=this.lobs.length;
 		for (i=0;i<n;++i) {																							// For each lob
