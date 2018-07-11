@@ -98,6 +98,7 @@ class Doc {
 		var s="assessLevel="+app.assessLevel;																		// Add assessment level
 		if (!app.setDone) 	s+=" setDone";																			// Don't set done
 		if (app.skipDone) 	s+=" setSkip";																			// Set skipping when done
+		if (app.defMargin)	s+=" margin="+app.defMargin;															// Default margin
 		str+=makeTSVLine("set","","Settings","",s);																	// Add set
 
 		function makeTSVLine(type, id, name, parent, body) {														// CREATE TSV OF LOB																				
@@ -367,6 +368,7 @@ class Doc {
 				if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
 				if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// No skip
 				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
+				if (v[4] && v[4].match(/margin=/i))			app.defMargin=v[4].match(/margin=(\.*\d+)/i)[1];		// Default margin
 				}
 			}
 		this.AddChildList();																						// Add children	

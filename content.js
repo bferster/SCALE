@@ -23,8 +23,8 @@ class Content  {
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
-		var margin=0;
 		var ifr,ifs,str="";
+		var margin=app.defMargin ? app.defMargin : 0;																// Default margin
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
 		if (id == undefined)	id=app.doc.curLobId;																// Use curent

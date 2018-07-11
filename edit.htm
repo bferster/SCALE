@@ -490,7 +490,8 @@ class App  {
 		str+="<table>";
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
 		str+="<tr><td>Skip done if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
-		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel :'')+"'></td></tr>";	
+		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
+		str+="<tr><td>Default margin %;</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
 		str+="<tr><td>Delete entire course</td><td><div id='deleteCourseBut' class='wm-bs'>Delete</div></td></tr>";	
 		str+="</table>";																			
 		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
@@ -509,6 +510,7 @@ class App  {
 			app.setDone=$("#setDone").prop("checked");										// Get vals			
 			app.skipDone=$("#setSkip").prop("checked");								
 			app.assessLevel=$("#setPass").val();	
+			app.defMargin=$("#setMargin").val();	
 			this.Draw("splash");															// Show splash																								
 			app.Do();																		// Save for undo
 			Sound("ding");																	// Ding sound
