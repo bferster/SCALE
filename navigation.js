@@ -74,9 +74,11 @@ class Navigation {
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get topic name
 				j=app.doc.FindLobIndexById(children[i]);															// Get topic index
-				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'><div  id='topicDotLab-"+i+"'class='wm-topicDotLab'";	// Add dot container
-				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+=" style='color:#c57117'";	// Highlight if current						
-				str+=`>${name}</div>`;																				// Add label
+				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'>";											// Add dot container
+				str+="<div id='topicDotLab-"+i+"'class='wm-topicDotLab'style='";									// Label container
+				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+="color:#c57117;";			// Highlight if current						
+				if (i%2 && (w < 500)) str+="margin-top:34px";														// Stagger if too small
+				str+=`'>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div></div>";								// Add dot
 				}
 			}
@@ -87,6 +89,7 @@ class Navigation {
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
+				if (w < 500)					 str+="margin-top:12px;";											// Shift down if too small			 
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
@@ -97,20 +100,23 @@ class Navigation {
 				str+=`'>${name}</div>`;
 				}
 			}
+
 		if (app.doc.curConcept != -1) {																				// If a step active
-			str+="<div id='stepBarDiv' class='wm-stepBar'>";														// Stepvbar div
+			str+="<div id='stepBarDiv' class='wm-stepBar' style='";													// Stepbar div
+			if (w < 500) str+="margin-top:8px";																		// Shift down if too small			 
+			str+="'>";	
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				str+=`<span id='stepBar-${i}' class='wm-stepBarItem' style='`;										// Use ES6 templates!
 				id=app.doc.lobs[app.doc.curConcept].children[i];													// Get concept id
 				if (app.doc.FindLobById(id).status == DONE)															// If done
-					str+=";color:#007700";																			// Show done color
+					str+="color:#007700;";																			// Show done color
 				if (app.doc.curLobId == children[i]) 																// If current Topic
-				 	str+=";color:#c57117;font-weight:bold";															// Show current place
-				str+=`'>${name}</span>`;
-				if (i != children.length-1)
-					str+="<span style='color:#999'>|</span>"
+				 	str+="color:#c57117;font-weight:bold";															// Show current place
+				str+=`'>${name}</span>`;																			// Add name
+				if (i != children.length-1)																			// Id not last
+					str+="<span style='color:#999'>|</span>";														// Add pipe
 				}	
 			}
 
