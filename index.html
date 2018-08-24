@@ -135,7 +135,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
 	app=new App(url);                                                      	// Alloc app
 	
-	if (window.location.host != "loocalhost") {								// Not in debug
+	if (window.location.host != "localhost") {								// Not in debug
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();						// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);								// Wait, and fade in main
 		}	
@@ -161,30 +161,21 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			app.doc.curPos=0; app.Draw(); Sound("click");					// Stert over
 			}
 
-else if ((e.which == 84) && e.altKey && e.ctrlKey) {				// Test key (Ctrl+Alt+T)
-
-	var dat={ "entry.529474552" :"data2", "entry.1066559787": "name2"};
-	postToGoogle("1FAIpQLSf4w1OQGsIncaiqXlmfAl4jYSt-e4Zx3xVJa7Weob4LnQbRZQ",dat);
-
-	function postToGoogle(id, dat) {
-		$.ajax({
-	       	url: "https://docs.google.com/forms/d/e/"+id+"/formResponse",
-			data: dat, 
-			type: "POST",  
-			dataType: "xml",
-        	});
-        }
-	}
-		});
+	else if ((e.which == 84) && e.altKey && e.ctrlKey) {					// Test key (Ctrl+Alt+T)
+		var dat={ "entry.529474552" :"some data", "entry.1066559787": "Bill"};
+		postToGoogle("1FAIpQLSf4w1OQGsIncaiqXlmfAl4jYSt-e4Zx3xVJa7Weob4LnQbRZQ",dat);
+		}
+	});
  
  });									
 
-function html5MessageHandler(e)										// ON HTML5 MESSAGE
+function html5MessageHandler(e)											// ON HTML5 MESSAGE
 {
 	if (e && e.data) 														// If a valid message				
 		app.msg.OnMessage(e);												// Route
 }
-  
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // APP
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +313,16 @@ class App  {																								 // APP
 		$("#contentIF")[0].contentWindow.postMessage(msg,"*");	 				// Send message 
 	}
 
-
+	function postToGoogle(id, dat) 											// POST DATA TO GOOGLE FORM
+	{
+		$.ajax({
+			url: "https://docs.google.com/forms/d/e/"+id+"/formResponse",		// Construct URL using forms id
+			data: dat, 															// Send data
+			type: "POST",  														// Will generate CORS error, but posts anyway
+			dataType: "xml",													// XML
+			});
+	}
+	
 
 </script>
 
