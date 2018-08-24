@@ -162,10 +162,19 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			}
 
 else if ((e.which == 84) && e.altKey && e.ctrlKey) {				// Test key (Ctrl+Alt+T)
-//			SendToIframe("ScaleAct=seek|20");
 
+	var dat={ "entry.529474552" :"data2", "entry.1066559787": "name2"};
+	postToGoogle("1FAIpQLSf4w1OQGsIncaiqXlmfAl4jYSt-e4Zx3xVJa7Weob4LnQbRZQ",dat);
 
-}
+	function postToGoogle(id, dat) {
+		$.ajax({
+	       	url: "https://docs.google.com/forms/d/e/"+id+"/formResponse",
+			data: dat, 
+			type: "POST",  
+			dataType: "xml",
+        	});
+        }
+	}
 		});
  
  });									
