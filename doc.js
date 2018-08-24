@@ -365,14 +365,17 @@ class Doc {
 				app.rul.rules.push(o);																				// Add step
 				}
 			else if (v[0] == "set")	{																				// A Setting
+				if (v[4] && v[4].match(/login/i))			app.login=true;											// Force login
 				if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
 				if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// No skip
 				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
+				if (v[4] && v[4].match(/assessReport=/i))	app.assessReport=v[4].match(/assessReport=(\.*\d+)/i)[1];	// Assessment reporting level
 				if (v[4] && v[4].match(/margin=/i))			app.defMargin=v[4].match(/margin=(\.*\d+)/i)[1];		// Default margin
 				}
 			}
 		this.AddChildList();																						// Add children	
 		app.Draw();																									// Reset data positions
+		if (app.login)	GetTextBox("Please log in","Type your user name","",function(s) { app.userName=s} ); 		// Login
 	}
 
 	GDriveLoad(id) 																								// LOAD DOC FROM GOOGLE DRIVE

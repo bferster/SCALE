@@ -47,9 +47,14 @@ class Messaging {
 				app.doc.SetStatus(j,(v[2]-0 >= app.assessLevel-0) ? 10 : 0);										// If after pass level, set status
 			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
 			app.rul.CheckRules("assess",id,Math.floor(v[2]*100));													// Send to rules
+			app.msg.SaveToForm(j,"Assess"+v[1]+"="+Math.floor(v[2]*100));											// Save final score to form, if set		
 			}
-		else if (msg.match(/Assess=answer/)) 																		// Assessment module loaded
+		else if (msg.match(/Assess=answer/)) {																		// Assessment module loaded
+			var j=app.doc.FindLobIndexById(v[1]);																	// Get assessment lob index
 			app.rul.CheckRules("answer",app.doc.curLobId+":"+v[2],v[3]);											// Send to rule checker
+			if (app.assessReport == 1)																				// If reporting answers
+				app.msg.SaveToForm(j,"Answer"+app.doc.curLobId+":"+v[2]+"="+v[3]);									// Save answer to form, if set		
+			}
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
 			if (msg.match(/next/)) {																				// Go onto next event
 				app.doc.NextLob(); 																					// Advance to next pos
@@ -72,6 +77,23 @@ class Messaging {
 		else
 			trace(msg)
 		}
-		
+
+		SaveToForm(id, data)																					// SAVE DATA TO FORM
+		{
+			var i,d={};
+			var body=app.doc.lobs[id].body;																			// Get body of assessment
+			if (!body) return;																						// Quit if no body
+			var v=body.match(/assess\((.*?)\)/i);																	// Get assess
+			if (!v[1]) return;																						// Quit if no assess() macro
+			v=(""+v[1]).split(',');																					// Split by ,
+			if (v.length < 3)	return;																				// No form params
+			if (v[2].match('='))  																					// If name is baked in
+				d[v[2].split('=')[0]]=v[2].split('=')[1]+":"+app.userName;											// Set name directly
+			else																									// Get login name																								
+				d[v[2]]=app.userName;																				// Use username
+			d[v[3]]=data;																							// Set data
+			postToGoogle(v[1],d);																					// Post data to Google form
+		}
+
 
 }

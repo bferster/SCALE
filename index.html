@@ -84,6 +84,10 @@
 							}
 		.wm-pullDownItem:hover{ background-color:#aaa
 							}
+		.wm-bs {			cursor: pointer; color:#fff; 
+							text-align: center; border-radius: 16px; display: inline-block; user-select: none;
+							font-size: 12px; background-color: #27ae60; padding: 2px 8px 2px 8px; vertical-align:3px;
+							}
 		.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix { border:none }
 		.ui-dialog { 		border-radius:12px; box-shadow:2px 2px 6px #ccc }
 		.ui-button { 		border-radius:30px; outline:none }
@@ -150,6 +154,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
+
 	$(window).on("keydown",function(e) {									// HANDLE KEYPRESS
 		if ((e.keyCode == 40) || (e.keyCode == 34)) {						// Down arrow, pg-dn
 			app.doc.NextLob(1); app.Draw(); Sound("click");					// Advance
@@ -189,6 +194,9 @@ class App  {																								 // APP
 		this.setDone=true;																							// Controls if we set status just by viewing pane
 		this.skipDone=false;																						// Controls if panes are skipped if status == 10
 		this.assessLevel=.5;																						// Level to pass assessment
+		this.assessReport=0;																						// Report only final grade of assessment
+		this.login=false;																							// No need to login
+		this.userName="JerryBruner";																				// User name
 		this.defMargin=0;																							// Default margin
 		this.doc=new Doc(id);																						// Alloc doc w/ course id
 		this.con=new Content();																						// Content
@@ -196,7 +204,7 @@ class App  {																								 // APP
 		this.msg=new Messaging();																					// Messaging
 		this.rul=new Rules();																						// Rules
 		this.Draw(); 																								// Draw app
-	}
+}
 
 	Draw(index) 																								// REDRAW
 	{
@@ -208,7 +216,8 @@ class App  {																								 // APP
 		this.con.Draw();																							// Draw container
 		this.nav.Draw();																							// Draw navigator and header
 		if (this.setDone)		app.doc.SetStatus(this.doc.curPos,10);												// Set lob's status
-	}
+
+}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,8 +262,36 @@ class App  {																								 // APP
 	{
 		Sound("ding");															// Ding
 		$("#menuMsg").text(msg);												// Set message
-		$("#menuMsg").fadeIn(500).delay(time ? time : 2000).fadeOut(500)		// Animate in and out	
+		$("#menuMsg").fadeIn(400).delay(time ? time : 2000).fadeOut(500)		// Animate in and out	
 	}
+
+	function GetTextBox(title, content, def, callback)					// GET TEXT LINE BOX
+	{
+		$("#alertBoxDiv").remove();											// Remove any old ones
+		$("body").append("<div id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span id='gtBoxTi'style='font-size:18px'><b>"+title+"</b></span><p>";
+		str+="<div style='font-size:12px;margin:14px'>"+content;
+		str+="<p><input style='border-radius:16px;width:75%' type='text' id='gtBoxTt' value='"+def+"'></p>";
+		str+="<div id='dialogOK' class='wm-bs'>OK</div>";
+		str+="<div id='dialogCancel' class='wm-bs' style='margin-left:8px;background-color:#999'>Cancel</div></div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400 });	
+		$("#alertBoxDiv").dialog("option","position",{ my:"center", at:"center" });
+		$("#alertBoxDiv").css({ border:"1px solid #999","border-radius":"6px"});
+
+		$("#dialogOK").on("click", function() {							// ON OK BUT
+					callback($("#gtBoxTt").val());
+					$("#alertBoxDiv").remove();  
+				});
+
+		$("#dialogCancel").on("click", function() {						// ON CANCEL BUT
+				$("#alertBoxDiv").remove();								// Remove 
+				});
+
+		}
+
+
 
 	function PopUp(msg, time, div)											// TIMED POPUP
 	{
@@ -313,11 +350,11 @@ class App  {																								 // APP
 		$("#contentIF")[0].contentWindow.postMessage(msg,"*");	 				// Send message 
 	}
 
-	function postToGoogle(id, dat) 											// POST DATA TO GOOGLE FORM
+	function postToGoogle(id, data) 											// POST DATA TO GOOGLE FORM
 	{
 		$.ajax({
 			url: "https://docs.google.com/forms/d/e/"+id+"/formResponse",		// Construct URL using forms id
-			data: dat, 															// Send data
+			data: data, 														// Send data
 			type: "POST",  														// Will generate CORS error, but posts anyway
 			dataType: "xml",													// XML
 			});
