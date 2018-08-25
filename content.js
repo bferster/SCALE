@@ -51,7 +51,7 @@ class Content  {
 				var w=99.5,b=0;																						// Assume full width
 				var h=$("#contentDiv").height()-250;																// Set default height												
 				ifs="<div style='text-align:center'>";																// For centering
-				var url="assess.htm?"+ifr[1].split(",")[0];															// Get answers (ignore form data, if any)
+				var url="assess.htm?"+ifr[1];																		// Get answers
 				url+="|"+l.id;																						// Add overall assessment id
 				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+url+"' style='height:"+h+"px;width:66%'></iframe></div>";	// Load in iframe
 				str=str.replace(/assess\(.*?\)/i,ifs);																// Get tag and replace it with iframe
@@ -64,7 +64,7 @@ class Content  {
 	
 			if (margin && (margin != "0"))	{																		// If a margin set
 				var pct=100-margin-margin;																			// Width
-				margin+="%";																					// Add %
+				margin+="%";																						// Add %
 				$("#contentBodyDiv").css({ "padding-left":margin,"padding-right":margin,width:pct+"%" });			// Set margin	
 				}	
 		}

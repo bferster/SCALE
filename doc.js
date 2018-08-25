@@ -369,7 +369,8 @@ class Doc {
 				if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
 				if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// No skip
 				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
-				if (v[4] && v[4].match(/assessReport=/i))	app.assessReport=v[4].match(/assessReport=(\.*\d+)/i)[1];	// Assessment reporting level
+				if (v[4] && v[4].match(/reportLevel=/i))	app.reportLevel=v[4].match(/reportLevel=(\.*\d+)/i)[1];	// Assessment reporting level
+				if (v[4] && v[4].match(/reportLink=/i))		app.reportLink=v[4].match(/reportLink=(\.*\S+)/i)[1];	// Assessment reporting link
 				if (v[4] && v[4].match(/margin=/i))			app.defMargin=v[4].match(/margin=(\.*\d+)/i)[1];		// Default margin
 				}
 			}

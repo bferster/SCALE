@@ -167,8 +167,6 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			}
 
 	else if ((e.which == 84) && e.altKey && e.ctrlKey) {					// Test key (Ctrl+Alt+T)
-		var dat={ "entry.529474552" :"some data", "entry.1066559787": "Bill"};
-		postToGoogle("1FAIpQLSf4w1OQGsIncaiqXlmfAl4jYSt-e4Zx3xVJa7Weob4LnQbRZQ",dat);
 		}
 	});
  
@@ -350,16 +348,7 @@ class App  {																								 // APP
 		$("#contentIF")[0].contentWindow.postMessage(msg,"*");	 				// Send message 
 	}
 
-	function postToGoogle(id, data) 											// POST DATA TO GOOGLE FORM
-	{
-		$.ajax({
-			url: "https://docs.google.com/forms/d/e/"+id+"/formResponse",		// Construct URL using forms id
-			data: data, 														// Send data
-			type: "POST",  														// Will generate CORS error, but posts anyway
-			dataType: "xml",													// XML
-			});
-	}
-	
+
 
 </script>
 
