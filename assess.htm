@@ -146,7 +146,7 @@
 
 	function Draw(num, showRight, answer)									// DRAW NODE
 	{
-		var i,lab,str="",col="#000",sliAns=-1;												
+		var i,pic,lab,str="",col="#000",sliAns=-1;												
 		if (num >= aData.pages.length) {										// Past last page
 			qe.SendMessage("done",curAssess+"|"+numCorrect/numAnswers);		// Send done message
 			return;																// Quit
@@ -160,7 +160,7 @@
 		if (d.text) 	$("#textDiv").html(d.text);								// Text body
 		if (d.prompt) 	$("#promptDiv").html(d.prompt);							// Prompt
 		$("#containerDiv").css("font-size",fontSize+"px");						// Set fontsize
-		if ((d.options) &&  (d.optionType == "radio" || d.optionType == "checkbox")) {	// Checkbox or radio												// Add options
+		if ((d.options) &&  (d.optionType == "radio" || d.optionType == "checkbox")) {	// Checkbox or radio, add options
 			for (i=0;i<d.options.length;++i) {									// For each option
 				if (showRight) {												// If showing correct answers
 					if (d.options[i].match(/^\*/)) 	col="#00aa00";				// If a correct one
@@ -168,12 +168,17 @@
 					}
 				lab=d.options[i].replace(/^\*/,"");								// Remove "correct" dot
 				str+="<span style='color:"+col+"'>";							// Add color span
-			 	str+="&nbsp;&nbsp; <input type='"+d.optionType+"' name='opt' id='opt"+i+"' value='"+lab+"'>"+lab+"</span>";	// Add line
+				if ((pic=lab.match(/pic\(.*?\)/i))) {							// If pic() macro set
+					lab=lab.replace(/pic\(.*?\)/i,"");							// Delete text
+					pic=pic[0].substr(4,pic[0].length-5);						// Get payload
+			 		str+="<br>&nbsp; &nbsp;<img style='vertical-align:top' src='"+pic+"'><br>";	 // Add pic
+					}	
+				str+="&nbsp;&nbsp; <input type='"+d.optionType+"' name='opt' id='opt"+i+"' value='"+lab+"'>"+lab+"</span>";	// Add line
 				if (d.options[i].toLowerCase() == "*other")						// If an other option
 		 			str+="&nbsp <input class='is' style='width:6em;' type='text' id='otherOpt'><br></span>";	// Add line
 				else	str+="<br>";											// Add break
 				}
-			}
+}
 		if ((d.options) && (d.optionType == "cloze")) {							// Cloze
 			var s=d.text;
 			i=0;																// Reset counter
@@ -453,3 +458,4 @@
 	
 </script>
 </body></html>
+
