@@ -51,7 +51,7 @@ class Messaging {
 			}
 		else if (msg.match(/Assess=answer/)) {																		// Assessment module loaded
 			app.rul.CheckRules("answer",app.doc.curLobId+":"+v[2],v[3]);											// Send to rule checker
-			if (app.assessReport == 1)																				// If reporting answers
+			if (app.reportLevel == 1)																				// If reporting answers
 				app.msg.SaveToForm("Answer"+app.doc.curLobId+":"+v[2]+"="+v[3]);									// Save answer to form, if set		
 			}
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
@@ -80,13 +80,12 @@ class Messaging {
 		SaveToForm(data)																						// SAVE DATA TO FORM
 		{
 			var d={};
+			if (!app.reportLink)	return;																			// Invalid link
 			var url=app.reportLink.split("/viewform?")[0]+"/formResponse";											// Extract post url
 			var nam=app.reportLink.match(/entry.[0-9]*=name/i)[0].split("=");										// Extract name
 			var dat=app.reportLink.match(/entry.[0-9]*=data/i)[0].split("=");										// Extract data
-			d[nam[0]]=app.userName;																					// Use username from login																	
+			d[nam[0]]=(app.namePrefix ? app.namePrefix+':' : "") + app.userName;									// Use username from login																	
 			d[dat[0]]=data;																							// Set data
-			$.ajax({ url: url, data: d, 																			// POST
-					 type: "POST",  dataType: "xml",																// Will generate CORS error, but posts anyway
-					 });
+			$.ajax({ url: url, data: d,  type: "POST",  dataType: "xml" });											// Will generate CORS error, but posts anyway
 			}
 }

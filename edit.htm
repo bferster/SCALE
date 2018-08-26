@@ -491,7 +491,12 @@ class App  {
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
 		str+="<tr><td>Skip done if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
 		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
-		str+="<tr><td>Default margin %;</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
+		str+="<tr><td>Default margin %</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
+		str+="<tr><td>Name prefix&nbsp;</td><td><input class='wm-is' type='text' id='setName' value='"+(app.namePrefix ? app.namePrefix : '')+"'></td></tr>";	
+		str+="<tr><td>Ask to login</td><td><input type='checkbox' "+(app.login ? "checked" : "")+" id='setLogin'></td></tr>";	
+		str+="<tr><td>Reporting level&nbsp;</td><td><input class='wm-is' type='text' id='setLevel' value='"+(app.reportLevel ? app.reportLevel : '')+"'></td></tr>";	
+		str+="<tr><td>Reporting link&nbsp;</td><td><input class='wm-is' type='text' id='setLink' value='"+(app.reportLink ? app.reportLink : '')+"'></td></tr>";	
+
 		str+="<tr><td>Delete entire course</td><td><div id='deleteCourseBut' class='wm-bs'>Delete</div></td></tr>";	
 		str+="</table>";																			
 		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
@@ -509,7 +514,10 @@ class App  {
 		$("#saveSetBut").on("click", ()=> { 												// ON SAVE SETTINGS
 			app.setDone=$("#setDone").prop("checked");										// Get vals			
 			app.skipDone=$("#setSkip").prop("checked");								
-			app.assessLevel=$("#setPass").val();	
+			app.reportLevel=$("#setLevel").val();	
+			app.login=$("#setLogin").prop("checked");								
+			app.namePrefix=$("#setName").val();	
+			app.reportLink=$("#setLink").val();	
 			app.defMargin=$("#setMargin").val();	
 			this.Draw("splash");															// Show splash																								
 			app.Do();																		// Save for undo

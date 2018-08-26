@@ -84,6 +84,9 @@
 							}
 		.wm-pullDownItem:hover{ background-color:#aaa
 							}
+		.wm-is {			border-radius:.8em;padding-left:.6em;padding-right:.6em;padding-top:1px;
+							border:1px solid #999; font-size:1em; height: 1.66em; width:16.66em;
+							}
 		.wm-bs {			cursor: pointer; color:#fff; 
 							text-align: center; border-radius: 16px; display: inline-block; user-select: none;
 							font-size: 12px; background-color: #27ae60; padding: 2px 8px 2px 8px; vertical-align:3px;
@@ -192,7 +195,8 @@ class App  {																								 // APP
 		this.setDone=true;																							// Controls if we set status just by viewing pane
 		this.skipDone=false;																						// Controls if panes are skipped if status == 10
 		this.assessLevel=.5;																						// Level to pass assessment
-		this.assessReport=0;																						// Report only final grade of assessment
+		this.reportLevel=0;																							// Report only final grade of assessment
+		this.reportLink="";																							// Link to form
 		this.login=false;																							// No need to login
 		this.userName="JerryBruner";																				// User name
 		this.defMargin=0;																							// Default margin
@@ -270,7 +274,7 @@ class App  {																								 // APP
 		var str="<p><img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span id='gtBoxTi'style='font-size:18px'><b>"+title+"</b></span><p>";
 		str+="<div style='font-size:12px;margin:14px'>"+content;
-		str+="<p><input style='border-radius:16px;width:75%' type='text' id='gtBoxTt' value='"+def+"'></p>";
+		str+="<p><input class='wm-is' style='width:75%' type='text' id='gtBoxTt' value='"+def+"'></p>";
 		str+="<div id='dialogOK' class='wm-bs'>OK</div>";
 		str+="<div id='dialogCancel' class='wm-bs' style='margin-left:8px;background-color:#999'>Cancel</div></div>";
 		$("#alertBoxDiv").append(str);	

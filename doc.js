@@ -96,9 +96,13 @@ class Doc {
 			str+=makeTSVLine("ask",o.id,o.name,"",o.step);															// Add ask
 			}
 		var s="assessLevel="+app.assessLevel;																		// Add assessment level
-		if (!app.setDone) 	s+=" setDone";																			// Don't set done
-		if (app.skipDone) 	s+=" setSkip";																			// Set skipping when done
-		if (app.defMargin)	s+=" margin="+app.defMargin;															// Default margin
+		if (!app.setDone) 		s+=" setDone";																		// Don't set done
+		if (app.skipDone) 		s+=" setSkip";																		// Set skipping when done
+		if (app.login) 			s+=" login";																		// Set skipping when done
+		if (app.reportLevel)	s+=" reportLevel="+app.reportLevel													// Report level
+		if (app.reportLink)		s+=" reportLink="+app.reportLink													// Report link
+		if (app.namePrefix)		s+=" namePrefix="+app.namePrefix													// Username prefix
+		if (app.defMargin)		s+=" margin="+app.defMargin;														// Default margin
 		str+=makeTSVLine("set","","Settings","",s);																	// Add set
 
 		function makeTSVLine(type, id, name, parent, body) {														// CREATE TSV OF LOB																				
@@ -371,6 +375,7 @@ class Doc {
 				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
 				if (v[4] && v[4].match(/reportLevel=/i))	app.reportLevel=v[4].match(/reportLevel=(\.*\d+)/i)[1];	// Assessment reporting level
 				if (v[4] && v[4].match(/reportLink=/i))		app.reportLink=v[4].match(/reportLink=(\.*\S+)/i)[1];	// Assessment reporting link
+				if (v[4] && v[4].match(/namePrefix=/i))		app.namePrefix=v[4].match(/namePrefix=(\.*\S+)/i)[1];	// User name prefix
 				if (v[4] && v[4].match(/margin=/i))			app.defMargin=v[4].match(/margin=(\.*\d+)/i)[1];		// Default margin
 				}
 			}
