@@ -163,19 +163,14 @@ class App  {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	var app=null;																	// Hold course data 
-	$(document).ready(function() {												// WHEN PAGE LOADED
+	$(document).ready(function() {													// WHEN PAGE LOADED
 		if (window.addEventListener) 												// If supported this way
 			window.addEventListener("message",eventHandler,false);					// Add event handler
 		else																		// Use other method
 			window.attachEvent("message",eventHandler);								// Add handler
 
 	var h=$(window).height()-300;													// Editor height
-/*	if (window.location.host != "localhost") {										// Not in debug
-		$("#splashDiv").fadeIn().delay(2000).fadeOut();								// Fade out splash
-		$("#mainDiv").delay(2000).fadeIn(2000);										// Wait, and fade in main
-		}	
-	else																			// Debug
-*/		$("#mainDiv").fadeIn(0),h+=44;												// Load fast (account for CK sizing bug)
+	$("#mainDiv").fadeIn(0),h+=44;													// Load fast (account for CK sizing bug)
 	
 	var url=window.location.search.substring(1);						   			// Get query string
 	if (!url)																		// No lobs id set
@@ -498,14 +493,15 @@ class App  {
 		str+="<table>";
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
 		str+="<tr><td>Skip done if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
-		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
 		str+="<tr><td>Hide header</td><td><input  type='checkbox' "+(app.hideHeader ? "checked" : "")+" id='setHeader'></td></tr>";	
 		str+="<tr><td>Default margin %</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
-		str+="<tr><td>Name prefix&nbsp;</td><td><input class='wm-is' type='text' id='setName' value='"+(app.namePrefix ? app.namePrefix : '')+"'></td></tr>";	
+		str+="<tr><td colspan='2'><hr></td></tr>";	
+		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
+		str+="<tr><td>User name prefix&nbsp;</td><td><input class='wm-is' type='text' id='setName' value='"+(app.namePrefix ? app.namePrefix : '')+"'></td></tr>";	
 		str+="<tr><td>Ask to login</td><td><input type='checkbox' "+(app.login ? "checked" : "")+" id='setLogin'></td></tr>";	
 		str+="<tr><td>Reporting level&nbsp;</td><td><input class='wm-is' type='text' id='setLevel' value='"+(app.reportLevel ? app.reportLevel : '')+"'></td></tr>";	
 		str+="<tr><td>Reporting link&nbsp;</td><td><input class='wm-is' type='text' id='setLink' value='"+(app.reportLink ? app.reportLink : '')+"'></td></tr>";	
-
+		str+="<tr><td colspan='2'><hr></td></tr>";	
 		str+="<tr><td>Delete entire course</td><td><div id='deleteCourseBut' class='wm-bs'>Delete</div></td></tr>";	
 		str+="</table>";																			
 		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
