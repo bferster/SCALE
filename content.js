@@ -24,14 +24,13 @@ class Content  {
 			var b=app.doc.lobs[app.doc.curPos].body;																// Point at body
 			if (b.match(/assess\(/i)) {																				// If in an assessment
 				Sound("delete");																					// Sound
-				PopUp("Please finish this assessment");																// Popup message
+				PopUp("Please finish this assessment first");														// Popup message
 				return;
 				}
 			app.doc.NextLob(1); 																					// Next lob
 			app.Draw(); 																							// Draw it
 			ButtonPress("nextBut");																					// Wiggle button
-			}
-			);				
+			});				
 	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
