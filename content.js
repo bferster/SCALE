@@ -12,7 +12,9 @@ class Content  {
 
 	Draw(id) 																									// REDRAW
 	{	
-		var h=app.hgt-$("#headerDiv").height()-$("#navDiv").height()-36;											// Get height
+		var h=app.hgt-$("#navDiv").height()-24;																		// Get height
+		if (!app.hideHeader)																						// If not hiding header
+			h-=$("#headerDiv").height()+8;																			// Accommodate for it
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
@@ -53,7 +55,7 @@ class Content  {
 				ifs="<div style='text-align:center'>";																// For centering
 				var url="assess.htm?"+ifr[1];																		// Get answers
 				url+="|"+l.id;																						// Add overall assessment id
-				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+url+"' style='height:"+h+"px;width:66%'></iframe></div>";	// Load in iframe
+				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+url+"' style='height:"+h+"px;width:100%'></iframe></div>";	// Load in iframe
 				str=str.replace(/assess\(.*?\)/i,ifs);																// Get tag and replace it with iframe
 				}
 			if (ifr=str.match(/margin\((.*?)\)/i)) {																// If a margin tag

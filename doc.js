@@ -99,6 +99,7 @@ class Doc {
 		if (!app.setDone) 		s+=" setDone";																		// Don't set done
 		if (app.skipDone) 		s+=" setSkip";																		// Set skipping when done
 		if (app.login) 			s+=" login";																		// Set skipping when done
+		if (app.hideHeader) 	s+=" hideHeader";																	// Set hiding of header
 		if (app.reportLevel)	s+=" reportLevel="+app.reportLevel													// Report level
 		if (app.reportLink)		s+=" reportLink="+app.reportLink													// Report link
 		if (app.namePrefix)		s+=" namePrefix="+app.namePrefix													// Username prefix
@@ -372,6 +373,7 @@ class Doc {
 				if (v[4] && v[4].match(/login/i))			app.login=true;											// Force login
 				if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
 				if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// No skip
+				if (v[4] && v[4].match(/hideHeader/i))		app.hideHeader=true;									// Hide header aeea
 				if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
 				if (v[4] && v[4].match(/reportLevel=/i))	app.reportLevel=v[4].match(/reportLevel=(\.*\d+)/i)[1];	// Assessment reporting level
 				if (v[4] && v[4].match(/reportLink=/i))		app.reportLink=v[4].match(/reportLink=(\.*\S+)/i)[1];	// Assessment reporting link

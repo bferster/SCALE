@@ -113,6 +113,14 @@ class App  {
 		this.undos=[];																// Holds undos
 		this.curUndo=0;																// Undo counter
 		this.InitCourse(id)															// Init course
+		this.setDone=true;															// Controls if we set status just by viewing pane
+		this.skipDone=false;														// Controls if panes are skipped if status == 10
+		this.hideHeader=false;														// Controls header is hidden
+		this.assessLevel=.5;														// Level to pass assessment
+		this.reportLevel=0;															// Report only final grade of assessment
+		this.reportLink="";															// Link to form
+		this.login=false;															// No need to login
+		this.defMargin=0;															// Default margin
 	}
 
 	InitCourse(id)
@@ -491,6 +499,7 @@ class App  {
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
 		str+="<tr><td>Skip done if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
 		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
+		str+="<tr><td>Hide header</td><td><input  type='checkbox' "+(app.hideHeader ? "checked" : "")+" id='setHeader'></td></tr>";	
 		str+="<tr><td>Default margin %</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
 		str+="<tr><td>Name prefix&nbsp;</td><td><input class='wm-is' type='text' id='setName' value='"+(app.namePrefix ? app.namePrefix : '')+"'></td></tr>";	
 		str+="<tr><td>Ask to login</td><td><input type='checkbox' "+(app.login ? "checked" : "")+" id='setLogin'></td></tr>";	
@@ -518,6 +527,7 @@ class App  {
 			app.login=$("#setLogin").prop("checked");								
 			app.namePrefix=$("#setName").val();	
 			app.reportLink=$("#setLink").val();	
+			app.hideHeader=$("#setHeader").prop("checked");								
 			app.defMargin=$("#setMargin").val();	
 			this.Draw("splash");															// Show splash																								
 			app.Do();																		// Save for undo

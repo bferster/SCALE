@@ -38,7 +38,6 @@ class Navigation {
 			var id=e.currentTarget.id.substr(9);																	// Extract id
 			app.doc.curPos=id;																						// Go to start of lesson
 			app.Draw();																								// Redraw
-			trace(id);
 			Sound("click");																							// Click
 			$("#menuSlotDiv").remove();																				// Close menu	
 		});
@@ -181,6 +180,10 @@ class Navigation {
 
 	UpdateHeader() 																								// UPDATE HEADER																					
 	{	
+		if (app.hideHeader) {																						// If hiding header
+			$("#headerDiv").css("display","none");																	// Hide it
+			$("body").css("background-color","#ddd")																// Background gray
+			}
 		$("#courseTitle").html(app.doc.lobs[0].name);																// Show course name
 		if (app.doc.curLesson <= 0)																					// On splash page
 			$("#lessonTitle").html("");																				// Hide lesson name
