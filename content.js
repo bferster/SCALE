@@ -19,7 +19,17 @@ class Content  {
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
 		$("#contentDiv").html(str);																					// Set content
-		this.GetContentBody(id);																					// Add content
+		if (id == "discuss") {																						// If a discussion
+			var str="<img onclick='javascript:app.con.Draw()' src='img/next.png' class='wm-nextBut'>"; 				// Add exit button
+			var h=$("#contentDiv").height()-200;																	// Set default height												
+			var link="disqus.htm?"+app.discussion;																	// Set link
+			str+="<div class='wm-pageTitle'>Discussion</div><br>";													// Add page title
+			str+="<div style='text-align:center'>";																	// For centering
+			str+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+link+"' style='height:"+h+"px;width:75%'></iframe></div>";	// Load in iframe
+			$("#contentDiv").append(str);																			// Run discussion
+			}
+		else
+			this.GetContentBody(id);																				// Add content
 		$("#nextBut").on("click",()=> { 																			// On button click, navigate forward   
 			var b=app.doc.lobs[app.doc.curPos].body;																// Point at body
 			if (b.match(/assess\(/i)) {																				// If in an assessment

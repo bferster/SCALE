@@ -116,6 +116,7 @@
 				<span id="menuMsg" style="display:none;margin-left:32px"></span>
 				<span id="userName" class="wm-userName">User&nbsp;Name</span>
 				<img id="showgdoc" style="cursor:pointer;float:right;margin-right:8px" src="img/gdrive.png">
+				<img id="showDiscuss" style="cursor:pointer;float:right;margin-right:12px;display:none" src="img/chatbut.png">
 			</div>
 			<div id="contentDiv" class="wm-content"></div>
 			<div id="navDiv" class="wm-navigation"></div>
@@ -160,6 +161,9 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
+	$("#showDiscuss").on("click",function() {								// Show discussion
+		app.con.Draw("discuss");											// Show it	
+		});
 
 	$(window).on("keydown",function(e) {									// HANDLE KEYPRESS
 		if ((e.keyCode == 40) || (e.keyCode == 34)) {						// Down arrow, pg-dn
@@ -202,6 +206,7 @@ class App  {																								 // APP
 		this.reportLevel=0;																							// Report only final grade of assessment
 		this.reportLink="";																							// Link to form
 		this.login=false;																							// No need to login
+		this.discussion="";																							// Discussuion		
 		this.userName="JerryBruner";																				// User name
 		this.defMargin=0;																							// Default margin
 		this.doc=new Doc(id);																						// Alloc doc w/ course id

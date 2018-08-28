@@ -104,6 +104,7 @@ class Doc {
 		if (app.reportLink)		s+=" reportLink="+app.reportLink													// Report link
 		if (app.namePrefix)		s+=" namePrefix="+app.namePrefix													// Username prefix
 		if (app.defMargin)		s+=" margin="+app.defMargin;														// Default margin
+		if (app.discussion)		s+="discussion="+app.discussion;													// Discussion link
 		str+=makeTSVLine("set","","Settings","",s);																	// Add set
 
 		function makeTSVLine(type, id, name, parent, body) {														// CREATE TSV OF LOB																				
@@ -379,6 +380,7 @@ class Doc {
 				if (v[4] && v[4].match(/reportLink=/i))		app.reportLink=v[4].match(/reportLink=(\.*\S+)/i)[1];	// Assessment reporting link
 				if (v[4] && v[4].match(/namePrefix=/i))		app.namePrefix=v[4].match(/namePrefix=(\.*\S+)/i)[1];	// User name prefix
 				if (v[4] && v[4].match(/margin=/i))			app.defMargin=v[4].match(/margin=(\.*\d+)/i)[1];		// Default margin
+				if (v[4] && v[4].match(/discussion=/i))		app.discussion=v[4].match(/discussion=(\.*\S+)/i)[1];	// Discussion link
 				}
 			}
 		this.AddChildList();																						// Add children	

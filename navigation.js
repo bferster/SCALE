@@ -190,6 +190,7 @@ class Navigation {
 		else																										// Into course
 			$("#lessonTitle").html(app.doc.lobs[app.doc.curLesson].name);											// Show lesson name
 		$("#userName").html(app.doc.firstName+"&nbsp;"+app.doc.lastName);											// Show user
+		if (app.discussion)		$("#showDiscuss").show();															// If discussion set
 	}
 
 }
