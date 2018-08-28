@@ -73,12 +73,12 @@ class Navigation {
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get topic name
 				j=app.doc.FindLobIndexById(children[i]);															// Get topic index
-				str+="<div id='topicDot-"+i+"' class='wm-topicDotDiv'>";											// Add dot container
 				str+="<div id='topicDotLab-"+i+"'class='wm-topicDotLab'style='";									// Label container
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+="color:#c57117;";			// Highlight if current						
-				if (i%2 && (w < 500)) str+="margin-top:34px";														// Stagger if too small
+				if (w < 900)			name=ShortenString(name,16);												// If small, shorten label
+				if (i%2 && (w < 500)) 	str+="margin-top:34px";														// Stagger ff really small
 				str+=`'>${name}</div>`;																				// Add label
-				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div></div>";								// Add dot
+				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div>";										// Add dot
 				}
 			}
 		
@@ -96,6 +96,7 @@ class Navigation {
 				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color
+				if (w < 500) name=ShortenString(name,15);															// If too small, shorten label
 				str+=`'>${name}</div>`;
 				}
 			}
@@ -126,16 +127,16 @@ class Navigation {
 			children=app.doc.lobs[app.doc.curLesson].children;														// Get topics
 			ww=(w-48)/(children.length-1);																			// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
-					$("#topicDot-"+i).on("click",function(e) {														// ON TOPIC CLICK
-						var id=e.currentTarget.id.substr(9);														// Extract id
+					$("#topicDotDot-"+i).on("click",function(e) {													// ON TOPIC CLICK
+						var id=e.currentTarget.id.substr(12);														// Extract id
 						id=app.doc.lobs[app.doc.curLesson].children[id];											// Get topic id
 						app.Draw(app.doc.FindLobIndexById(id));														// Set new index and redraw
 						Sound("click");																				// Click
 						});
-					$("#topicDot-"+i).css({ left:l+"px"} );															// Position dot
-					var id=app.doc.lobs[app.doc.curLesson].children[i];												// Get topic is
+						$("#topicDotLab-"+i).css({ left:l+"px"} );													// Position label
+						$("#topicDotDot-"+i).css({ left:(l+100)+"px"} );											// Position dot
+						var id=app.doc.lobs[app.doc.curLesson].children[i];											// Get topic is
 					if (app.doc.FindLobById(id).status == DONE)	{													// If done
-//						$("#topicDotDot-"+i).css({"background-color":"#009900"});									// Done status
 						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
 						}
 					l+=ww;																							// Next pos

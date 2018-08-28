@@ -6,7 +6,7 @@
 	<title>S C A L E</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<script src="lib/jquery.min.js"></script>
-	<script src="lib/jquery-ui.min.js"></script>
+	<script src="lib/jquery-ui.min.js"></scrip
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<script src="doc.js"></script>
 	<script src="content.js"></script>
@@ -50,14 +50,12 @@
 		.wm-topicBar { 		position: absolute; width:calc(100% - 32px); height:3px; top:29px; left:16px;
 							background-color: #999; border-radius:4px; 
 							}
-		.wm-topicDotDiv { 	position:absolute; top:4px;
-							}
-		.wm-topicDot { 		position: absolute; width:12px; height:12px; border-radius:14px; margin-left:100px; top:18px;
+		.wm-topicDot { 		position: absolute; width:12px; height:12px; border-radius:14px; top:22px; 
 							background-color: #ccc; border:2px solid #999; cursor:pointer;
 							}
 		.wm-topicDot:hover{ border:2px solid #6699ff;
 							}
-		.wm-topicDotLab { 	width:200px; text-align:center; padding-left:-100px; padding-bottom: 4px;
+		.wm-topicDotLab { 	position:absolute; top:4px; width:200px; text-align:center; padding-left:-100px; padding-bottom: 4px;
 							text-shadow: 1px 1px #fff;font-weight: bold; color:#555;
 							}
 		.wm-conceptBar { 	position: absolute; height:18px;background-color: #bbb; text-align:center; top: 48px;
@@ -367,6 +365,13 @@ class App  {																								 // APP
 			snd.play();															// Play it
 			}
 		}
+		
+	function ShortenString(str, len)										// SHORTEN A STRING TO LENGTH
+	{
+		if (str && str.length > len)											// Too long
+			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);			// Shorten	
+		return str;																// Return string
+	}
 		
 	function ButtonPress(id)												// WIGGLE BUTTON
 	{
