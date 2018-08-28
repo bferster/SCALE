@@ -14,13 +14,24 @@ class Content  {
 	{	
 		var h=app.hgt-$("#navDiv").height()-24;																		// Get height
 		if (!app.hideHeader)																						// If not hiding header
-			h-=$("#headerDiv").height()+8;																			// Accommodate for it
+			h-=$("#headerDiv").height()+10;																			// Accommodate for it
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
 		$("#contentDiv").html(str);																					// Set content
 		this.GetContentBody(id);																					// Add content
-		$("#nextBut").on("click",()=> { app.doc.NextLob(1); app.Draw(); ButtonPress("nextBut")} );					// On button click, navigate forward   
+		$("#nextBut").on("click",()=> { 																			// On button click, navigate forward   
+			var b=app.doc.lobs[app.doc.curPos].body;																// Point at body
+			if (b.match(/assess\(/i)) {																				// If in an assessment
+				Sound("delete");																					// Sound
+				PopUp("Please finish this assessment");																// Popup message
+				return;
+				}
+			app.doc.NextLob(1); 																					// Next lob
+			app.Draw(); 																							// Draw it
+			ButtonPress("nextBut");																					// Wiggle button
+			}
+			);				
 	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT

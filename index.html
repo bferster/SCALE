@@ -73,6 +73,9 @@
 							}
 		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
+		.wm-confirm {		position: absolute;  width: 300px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
+							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
+							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
 							border-radius: 8px; background-color: #eee; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
 							font-size: 14px; text-align:center; display: none;
@@ -294,7 +297,29 @@ class App  {																								 // APP
 
 		}
 
+	function ConfirmBox(title, content, callback, callback2)							// CONFIRMATION BOX
+	{
+		Sound("ding");																		// Ding sound
+		$("#confirmBoxDiv").remove();														// Remove 
+		$("body").append("<div class='wm-confirm' id='confirmBoxDiv'></div>");														
+		var str="<img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px; color:#666'><b>"+title+"</b></span><br>";
+		str+="<p>"+content+"<p>";
+		str+="<div style='float:right'><div id='confirmOK' class='wm-bs'>OK</div>";
+		str+="<div id='confirmCancel' class='wm-bs' style='margin-left:8px;background-color:#999'>Cancel</div></div>";
+		$("#confirmBoxDiv").html(str);	
+	
+		$("#confirmOK").on("click", function() {											// ON OK BUT
+				$("#confirmBoxDiv").remove();												// Remove 
+				if (callback)	callback();													// If callback defined, run it
+				});
 
+		$("#confirmCancel").on("click", function() {										// ON CANCEL BUT
+				$("#confirmBoxDiv").remove();												// Remove 
+				if (callback2)	callback();													// If callback defined, run it
+				Sound("delete");															// Delete sound
+				});
+	}
 
 	function PopUp(msg, time, div)											// TIMED POPUP
 	{
