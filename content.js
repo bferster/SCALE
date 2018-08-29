@@ -44,6 +44,7 @@ class Content  {
 			app.doc.NextLob(1); 																					// Next lob
 			app.Draw(); 																							// Draw it
 			ButtonPress("nextBut");																					// Wiggle button
+			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
 			});				
 
 		$("#fullBut").on("click",()=> { 																			// Full screen button
