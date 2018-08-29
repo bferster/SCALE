@@ -12,13 +12,17 @@ class Content  {
 
 	Draw(id) 																									// REDRAW
 	{	
-		var h=app.hgt-$("#navDiv").height()-24;																		// Get height
+		var h=app.hgt-24;																							// Get height
 		if (!app.hideHeader)																						// If not hiding header
 			h-=$("#headerDiv").height()+10;																			// Accommodate for it
+		if (!app.fullScreen)																						// If not full screen
+			h-=$("#navDiv").height();																				// Accomodate
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
+		str+="<img id='fullBut' src='img/fullbut.png' class='wm-fullBut'>"; 										// Add full button
 		$("#contentDiv").html(str);																					// Set content
+		
 		if (id == "discuss") {																						// If a discussion
 			var str="<img onclick='javascript:app.con.Draw()' src='img/next.png' class='wm-nextBut'>"; 				// Add exit button
 			var h=$("#contentDiv").height()-200;																	// Set default height												
@@ -41,7 +45,14 @@ class Content  {
 			app.Draw(); 																							// Draw it
 			ButtonPress("nextBut");																					// Wiggle button
 			});				
-	}
+
+		$("#fullBut").on("click",()=> { 																			// Full screen button
+			app.fullScreen=!app.fullScreen;																			// Toggle mode
+			app.hideHeader=app.fullScreen;																			// Set header
+			app.Draw(); 																							// Draw it
+			});
+	
+		}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
@@ -83,7 +94,8 @@ class Content  {
 				str=str.replace(/margin\(.*?\)/i,"");																// Kill tag
 				}
 			$("#contentDiv").append(str+"</div>");																	// Set content
-	
+			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "1000px" )						// Reset width
+			
 			if (margin && (margin != "0"))	{																		// If a margin set
 				var pct=100-margin-margin;																			// Width
 				margin+="%";																						// Add %

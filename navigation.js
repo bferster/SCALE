@@ -41,7 +41,6 @@ class Navigation {
 			Sound("click");																							// Click
 			$("#menuSlotDiv").remove();																				// Close menu	
 		});
-
 		
 		var x=$("#lessonTitle").offset().left-8+"px";																// Left
 		var y=$("#contentDiv").offset().top-20+"px";																// Top
@@ -66,7 +65,11 @@ class Navigation {
 		var l=$("#navDiv").offset().left;																			// Left
 		this.UpdateHeader();																						// Update header																						
 		$("#menuSlotDiv").remove();																					// Close lesson picker															
-	
+		$("#navDiv").css("display","block");																		// Make sure it shows
+		if (app.fullScreen) {																						// If full screeen
+			$("#navDiv").css("display","none");																		// Hide it
+			return;																									// Quit
+			}
 		if (app.doc.curLesson != -1) {																				// If a lesson active
 			str+="<div id='topicBar' class='wm-topicBar'></div>";													// Topic bar
 			children=app.doc.lobs[app.doc.curLesson].children;														// Get topics
@@ -75,7 +78,7 @@ class Navigation {
 				j=app.doc.FindLobIndexById(children[i]);															// Get topic index
 				str+="<div id='topicDotLab-"+i+"'class='wm-topicDotLab'style='";									// Label container
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+="color:#c57117;";			// Highlight if current						
-				if (w < 900)			name=ShortenString(name,16);												// If small, shorten label
+				if (w < 800)			name=ShortenString(name,15);												// If small, shorten label
 				if (i%2 && (w < 500)) 	str+="margin-top:34px";														// Stagger ff really small
 				str+=`'>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div>";										// Add dot
@@ -185,6 +188,8 @@ class Navigation {
 			$("#headerDiv").css("display","none");																	// Hide it
 			$("body").css("background-color","#ddd")																// Background gray
 			}
+		else
+			$("#headerDiv").css("display","block");																	// Show it		
 		$("#courseTitle").html(app.doc.lobs[0].name);																// Show course name
 		if (app.doc.curLesson <= 0)																					// On splash page
 			$("#lessonTitle").html("");																				// Hide lesson name

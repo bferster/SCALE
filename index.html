@@ -24,25 +24,25 @@
 							}
 		.wm-header { 		background-color: #bbb; width:100%; color:#fff;	padding: 8px 0px; user-select: none;
 							}
-		.wm-logo { 			height:40px; vertical-align: top; margin:0px 16px; cursor:pointer;
+		.wm-logo { 			height:32px; vertical-align: top; margin:0px 16px; cursor:pointer;
 							}
-		.wm-courseTitle { 	font-size: 32px; font-weight: bold; margin-right:32px; cursor:pointer;
+		.wm-courseTitle { 	font-size: 24px; font-weight: bold; margin-right:32px; cursor:pointer;
 							}
-		.wm-lessonTitle { 	font-size: 24px; margin-right:8px;
-							}
-		.wm-userName { 		position:absolute; left:90%; font-size: 12px; cursor:pointer; color:#000; text-align: left;
+		.wm-lessonTitle { 	font-size: 18px; margin-right:8px;
 							}
 		.wm-lessonTri { 	width: 0; height: 0; border-left: 7px solid transparent;  border-right: 7px solid transparent;
    							border-top: 7px solid #fff; cursor:pointer; display:inline-block;
 							}
-		.wm-content { 		width:100%; max-width:1000px; margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
+		.wm-content { 		position: relative; width:100%; max-width:1000px; margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
 							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden; height:100%; min-height:500px;
 							}
-		.wm-contentBody { 	overflow:auto; height:calc(100% - 110px); width:calc(100% - 48px); padding:8px 24px 0px 24px; 
+		.wm-contentBody { 	overflow:auto; height:calc(100% - 114px); width:calc(100% - 48px); padding:8px 24px 0px 24px; 
 							line-height: 1.5; font-size:14px;
 							} 
-		.wm-nextBut { 		position: absolute; left:calc(50% - 16px); top:calc(100% - 155px); border-radius: 32px;
+		.wm-nextBut { 		position: absolute; bottom: 12px; left:calc(50% - 16px); border-radius: 32px;
 							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 32px; user-select: none;
+							}
+		.wm-fullBut { 		position: absolute; bottom:12px; left:calc(100% - 40px); cursor:pointer; user-select: none;
 							}
 		.wm-navigation { 	position: relative; height:100px; width:100%; top: calc(100% + 16px);
 							max-width:924px;  margin: 0px auto; user-select: none; white-space:nowrap;
@@ -107,14 +107,12 @@
 	
 	<div id="mainDiv" class="wm-main">
 		<div id="headerDiv" class="wm-header">
-			<img src="img/scaleLogoWhite.png"class="wm-logo">
+			<img src="img/scaleLogoWhite.png" class="wm-logo">
 				<span id="courseTitle" class="wm-courseTitle">Course</span>
 				<span id="lessonTitle" class="wm-lessonTitle">Lesson</span>
 				<div id="lessonBut" class="wm-lessonTri"></div>
 				<span id="menuMsg" style="display:none;margin-left:32px"></span>
-				<span id="userName" class="wm-userName">User&nbsp;Name</span>
-				<img id="showgdoc" style="cursor:pointer;float:right;margin-right:8px" src="img/gdrive.png">
-				<img id="showDiscuss" style="cursor:pointer;float:right;margin-right:12px;display:none" src="img/chatbut.png">
+				<img id="showDiscuss" style="cursor:pointer;float:right;margin-right:12px;margin-top:8px;display:none" src="img/chatbut.png">
 			</div>
 			<div id="contentDiv" class="wm-content"></div>
 			<div id="navDiv" class="wm-navigation"></div>
@@ -156,7 +154,6 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		window.attachEvent("message",html5MessageHandler);					// Add handler
 
 	$("#showgdoc").on("click",function() {									// Show google doc
-		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 		});
 
 	$("#showDiscuss").on("click",function() {								// Show discussion
@@ -173,8 +170,10 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		else if (e.keyCode == 36) {											// Home
 			app.doc.curPos=0; app.Draw(); Sound("click");					// Stert over
 			}
-
-	else if ((e.which == 84) && e.altKey && e.ctrlKey) {					// Test key (Ctrl+Alt+T)
+		else if ((e.which == 71) && e.altKey) {								// Show spreadsheet (Alt+G)
+			window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
+			}
+		else if ((e.which == 84) && e.altKey && e.ctrlKey) {					// Test key (Ctrl+Alt+T)
 		}
 	});
  
@@ -205,15 +204,16 @@ class App  {																								 // APP
 		this.reportLink="";																							// Link to form
 		this.login=false;																							// No need to login
 		this.discussion="";																							// Discussuion		
-		this.userName="JerryBruner";																				// User name
+		this.userName="jbruner";																					// User name
 		this.defMargin=0;																							// Default margin
 		this.doc=new Doc(id);																						// Alloc doc w/ course id
 		this.con=new Content();																						// Content
 		this.nav=new Navigation();																					// Navigation
 		this.msg=new Messaging();																					// Messaging
 		this.rul=new Rules();																						// Rules
+		this.fullScreen=false;																						// Assume full screen is off
 		this.Draw(); 																								// Draw app
-}
+	}
 
 	Draw(index) 																								// REDRAW
 	{
@@ -376,7 +376,7 @@ class App  {																								 // APP
 	function ButtonPress(id)												// WIGGLE BUTTON
 	{
 		Sound("click");
-		var p=$("#"+id).offset();
+		var p=$("#"+id).position();
 		$("#"+id).animate( { left: p.left+1+"px", top: p.top+1+"px"}, 50, 
 			function() {$("#"+id).css( { left: p.left+"px", top: p.top+"px"})} 
 			);
