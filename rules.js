@@ -25,25 +25,33 @@ class Rules {
 				case "LT": if (value <  o.trigger)		act=true;	break;											// LT							
 				case "LE": if (value <= o.trigger)		act=true;	break;											// LE							
 				}
-			if (!act)																								// Don't act?
-				continue;																							// Next																			
-			v=o.object.split(":");																					// Split object
-			if ((o.object.charAt(0) == '+') || (o.object.charAt(0) == '-'))											// If relative jump
-				o.object=app.doc.lobs[(app.doc.curPos-0)+(o.object-0)].id;											// Get id
-			switch(o.do.toUpperCase()) {																			// Route on verb
-				case "SHOW": 	app.con.Draw(o.object-0);						break;								// SHOW							
-				case "GOTO": 	app.Draw(app.doc.FindLobIndexById(o.object-0));	break;								// GOTO index						
-				case "VAR": 	app.doc.vars[v[0]]=v[1];						break;								// SET VAR						
-				case "STATUS": 																						// STATUS
-					var l=app.doc.FindLobById(v[0]);																// Point at lob
-					if (l)	l.status=v[1];																			// Set status
-					app.nav.Draw();																					// Redraw nav
-					break;		
-				case "REPORT": 																						// REPORT
-					app.msg.SaveToForm("Rule"+o.id+"="+o.object);													// Save value to form, if set		
-					break;		
-				}
+			if (act)																								// If act
+				this.RunRule(o)																						// Run rule																		
 			}
 	}
 	
+	RunRule(o)																									// RUN RULE
+	{
+		var v=o.object.split(":");																					// Split object
+		if ((o.object.charAt(0) == '+') || (o.object.charAt(0) == '-'))												// If relative jump
+			o.object=app.doc.lobs[(app.doc.curPos-0)+(o.object-0)].id;												// Get id
+		switch(o.do.toUpperCase()) {																				// Route on verb
+			case "SHOW": 	app.con.Draw(o.object-0);						break;									// SHOW							
+			case "GOTO": 	app.Draw(app.doc.FindLobIndexById(o.object-0));	break;									// GOTO index						
+			case "VAR": 	app.doc.vars[v[0]]=v[1];						break;									// SET VAR						
+			case "STATUS": 																							// STATUS
+				var l=app.doc.FindLobById(v[0]);																	// Point at lob
+				if (l)	l.status=v[1];																				// Set status
+				app.nav.Draw();																						// Redraw nav
+				break;		
+			case "REPORT": 																							// REPORT
+				app.msg.SaveToForm("Rule"+o.id+"="+o.object);														// Save value to form, if set		
+				break;		
+			}
+	}
+
+
+
 }
+
+

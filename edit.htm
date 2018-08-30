@@ -221,8 +221,8 @@ class App  {
 		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='undoBut' class='wm-bs'>Undo</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='settingsBut' class='wm-bs'>Settings</div>";
-		str+="<br><br><textarea id='outputDiv' class='wm-is'style='height:50px;width:auto;overflow:hidden'></textarea>";
-		str+="<br><br>Help <img src='img/helpicon.gif' style='vertical-align:-4px;cursor:pointer' id='showHelp'>"; 
+		str+="<br><textarea id='outputDiv' style='width:1px;height:1px;opacity:.01'></textarea>";
+		str+="<br>Help <img src='img/helpicon.gif' style='vertical-align:-4px;cursor:pointer' id='showHelp'>"; 
 
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
@@ -449,7 +449,7 @@ class App  {
 		str+="<tr><td><b>IF</b></td><td><input class='wm-is' type='text' id='ruleSub' value='"+(r.subject ? r.subject :'')+"'></td></tr>";	
 		str+="<tr><td><b>IS</b></td><td>"+MakeSelect("ruleVerb",false,["Equal","Not equal","Similar","Less than","Less than or equal","Greater than","Greater than or equal","RegEx"],r.verb,"",["EQ","NE","LK","LT","LE","GT","GE","RE"])+"</td></tr>";	
 		str+="<tr><td><b>TO</b></td><td><input class='wm-is' type='text' id='ruleTrig' value='"+(r.trigger ? r.trigger :'')+"'></td></tr>";	
-		str+="<tr><td><b>THEN&nbsp;</b></td><td>"+MakeSelect("ruleDo",false,["Show pane","Set status","Set var name"],r.do,"",["SHOW","STATUS","VAR"])+"</td></tr>";	
+		str+="<tr><td><b>THEN&nbsp;</b></td><td>"+MakeSelect("ruleDo",false,["Show pane","Goto pane","Set status","Report","Set var"],r.do,"",["SHOW","GOTO","STATUS","REPORT","VAR"])+"</td></tr>";	
 		str+="<tr><td><b>OF</b></td><td><input class='wm-is' type='text' id='ruleObj' value='"+(r.object ? r.object :'')+"'></td></tr>";	
 		str+="<tr><td colspan='2'><br></td></tr>";	
 		str+="<tr><td><b>Name</b></td><td><input class='wm-is' type='text' id='ruleName' value='"+(r.name ? r.name :'')+"'></td></tr>";	

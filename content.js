@@ -93,6 +93,16 @@ class Content  {
 				margin=ifr[1];																						// Set margin
 				str=str.replace(/margin\(.*?\)/i,"");																// Kill tag
 				}
+			if (ifr=str.match(/do\(.+?\)"/ig)) {																	// If a GOTO tag
+				var i,d;	
+				for (i=0;i<ifr.length;++i) {																		// For each do() macro
+					d="javascript:app.rul.RunRule(";																// Rule function
+					d+="{ id:0, do:\'"+ifr[i].substr(3,ifr[i].length-5).split(" ")[0];
+					d+="\', object:\'"+ifr[i].substr(3,ifr[i].length-5).split(" ")[1]+"'}\)";
+					str=str.replace(/do\(.+?\)/i,d);																// Replace tag
+					}
+				}
+
 			$("#contentDiv").append(str+"</div>");																	// Set content
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "1000px" )						// Reset width
 			
