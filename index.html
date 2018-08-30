@@ -142,7 +142,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
 	app=new App(url);                                                      	// Alloc app
 	
-	if (window.location.host != "localhost") {								// Not in debug
+	if ((window.location.host != "localhost") && (url != "preview")) {		// Not in debug or preview
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();						// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);								// Wait, and fade in main
 		}	

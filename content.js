@@ -13,7 +13,7 @@ class Content  {
 	Draw(id) 																									// REDRAW
 	{	
 		var h=app.hgt-24;																							// Get height
-		if (!app.hideHeader)																						// If not hiding header
+		if (!app.hideHeader && !app.fullScreen)																		// If not hiding header and not full
 			h-=$("#headerDiv").height()+10;																			// Accommodate for it
 		if (!app.fullScreen)																						// If not full screen
 			h-=$("#navDiv").height();																				// Accomodate
@@ -49,7 +49,6 @@ class Content  {
 
 		$("#fullBut").on("click",()=> { 																			// Full screen button
 			app.fullScreen=!app.fullScreen;																			// Toggle mode
-			app.hideHeader=app.fullScreen;																			// Set header
 			app.Draw(); 																							// Draw it
 			});
 	

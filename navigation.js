@@ -26,13 +26,6 @@ class Navigation {
 			if (app.doc.FindLobById(o[i]).status > 9)	str+=" &#10003;";											// Add check if done
 			str+="</span></div>";															
 			}		
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 2 &#10003;</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 3 &#10003;</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 4</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 5</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 6</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 7</div>";
-		str+="<div class='wm-pullDownItem' onclick='$(\"#menuSlotDiv\").remove()'>Week 8</div>";
 		$("body").append(str);																						// Add menu to body
 		$("[id^=lessonId-]").on("click", function(e) {																// Lesson click handler
 			var id=e.currentTarget.id.substr(9);																	// Extract id
@@ -184,7 +177,7 @@ class Navigation {
 
 	UpdateHeader() 																								// UPDATE HEADER																					
 	{	
-		if (app.hideHeader) {																						// If hiding header
+		if (app.hideHeader || app.fullScreen) {																		// If not hiding header or full screen
 			$("#headerDiv").css("display","none");																	// Hide it
 			$("body").css("background-color","#ddd")																// Background gray
 			}
