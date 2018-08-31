@@ -177,7 +177,6 @@ class App  {
 	if (!url)																		// No lobs id set
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";							// Use this one
 	app=new App(url);																// Alloc doc w/ course id
-	app.previewWin=window.open("index.html?preview","scalePreview");				// Open preview tab
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
 	CKEDITOR.instances.editor1.on('change', function(e) { app.editorChange++});		// We've changed something
 
@@ -272,8 +271,15 @@ class App  {
 			$("#outputDiv")[0].select();											// Select div
 			if (app.previewWin && app.previewWin.closed)							// No longer open
 				app.previewWin=false;												// Force a reopen
-			if (!app.previewWin)													// No window open
+			if (!app.previewWin) {													// No window open
 				app.previewWin=window.open("index.html?preview","scalePreview");	// Open preview tab
+				setTimeout(function() {												// Open timer
+					if (app.previewWin) {											// If preview window has opened
+						app.previewWin.postMessage("ScalePreview|"+str,"*");		// Send message	
+						$(this).remove();											// Kill timer					
+						}
+					},1000);														// 1 sec interval
+				}	
 			app.previewWin.postMessage("ScalePreview|"+str,"*");					// Send message						
 			app.previewWin.focus();													// Show it
 			Sound("ding"); 															// Ding

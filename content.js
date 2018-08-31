@@ -93,7 +93,7 @@ class Content  {
 				margin=ifr[1];																						// Set margin
 				str=str.replace(/margin\(.*?\)/i,"");																// Kill tag
 				}
-			if (ifr=str.match(/do\(.+?\)"/ig)) {																	// If a GOTO tag
+			if (ifr=str.match(/do\(.+?\)"/ig)) {																	// If a DO tag
 				var i,d;	
 				for (i=0;i<ifr.length;++i) {																		// For each do() macro
 					d="javascript:app.rul.RunRule(";																// Rule function
