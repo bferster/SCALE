@@ -448,6 +448,7 @@ class App  {
 	
 	RuleEditor(r)																		// RULE EDITOR
 	{
+		var i,ids=[];
 		var str="<div class='wm-stepEditor'>";
 		str+="<table>";
 		str+="<tr><td><img src='img/scalelogo.png' style='vertical-align:-20px' width='32'></td><td><span style='font-size:30px'><b>Rule Editor</b></span><br><b</td></tr>";	
@@ -466,12 +467,25 @@ class App  {
 		str+="<img id='removeRuleBut' title='Delete this rule' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
 		$("#contentDiv").html(str);	
 
-		$("#saveRuleBut").on("click", ()=> { 											// ON SAVE RULE
+		i=app.doc.FindLobIndexById(r.subject.split(":")[0]);								// ADD NAMES AND AUTOCOMPLETE - index to subject
+		if (i != -1)																		// If a valid mob
+			$("#ruleSub").val(r.subject+" - "+ShortenString(app.doc.lobs[i].name,30));		// Add name
+		i=app.doc.FindLobIndexById(r.object.split(":")[0]);									// Index to object
+		if (i != -1)																		// If a valid mob
+			$("#ruleObj").val(r.object+" - "+ShortenString(app.doc.lobs[i].name,30));		// Add name
+		for (i=0;i<app.doc.lobs.length;++i)													// For each lob
+			ids.push(app.doc.lobs[i].id+" - "+ShortenString(app.doc.lobs[i].name,30));		// Add label
+		$("#ruleSub").autocomplete({ source: ids, minLength: 0});							// Auto complete source
+		$("#ruleObj").autocomplete({ source: ids, minLength: 0});							// Auto complete object
+
+		$("#saveRuleBut").on("click", ()=> { 												// ON SAVE RULE
 			var o={};
-			o.subject=$("#ruleSub").val();	o.object=$("#ruleObj").val();					// Get vals						
+			o.subject=$("#ruleSub").val().split(" - ")[0];									// Save just ID
+			o.object=$("#ruleObj").val().split(" - ")[0];									// Save just ID
+			o.id=$("#ruleId").val();	o.name=$("#ruleName").val();						// Get vals						
 			o.verb=$("#ruleVerb").val();	o.trigger=$("#ruleTrig").val();					
-			o.do=$("#ruleDo").val();		o.name=$("#ruleName").val();		
-			o.id=$("#ruleId").val();	
+			o.do=$("#ruleDo").val();			
+
 			$('#rulesBut').find(":selected").text(o.id+" - "+o.name);						// Rename pulldown			
 			app.rul.rules[$("#rulesBut")[0].selectedIndex-1]=o;								// Set new rule
 			$("#rulesBut")[0].selectedIndex=0;												// Clear selection
@@ -815,6 +829,13 @@ function GoogleDriveLoad(allFiles, callback)											// GOOGLE IMPORTER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	function ShortenString(str, len)													// SHORTEN A STRING TO LENGTH
+	{
+		if (str && str.length > len)														// Too long
+			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);						// Shorten	
+		return str;																			// Return string
+	}
 
 	function ConfirmBox(title, content, callback, callback2)							// CONFIRMATION BOX
 	{
