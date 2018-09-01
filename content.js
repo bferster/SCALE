@@ -6,7 +6,8 @@ class Content  {
 	
 	constructor()   																							// CONSTRUCTOR
 	{	
-		this.resumeId=0;																							// Id of triggered lob
+		this.resumeId=0;																							// Id of triggering lob
+		this.triggerId=0;																							// Id of triggered lob
 		this.resumeTime=0;																							// Time of trigger
 		this.actionQueue=[];																						// Delayed actions on next button
 	}
@@ -50,11 +51,11 @@ class Content  {
 				v=this.actionQueue[i]=this.actionQueue[i].substr(0,this.actionQueue[i].length-1).split(" ");		// Trim paren and split
 				app.rul.RunRule({ id: app.doc.curLobId, do: v[0], object: t });										// Run action
 				}
-			app.con.actionQueue=[];																					// Clear queue
+			app.con.actionQueue=[];																				// Clear queue
 			app.doc.NextLob(1); 																					// Next lob
 			app.Draw(); 																							// Draw it
 			ButtonPress("nextBut");																					// Wiggle button
-			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
+			app.con.resumeId=app.con.triggerId=app.con.resumeTime=0;												// Clear resume
 			});				
 
 		$("#fullBut").on("click",()=> { 																			// Full screen button

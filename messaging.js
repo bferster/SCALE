@@ -37,7 +37,7 @@ class Messaging {
 		else if (msg.match(/Assess=done/)) {																		// Assessment module loaded
 			var id=app.doc.curLobId;																				// Save id to assessment
 			if (app.con.resumeId)																					// If a resume set
-				app.con.Draw(app.doc.curLobId);																		// Init player
+				app.con.Draw(app.con.resumeId);																		// Init player
 			else{																									// Normal end
 				app.doc.NextLob(); 																					// Advance to next pos
 				app.Draw();																							// Redraw
@@ -50,7 +50,10 @@ class Messaging {
 			app.msg.SaveToForm("Assess"+v[1]+"="+Math.floor(v[2]*100));												// Save final score to form, if set		
 			}
 		else if (msg.match(/Assess=answer/)) {																		// Assessment module loaded
-			app.rul.CheckRules("answer",app.doc.curLobId+":"+v[2],v[3]);											// Send to rule checker
+			if (app.con.resumeId)																					// In a trigger
+				app.rul.CheckRules("answer",app.con.triggerId+":"+v[2],v[3]);										// Send trigger id to rule checker
+			else																									// Direct
+				app.rul.CheckRules("answer",app.doc.curLobId+":"+v[2],v[3]);										// Send to rule checker
 			if (app.reportLevel == 1)																				// If reporting answers
 				app.msg.SaveToForm("Answer"+app.doc.curLobId+":"+v[2]+"="+v[3]);									// Save answer to form, if set		
 			}
@@ -60,7 +63,8 @@ class Messaging {
 				app.Draw();																							// Redraw
 				}
 			if (msg.match(/trigger/)) {																				// Hit a trigger point
-				var o=app.doc.FindLobById(v[1]);																	// Point at assessment
+				var o=app.doc.FindLobById(v[1]);																	// Point at triggered lob (typically an assessment)
+				app.con.triggerId=v[1];																				// Store trigger id
 				app.con.resumeId=app.doc.curLobId;																	// Store resume id
 				app.con.resumeTime=v[2];																			// Store resume time
 				if (app.skipDone && o && (o.status > 9)) 															// If seen and skipping

@@ -16,7 +16,7 @@ class Rules {
 		for (i=0;i<n;++i) {																							// For each rule
 			o=this.rules[i];																						// Point at it
 			if (o.subject != subject) 																				// Rule doesn't match IF target	
-				continue;																							// Next																			
+			continue;																								// Next																			
 			switch(o.verb.toUpperCase()) {																			// Route on verb
 				case "EQ": if (value == o.trigger)		act=true;	break;											// EQ							
 				case "NE": if (value != o.trigger)		act=true;	break;											// NE							
@@ -24,7 +24,7 @@ class Rules {
 				case "GE": if (value >= o.trigger)		act=true;	break;											// GE							
 				case "LT": if (value <  o.trigger)		act=true;	break;											// LT							
 				case "LE": if (value <= o.trigger)		act=true;	break;											// LE							
-				}
+			}
 			if (act)																								// If act
 				this.RunRule(o)																						// Run rule																		
 			}
