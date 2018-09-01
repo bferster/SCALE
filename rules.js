@@ -45,7 +45,7 @@ class Rules {
 				app.nav.Draw();																						// Redraw nav
 				break;		
 			case "REPORT": 																							// REPORT
-				app.msg.SaveToForm("Rule"+o.id+"="+o.object);														// Save value to form, if set		
+				app.msg.SaveToForm("Report"+o.id+"="+o.object);														// Save value to form, if set		
 				break;		
 			}
 	}

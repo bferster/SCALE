@@ -8,6 +8,7 @@ class Content  {
 	{	
 		this.resumeId=0;																							// Id of triggered lob
 		this.resumeTime=0;																							// Time of trigger
+		this.actionQueue=[];																						// Delayed actions on next button
 	}
 
 	Draw(id) 																									// REDRAW
@@ -35,12 +36,21 @@ class Content  {
 		else
 			this.GetContentBody(id);																				// Add content
 		$("#nextBut").on("click",()=> { 																			// On button click, navigate forward   
+			var i,v,t
 			var b=app.doc.lobs[app.doc.curPos].body;																// Point at body
 			if (b.match(/assess\(/i)) {																				// If in an assessment
 				Sound("delete");																					// Sound
 				PopUp("Please finish this assessment first");														// Popup message
 				return;
 				}
+			for (i=0;i<this.actionQueue.length;++i) {															// For each queued action
+				t="";
+				if (this.actionQueue[i].match(/REPORT /)) 															// If a REPORT
+					t=$("#txb-"+i).val();																			// Get val
+				v=this.actionQueue[i]=this.actionQueue[i].substr(0,this.actionQueue[i].length-1).split(" ");		// Trim paren and split
+				app.rul.RunRule({ id: app.doc.curLobId, do: v[0], object: t });										// Run action
+				}
+			app.con.actionQueue=[];																					// Clear queue
 			app.doc.NextLob(1); 																					// Next lob
 			app.Draw(); 																							// Draw it
 			ButtonPress("nextBut");																					// Wiggle button
@@ -56,7 +66,7 @@ class Content  {
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
-		var ifr,ifs,str="";
+		var v,ifr,ifs,str="";
 		var margin=app.defMargin ? app.defMargin : 0;																// Default margin
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
@@ -93,13 +103,28 @@ class Content  {
 				margin=ifr[1];																						// Set margin
 				str=str.replace(/margin\(.*?\)/i,"");																// Kill tag
 				}
-			if (ifr=str.match(/do\(.+?\)"/ig)) {																	// If a DO tag
+			if (ifr=str.match(/do\(.+?\)"/ig)) {																	// If a do() tag
 				var i,d;	
 				for (i=0;i<ifr.length;++i) {																		// For each do() macro
 					d="javascript:app.rul.RunRule(";																// Rule function
 					d+="{ id:0, do:\'"+ifr[i].substr(3,ifr[i].length-5).split(" ")[0];
 					d+="\', object:\'"+ifr[i].substr(3,ifr[i].length-5).split(" ")[1]+"'}\)";
 					str=str.replace(/do\(.+?\)/i,d);																// Replace tag
+					}
+				}
+			if (ifr=str.match(/textbox\(.+?\)/ig)) {																// If a textbox() tag
+				var i,t;	
+				for (i=0;i<ifr.length;++i) {																		// For each do() macro
+					v=(""+ifr[i]).split(",");																		// Get params
+					v[0]=v[0].substr(8);																			// Remove header
+					if (v[1] == 1) 																					// Single line
+						t="<input id='txb-"+i+"' class='wm-is' width:"+v[0]+"%' type='text'>";						// Use input
+					else{
+						t="<textarea id='txb-"+i+"' style='width:"+v[0]+"%;"										// Add textarea
+						t+="vertical-align:top;border-radius:12px;' rows='"+v[1]+"'></textarea>";	
+						}
+					str=str.replace(/textbox\(.+?\)/i,t);															// Replace tag
+					this.actionQueue.push(v[2]+" "+v[3]);															// Add action to queue
 					}
 				}
 
