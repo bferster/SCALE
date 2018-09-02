@@ -44,11 +44,11 @@ class Content  {
 				PopUp("Please finish this assessment first");														// Popup message
 				return;
 				}
-			for (i=0;i<this.actionQueue.length;++i) {															// For each queued action
-				t="";
-				if (this.actionQueue[i].match(/REPORT /)) 															// If a REPORT
-					t=$("#txb-"+i).val();																			// Get val
+			for (i=0;i<this.actionQueue.length;++i) {																// For each queued action
+				t="";																								// Clear
 				v=this.actionQueue[i]=this.actionQueue[i].substr(0,this.actionQueue[i].length-1).split(" ");		// Trim paren and split
+				if (v[0] == "REPORT") 																				// If a REPORT
+					t=v[1].substr(0,v[1].length-1)+":"+$("#txb-"+i).val();						 					// Get val
 				app.rul.RunRule({ id: app.doc.curLobId, do: v[0], object: t });										// Run action
 				}
 			app.con.actionQueue=[];																				// Clear queue
