@@ -18,7 +18,7 @@
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px; box-sizing:border-box; 
 							padding:0;margin:0; 
 							}
-		.wm-main { 			position:relative; width:100%; height:100%; background-color: #ddd; display:none;
+		.wm-main { 			position:relative; width:100%; height:calc(100% - 32px); background-color: #ddd; display:none;
 							}
 		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%;  display:none;
 							}
@@ -44,7 +44,7 @@
 							}
 		.wm-fullBut { 		position: absolute; bottom:12px; left:calc(100% - 40px); cursor:pointer; user-select: none;
 							}
-		.wm-navigation { 	position: relative; height:100px; width:100%; top: calc(100% + 16px);
+		.wm-navigation { 	position: relative; height:100px; width:100%; top: 0;
 							max-width:924px;  margin: 0px auto; user-select: none; white-space:nowrap;
 							}
 		.wm-topicBar { 		position: absolute; width:calc(100% - 32px); height:3px; top:29px; left:16px;
@@ -173,22 +173,25 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		});
 
 	$("#showDesktop").on("click",function() {								// Show desktop mode
-		$("#contentDiv").css({height:"calc(100% - 114px)",width:"calc(100% - 48px)" });	// Set content dull
-		$("#navDiv").css({ width:"100%" });									// Set nav full
+		$("#mainDiv").height($(window).height());							// Set main
+		$("#contentDiv").css("width","calc(100% - 48px)");					// Set content 
+		$("#navDiv").css({ width:"100%" });									// Set nav 
 		app.Draw();															// Redraw	
 		});
 	
 	$("#showIpad").on("click",function() {									// Show iPad mode
-		var h=$("#mainDiv").height()-114;									// Full
-		$("#contentDiv").css({height:h+"",width:h*.75+"px" });				// 3/4 content
+		var h=$(window).height();											// Use full hgt
+		$("#mainDiv").height(h);											// Set main
+		$("#contentDiv").css("width",h*.75+"px");							// 3/4 content
 		$("#navDiv").css({ width:h*.75+"px" });								// Fit nav to content
 		app.Draw();															// Redraw	
 		});
 
 	$("#showIphone").on("click",function() {								// Show iPhone mode
-		var h=Math.min($("#mainDiv").height(),900)-114;						// Full
-		$("#contentDiv").css({height:h+"",width:"499px" });					// Content
-		$("#navDiv").css({ width:"499px" });								// Fit nav to content
+		$("#mainDiv").height(700);
+		$("#contentDiv").width(400);										// Content
+		$("#navDiv").width(400);											// Nav
+		$("body").css("background-color","#ddd"); 							// Fully grey
 		app.Draw();															// Redraw	
 		});
 
@@ -251,8 +254,6 @@ class App  {																								 // APP
 	{
 		if ((index != undefined) && (index >= 0))																	// A valid index
 			this.doc.curPos=index;																					// Set new index
-		this.wid=$(window).width();																					// Get window width			
-		this.hgt=$(window).height();																				// Height
 		app.doc.Draw();																								// Reset various params
 		this.con.Draw();																							// Draw container
 		this.nav.Draw();																							// Draw navigator and header

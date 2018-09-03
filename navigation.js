@@ -71,7 +71,7 @@ class Navigation {
 				j=app.doc.FindLobIndexById(children[i]);															// Get topic index
 				str+="<div id='topicDotLab-"+i+"'class='wm-topicDotLab'style='";									// Label container
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+="color:#c57117;";			// Highlight if current						
-				if (w < 800)			name=ShortenString(name,15);												// If small, shorten label
+				if (w < 800)			name=ShortenString(name,18);												// If small, shorten label
 				if (i%2 && (w < 600)) 	str+="margin-top:34px";														// Stagger if really small
 				str+=`'>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div>";										// Add dot
@@ -92,7 +92,7 @@ class Navigation {
 				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color
-				if (w < 600) name=ShortenString(name,15);															// If too small, shorten label
+				if (w < 600) name=ShortenString(name,16);															// If too small, shorten label
 				str+=`'>${name}</div>`;
 				}
 			}

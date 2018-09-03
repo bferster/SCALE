@@ -14,7 +14,7 @@ class Content  {
 
 	Draw(id) 																									// REDRAW
 	{	
-		var h=app.hgt-24;																							// Get height
+		var h=$("#mainDiv").height()-24;																			// Get height
 		if (!app.hideHeader && !app.fullScreen)																		// If not hiding header and not full
 			h-=$("#headerDiv").height()+10;																			// Accommodate for it
 		if (!app.fullScreen)																						// If not full screen
