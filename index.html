@@ -112,7 +112,12 @@
 				<span id="lessonTitle" class="wm-lessonTitle">Lesson</span>
 				<div id="lessonBut" class="wm-lessonTri"></div>
 				<span id="menuMsg" style="display:none;margin-left:32px"></span>
-				<img id="showDiscuss" style="cursor:pointer;float:right;margin-right:12px;margin-top:8px;display:none" src="img/chatbut.png">
+				<div style="float:right">
+					<img id="showDesktop" title="Desktop size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/desktop.png">
+					<img id="showIpad" title="Tablet size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/ipad.png">
+					<img id="showIphone" title="Phone size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/iphone.png">
+					<img id="showDiscuss" title="Discussion" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/chatbut.png">
+				</div>
 			</div>
 			<div id="contentDiv" class="wm-content"></div>
 			<div id="navDiv" class="wm-navigation"></div>
@@ -148,6 +153,13 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		}	
 	else																	// Debug
 		$("#mainDiv").fadeIn(0);											// Load fast
+
+	if (url == "preview") {													// In preview
+		$("#showDesktop").show();											// Show size icons
+		$("#showIpad").show();											
+		$("#showIphone").show();										
+		}
+
 	if (window.addEventListener) 											// If supported this way
 		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
 	else																	// Use other method
@@ -158,6 +170,26 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 
 	$("#showDiscuss").on("click",function() {								// Show discussion
 		app.con.Draw("discuss");											// Show it	
+		});
+
+	$("#showDesktop").on("click",function() {								// Show desktop mode
+		$("#contentDiv").css({height:"calc(100% - 114px)",width:"calc(100% - 48px)" });	// Set content dull
+		$("#navDiv").css({ width:"100%" });									// Set nav full
+		app.Draw();															// Redraw	
+		});
+	
+	$("#showIpad").on("click",function() {									// Show iPad mode
+		var h=$("#mainDiv").height()-114;									// Full
+		$("#contentDiv").css({height:h+"",width:h*.75+"px" });				// 3/4 content
+		$("#navDiv").css({ width:h*.75+"px" });								// Fit nav to content
+		app.Draw();															// Redraw	
+		});
+
+	$("#showIphone").on("click",function() {								// Show iPhone mode
+		var h=Math.min($("#mainDiv").height(),900)-114;						// Full
+		$("#contentDiv").css({height:h+"",width:"499px" });					// Content
+		$("#navDiv").css({ width:"499px" });								// Fit nav to content
+		app.Draw();															// Redraw	
 		});
 
 	$(window).on("keydown",function(e) {									// HANDLE KEYPRESS

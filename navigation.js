@@ -72,7 +72,7 @@ class Navigation {
 				str+="<div id='topicDotLab-"+i+"'class='wm-topicDotLab'style='";									// Label container
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+="color:#c57117;";			// Highlight if current						
 				if (w < 800)			name=ShortenString(name,15);												// If small, shorten label
-				if (i%2 && (w < 500)) 	str+="margin-top:34px";														// Stagger ff really small
+				if (i%2 && (w < 600)) 	str+="margin-top:34px";														// Stagger if really small
 				str+=`'>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div>";										// Add dot
 				}
@@ -84,7 +84,7 @@ class Navigation {
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
-				if (w < 500)					 str+="margin-top:12px;";											// Shift down if too small			 
+				if (w < 600)					 str+="margin-top:12px;";											// Shift down if too small			 
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
@@ -92,14 +92,14 @@ class Navigation {
 				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color
-				if (w < 500) name=ShortenString(name,15);															// If too small, shorten label
+				if (w < 600) name=ShortenString(name,15);															// If too small, shorten label
 				str+=`'>${name}</div>`;
 				}
 			}
 
 		if (app.doc.curConcept != -1) {																				// If a step active
 			str+="<div id='stepBarDiv' class='wm-stepBar' style='";													// Stepbar div
-			if (w < 500) str+="margin-top:8px";																		// Shift down if too small			 
+			if (w < 600) str+="margin-top:8px";																		// Shift down if too small			 
 			str+="'>";	
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
