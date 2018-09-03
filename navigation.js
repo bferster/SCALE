@@ -5,7 +5,6 @@
 class Navigation {
 	
 	constructor() {																								// CONSTRUCTOR
-		this.left=this.top=this.wid=this.hgt=0;																		// Sizes
 		$("#lessonBut").on("click",()=> { this.ChangeLesson() } );													// Click on lesson button
 		}
 	

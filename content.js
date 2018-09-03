@@ -64,7 +64,7 @@ class Content  {
 			$("#mainDiv").height($(window).height());																// Set main
 		});
 	
-		}
+	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
