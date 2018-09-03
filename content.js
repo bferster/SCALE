@@ -61,7 +61,8 @@ class Content  {
 		$("#fullBut").on("click",()=> { 																			// Full screen button
 			app.fullScreen=!app.fullScreen;																			// Toggle mode
 			app.Draw(); 																							// Draw it
-			});
+			$("#mainDiv").height($(window).height());																// Set main
+		});
 	
 		}
 
