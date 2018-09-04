@@ -102,7 +102,7 @@ class Navigation {
 					conceptName=app.doc.FindLobById(children[i]).name;												// Set concept name
 				v.push(app.doc.FindLobById(children[i]).name);														// Get concept name
 				}
-			str+="<div style='position:absolute;text-align:center;top:60px'>";										// Position div
+			str+="<div style='position:absolute;left:0;top:60px'>";													// Position div
 			str+=MakeSelect("conceptSel",false,v)+"</div>";															// Add select
 			}
 		
@@ -131,7 +131,7 @@ class Navigation {
 				v.push(app.doc.FindLobById(children[i]).name);														// Get step name
 				}
 			if (children.length) {																					// If any children
-				str+="<div style='position:absolute;left:200px;top:60px'>";											// Position div
+				str+="<div style='position:absolute;left:210px;top:60px'>";											// Position div
 				str+=MakeSelect("stepSel",false,v,false)+"</div>";													// Add select
 				}
 			}
