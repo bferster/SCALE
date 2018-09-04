@@ -52,6 +52,7 @@ class Navigation {
 	Draw() 																										// REDRAW
 	{
 		var str="";
+		var stepName="",conceptName="";
 		var i,j,id,ww,name,children;
 		var w=$("#navDiv").width()+16;																				// Content width
 		var l=$("#navDiv").offset().left;																			// Left
@@ -77,13 +78,12 @@ class Navigation {
 				}
 			}
 		
-		if (app.doc.curTopic != -1) {																				// If a topic active
+		if ((app.doc.curTopic != -1) && (w > 599)) {																// If a topic active
 			children=app.doc.lobs[app.doc.curTopic].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
-				if (w < 600)					 str+="margin-top:12px;";											// Shift down if too small			 
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
@@ -91,15 +91,23 @@ class Navigation {
 				 	str+=";color:#c57117;font-weight:bold";															// Show current place
 				if (app.doc.FindLobById(id).status == DONE)															// If done
 					str+=";color:#007700";																			// Show done color
-				if (w < 600) name=ShortenString(name,16);															// If too small, shorten label
 				str+=`'>${name}</div>`;
 				}
 			}
-
-		if (app.doc.curConcept != -1) {																				// If a step active
-			str+="<div id='stepBarDiv' class='wm-stepBar' style='";													// Stepbar div
-			if (w < 600) str+="margin-top:8px";																		// Shift down if too small			 
-			str+="'>";	
+		else if (app.doc.curTopic != -1) {																			// Too small
+			var v=[];
+			children=app.doc.lobs[app.doc.curTopic].children;														// Get concept
+			for (i=0;i<children.length;++i) {																		// For each concept 
+				if ((app.doc.curLobId == children[i]) || (j == app.doc.curConcept))									// If current concept
+					conceptName=app.doc.FindLobById(children[i]).name;												// Set concept name
+				v.push(app.doc.FindLobById(children[i]).name);														// Get concept name
+				}
+			str+="<div style='position:absolute;text-align:center;top:60px'>";										// Position div
+			str+=MakeSelect("conceptSel",false,v)+"</div>";															// Add select
+			}
+		
+		if ((app.doc.curConcept != -1) && (w > 599)) {																// If a step active
+			str+="<div id='stepBarDiv' class='wm-stepBar' style='>";												// Stepbar div
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
@@ -114,7 +122,20 @@ class Navigation {
 					str+="<span style='color:#999'>|</span>";														// Add pipe
 				}	
 			}
-
+		else if (app.doc.curConcept != -1) {																		// Too small
+			var v=[];
+			children=app.doc.lobs[app.doc.curConcept].children;														// Get steps
+			for (i=0;i<children.length;++i) {																		// For each step 
+				if (app.doc.curLobId == children[i]) 																// If current step
+					stepName=app.doc.FindLobById(children[i]).name;													// Set step name
+				v.push(app.doc.FindLobById(children[i]).name);														// Get step name
+				}
+			if (children.length) {																					// If any children
+				str+="<div style='position:absolute;left:200px;top:60px'>";											// Position div
+				str+=MakeSelect("stepSel",false,v,false)+"</div>";													// Add select
+				}
+			}
+	
 		$("#navDiv").html(str);																						// Add content	
 
 		if (app.doc.curLesson != -1) {																				// If a lesson active
@@ -140,6 +161,12 @@ class Navigation {
 
 		if (app.doc.curTopic != -1) {																				// If a topic active
 			l=14;																									// Start left
+			$("#conceptSel").on("change", function() {
+				var id=$(this)[0].selectedIndex;																	// Index
+				id=app.doc.lobs[app.doc.curTopic].children[id];														// Get concept id
+				app.Draw(app.doc.FindLobIndexById(id));																// Set new index and redraw
+				});	
+			if (conceptName)	$("#conceptSel").val(conceptName);													// Highlight it
 			children=app.doc.lobs[app.doc.curTopic].children;														// Get 
 			ww=(w-40)/children.length;																				// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 
@@ -158,6 +185,12 @@ class Navigation {
 
 		if (app.doc.curConcept != -1) {																				// If a step active
 			l=56;																									// Start left
+			$("#stepSel").on("change", function() {
+				var id=$(this)[0].selectedIndex;																	// Index
+				id=app.doc.lobs[app.doc.curConcept].children[id];													// Get step id
+				app.Draw(app.doc.FindLobIndexById(id));																// Set new index and redraw
+				});	
+			if (stepName)	$("#stepSel").val(stepName);															// Highlight it
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get 
 			ww=(w-120)/children.length;																				// Width between topic dots
 			for (i=0;i<children.length;++i) {																		// For each topic 

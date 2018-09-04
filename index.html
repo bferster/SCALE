@@ -154,11 +154,11 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	else																	// Debug
 		$("#mainDiv").fadeIn(0);											// Load fast
 
-	if (url == "preview") {													// In preview
+//	if (url == "preview") {													// In preview
 		$("#showDesktop").show();											// Show size icons
 		$("#showIpad").show();											
 		$("#showIphone").show();										
-		}
+//		}
 
 	if (window.addEventListener) 											// If supported this way
 		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
@@ -404,7 +404,27 @@ class App  {																								 // APP
 			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);			// Shorten	
 		return str;																// Return string
 	}
-		
+
+	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
+	{
+		var	str="<select class='wm-is' style='width:200px' id='"+id+"'";		// Header
+		if (multi)																// Multi select
+			str+="multiple='multiple' size='"+multi+"'";						// Add flag
+		if (extra)																// If extra param
+			str+=extra;															// Add them
+		str+=">";																// End header
+		for (i=0;i<items.length;++i) {											// For each option
+			str+="<option";														// Add tag
+			if (values && values[i]) {											// If has a value
+				str+=" value='"+values[i]+"'";									// Add it
+				if (sel == values[i])	str+=" selected='selected'"				// If value selected, add tag
+				}
+			else if (sel == items[i])	str+=" selected='selected'"				// If name selected, add tag
+			str+=">"+items[i]+"</option>";										// End option
+			}	
+		return str+"</select>";													// End select				
+	}
+	
 	function ButtonPress(id)												// WIGGLE BUTTON
 	{
 		Sound("click");
