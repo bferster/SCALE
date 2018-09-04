@@ -24,7 +24,7 @@
 //youtu.be/2doZROwdte4
 //www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471.mp4
 //vimeo.com/274326838
-//localhost/video.htm?src=IRVdiHu1VCc\|slides=https://docs.google.com/presentation/d/e/2PACX-1vQMmAXYMlLmBVH3n9hx4_U0OPYSdJwfR-JrI87p5D0ZldfWC9Y0Yxemkh4tYnuh2igiC03gNGHDjGnS/embed
+//localhost/video.htm?src=IRVdiHu1VCc\|slides=https://docs.google.com/presentation/d/e/2PACX-1vQMmAXYMlLmBVH3n9hx4_U0OPYSdJwfR-JrI87p5D0ZldfWC9Y0Yxemkh4tYnuh2igiC03gNGHDjGnS/embed|trigger=2-2+3-3+4-2+5-1
 
 	var playerSource="";
 	var playerAuto="false";
@@ -71,7 +71,7 @@
 		$(window).resize(ResizePanes);                                     		// On window resizing
 		playerTimer=setInterval(OnPlayerTimer,200);								// Set timer ~5ps
 		if (slideSource) {														// If showing slides
-			playerSlideRatio=.50;												// Share screen 
+			playerSlideRatio=.5;												// Share screen 
 			$("#slideDiv").html("<iframe id='slideDivIF' frameborder='0' width='100%' src='"+slideSource+"'></iframe>");	// Load in iframe
 			}
 		else{																	// No slides
@@ -114,14 +114,14 @@
 	function ResizePanes()													// RESIZE PANES
 	{ 
 		var wid=$("body").width();												// Cap at screen size
-		var w=wid*playerSlideRatio+20;											// Player width
+		var w=wid*playerSlideRatio+4;											// Player width
 		var w2=wid-w-8;															// Slide width
 		if (w <= 0)				w=0,w2=wid;										// Full slide											
 		else if (w2 <= 0)		w2=0,w=wid;										// Full video											
 		var h=Math.max(((wid-4)*playerAspect)-(w*playerAspect),w*playerAspect);	// Player height
 		$("#playerDiv").css({ width:w+"px",top:0 });							// Set player pos
 		offx=$("#playerDiv").offset().left;										// Offset X from base
-		$("#slideDiv").css({ left:(wid+offx-w2)+"px",width:(w2)+"px",top:0,height:h+"px"}); // Set slider pos/size
+		$("#slideDiv").css({ left:(wid+offx-w2)+"px",width:w2+"px",top:0,height:h+"px"}); // Set slider pos/size
 		$("#playerSiz").css({ left:(w+offx)+"px",height:h+"px",top:0});			// Set sizer pos
 		RunPlayer("resize");													// Resize player
 		$("#slideDivIF").height($("#slideDiv").height()-2);						// Set iframe height, if any
@@ -181,8 +181,13 @@
 			var i;
 			for (i=0;i<triggers.length;++i) {									// For each trigger
 				if (Math.abs(now-triggers[i][0]) < .15)	{						// Near trigger point
-					RunPlayer("pause");											// Pause
-					SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+					if (slideSource) {											// Has slides
+						$("#slideDivIF").prop("src",slideSource+"?slide="+triggers[i][1]);	// Next slide	
+						}
+					else{														// Straight video
+						RunPlayer("pause");										// Pause
+						SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+						}
 					break;														// Quit
 					}
 				}
