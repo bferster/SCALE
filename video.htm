@@ -49,7 +49,10 @@
 	var playerSlideRatio=1;														// Player slider ratio
 	var paneAnimationTimer=null;												// Animating panes
 
+
 	var v=window.location.search.substring(1).split("|");						// Get query string
+
+
 	for (i=0;i<v.length;++i) {													// For each param
 		if (v[i].match(/src=/i))		playerSource=GetDirectLink(v[i].substr(4));  // Set src
 		if (v[i].match(/start=/i))		playerStart=v[i].substr(6)-0;			// Set start
@@ -58,6 +61,7 @@
 		if (v[i].match(/next=/i))		playerNext=v[i].substr(5);				// Set next
 		if (v[i].match(/trigger=/i))	triggers=v[i].substr(8).split("+");		// Set triggers
 		if (v[i].match(/slides=/i))		slideSource=v[i].substr(7);				// Set slides source
+		if (v[i].match(/split=/i))		playerSlideRatio=v[i].substr(6)/100;	// Set start
 		}
 	for (var i=0;i<triggers.length;++i) 										// For each trigger
 		triggers[i]=triggers[i].split("-");										// Split time-action
@@ -71,7 +75,7 @@
 		$(window).resize(ResizePanes);                                     		// On window resizing
 		playerTimer=setInterval(OnPlayerTimer,200);								// Set timer ~5ps
 		if (slideSource) {														// If showing slides
-			playerSlideRatio=.5;												// Share screen 
+			if (playerSlideRatio == 1)	playerSlideRatio=.5;					// Assume 50% if no split set
 			$("#slideDiv").html("<iframe id='slideDivIF' frameborder='0' width='100%' src='"+slideSource+"'></iframe>");	// Load in iframe
 			}
 		else{																	// No slides
@@ -401,7 +405,8 @@
 					};
 								
 				myVid.oncanplay=function() {									// When ready
-     				playerAspect=player.videoHeight/player.videoWidth;			// Set aspect 				
+					if (!playerSource.match(/\.mp3/i)) 							// If video
+	     				playerAspect=player.videoHeight/player.videoWidth;		// Set aspect 				
 					if (!player.readySent)										// Not sent yet
 						RunPlayer("ready");										// Set up player		
 					player.readySent=true;										// Ready sent

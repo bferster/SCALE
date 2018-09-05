@@ -107,7 +107,7 @@ class Navigation {
 			}
 		
 		if ((app.doc.curConcept != -1) && (w > 599)) {																// If a step active
-			str+="<div id='stepBarDiv' class='wm-stepBar' style='>";												// Stepbar div
+			str+="<div id='stepBarDiv' class='wm-stepBar'>";														// Stepbar div
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
