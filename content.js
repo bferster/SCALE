@@ -15,13 +15,16 @@ class Content  {
 	Draw(id) 																									// REDRAW
 	{	
 		var h=$("#mainDiv").height()-24;																			// Get height
+	
 		if (!app.hideHeader && !app.fullScreen)																		// If not hiding header and not full
-			h-=$("#headerDiv").height()+10;																			// Accommodate for it
-		if (!app.fullScreen)																						// If not full screen
+			h-=Math.max($("#headerDiv").height(),32)+10;															// Accommodate for it
+		if (!app.fullScreen && ($("#mainDiv").width() > 599))														// If not full screen
 			h-=$("#navDiv").height();																				// Accomodate
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
+		if ($("#mainDiv").width() < 600)																			// If too small																
+			str+="<img id='mobileMenu' src='img/mobilemenu.png' class='wm-mobileBut' onclick='app.nav.MobileNavigator()'>"; // Add mobile button
 		str+="<img id='fullBut' src='img/fullbut.png' class='wm-fullBut'>"; 										// Add full button
 		$("#contentDiv").html(str);																					// Set content
 		
@@ -76,7 +79,7 @@ class Content  {
 		if (id == undefined)	id=app.doc.curLobId;																// Use curent
 		var l=app.doc.FindLobById(id);																				// Point at lob
 		if (app.doc.curPos)																							// If not splash page
-			str+=l.name ? "<div class='wm-pageTitle'>"+l.name+"</div>" : "";										// Add page title
+			str+=l.name ? "<div id='paneTitle' class='wm-pageTitle'>"+l.name+"</div>" : "";							// Add page title
 		str+="<div id='contentBodyDiv' class='wm-contentBody'>";													// Container div
 		if (l) {																									// Valid lob
 			str+=l.body ? l.body : "";																				// Add body

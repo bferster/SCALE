@@ -4,7 +4,7 @@
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
 	<title>S C A L E</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="viewport" content="width=device-width">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<link   rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>	
@@ -14,7 +14,7 @@
 	<script src="messaging.js"></script>
 	<script src="rules.js"></script>
 	<script src="navigation.js"></script>
-]	<style type="text/css">
+	<style type="text/css">
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px; box-sizing:border-box; 
 							padding:0;margin:0; 
 							}
@@ -36,13 +36,15 @@
 		.wm-content { 		position: relative; width:100%; max-width:1000px; margin: 8px auto; border: 1px solid #ccc;background-color: #fff;
 							border-radius: 16px; box-shadow: 2px 4px 8px #999; overflow:hidden; height:100%; min-height:500px;
 							}
-		.wm-contentBody { 	overflow:auto; height:calc(100% - 114px); width:calc(100% - 48px); padding:8px 24px 0px 24px; 
+		.wm-contentBody { 	overflow:auto; height:calc(100% - 114px); width:calc(100% - 48px); padding: 8px 24px 0px 24px; 
 							line-height: 1.5; font-size:14px;
 							} 
 		.wm-nextBut { 		position: absolute; bottom: 12px; left:calc(50% - 16px); border-radius: 32px;
 							box-shadow: 2px 4px 8px #999; cursor:pointer; width: 32px; user-select: none;
 							}
 		.wm-fullBut { 		position: absolute; bottom:12px; left:calc(100% - 40px); cursor:pointer; user-select: none;
+							}
+		.wm-mobileBut { 	position: absolute; bottom:12px; left:16px; cursor:pointer; user-select: none;
 							}
 		.wm-navigation { 	position: relative; height:100px; width:100%; top: 0;
 							max-width:924px;  margin: 0px auto; user-select: none; white-space:nowrap;
@@ -98,9 +100,6 @@
 		.ui-dialog-titlebar { display:none }
 		 table {			border-spacing: 0px;  }
 
-@media only screen and (max-width: 500px) {
-    .wm-contentBody {		padding: 8px;   }
-	}
 </style>
 </head>
 <body>
@@ -146,7 +145,6 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	if (!url)																// No lobs id set
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
 	app=new App(url);                                                      	// Alloc app
-	
 	if ((window.location.host != "localhost") && (url != "preview")) {		// Not in debug or preview
 		$("#splashDiv").fadeIn().delay(2000).fadeOut();						// Fade out splash
 		$("#mainDiv").delay(2000).fadeIn(2000);								// Wait, and fade in main
@@ -154,7 +152,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	else																	// Debug
 		$("#mainDiv").fadeIn(0);											// Load fast
 
-	if (url == "preview") {													// In preview
+	if ((url == "preview") || (window.location.host == "localhost")) {		// In preview
 		$("#showDesktop").show();											// Show size icons
 		$("#showIpad").show();											
 		$("#showIphone").show();										
@@ -407,7 +405,7 @@ class App  {																								 // APP
 
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
-		var	str="<select class='wm-is' style='width:195px' id='"+id+"'";		// Header
+		var	str="<select class='wm-is' style='width:auto' id='"+id+"'";			// Header
 		if (multi)																// Multi select
 			str+="multiple='multiple' size='"+multi+"'";						// Add flag
 		if (extra)																// If extra param
