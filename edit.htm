@@ -186,7 +186,6 @@ class App  {
 	
 	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
-			GoogleDriveLoad(true, function(e) {trace(e)})
 			}
 		});
 
@@ -254,7 +253,12 @@ class App  {
 			});
 
 		$("#saveCourseBut").on("click", ()=> {  									// ON SAVE COURSE
-			str=app.doc.MakeTabFile();												// Create TSV file
+			var i,d=[];
+			var v=app.doc.MakeTabFile().split("\n");								// Split into rows
+			for (var i=0;i<v.length;++i)											// For each row
+				d.push(v[i].split("\t"));											// Add array of fields
+			SaveSpreadsheet(app.doc.courseId,d);			// Save to GDrive
+/*			str=app.doc.MakeTabFile();												// Create TSV file
 			$("#outputDiv").val(str);												// Show it
 			$("#outputDiv")[0].select();											// Select div
 			try {
@@ -263,7 +267,8 @@ class App  {
 					PopUp("Course<br>spreadsheet<br>copied to clipboard");			// Show popup
 					}
 				} catch (err) { console.log("Clipboard copy error")}				// Show error
-			});
+*/
+});
 
 		$("#previewBut").on("click", ()=> {  										// ON PREVIEW COURSE
 			str=app.doc.MakeTabFile();												// Create TSV file
@@ -761,67 +766,42 @@ class App  {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// GOOGLE
+// GOOGLE DRIVE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function GoogleDriveLoad(allFiles, callback)											// GOOGLE IMPORTER
+function SaveSpreadsheet(id, data)															// CLEAR AND SAVE DATA TO GDRIVE
 {
-	var _this=this;																			// Save context
- 	
-	LoadGoogleDrive(true, function(s) {
-		if (callback) callback(s.url);
+		gapi.load('client:auth2', function() {
+			gapi.client.init({																	// Init
+          	apiKey: "AIzaSyD0jrIlONfTgL-qkfnMTNdjizsNbLBBjTk",									// Key
+			clientId: "453812393680-8tb3isinl1bap0vqamv45cc5d9c7ohai.apps.googleusercontent.com", // Google client id 
+			scope:"https://www.googleapis.com/auth/drive",										// Scope
+          	discoveryDocs:["https://sheets.googleapis.com/$discovery/rest?version=v4"],			// API discovery
+        	}).then(function () {																// When initted, listen for sign-in state changes.
+	        	gapi.auth2.getAuthInstance().isSignedIn.listen(doIt);							// Try						
+        		doIt(gapi.auth2.getAuthInstance().isSignedIn.get());							// Try
+	
+				function doIt(isSignedIn) {														// Do action
+					if (!isSignedIn) 															// If not signed in yet														
+						gapi.auth2.getAuthInstance().signIn();									// Sign in
+					else{																		// Clear and save
+						var params= { spreadsheetId:id, range: "A1:ZZZ100000" };				// Where to save it
+						var body= { majorDimension: "ROWS", values: data };						// Data to save
+						var request=gapi.client.sheets.spreadsheets.values.clear(params);		// Clear first
+						request.then(function(r) { 												// When cleared
+							params.valueInputOption="RAW";										// Send raw data
+							var request=gapi.client.sheets.spreadsheets.values.update(params,body);	// Send new data
+							request.then(function(r) {											// Good save
+								Sound("ding");													// Ding
+								PopUp("Course<br>course<br>copied to Google Drive");			// Show popup
+								}, 
+								function(e) { trace(e.result.error.message); })					// Error reporting for send
+							}, 
+						function(e) { trace(e.result.error.message); });						// Error reporting for clear
+						}
+				}			
+			});
 		});
-	
- 	function LoadGoogleDrive(allFiles, callback)										// LOAD PICKER FOR GOOGLE DRIVE
-	{
-	  	var pickerApiLoaded=false;
-		var oauthToken;
-		var key="AIzaSyCYHoa3mQ56qcp0E6gDHXdDhU1rsvtsNCI";
-		var id="802670590549-r0sj486pl33jo2pfbod6jkt3hjslt1iq.apps.googleusercontent.com";
-			gapi.load('auth', { 'callback': function() {
-				window.gapi.auth.authorize( {
-	              	'client_id': id,
-	             	'scope': ['https://www.googleapis.com/auth/drive'],
-	              	'immediate': false }, function(authResult) {
-							if (authResult && !authResult.error) {
-	          					oauthToken=authResult.access_token;
-	          					createPicker();
-	          					}
-	          				});
-				}
-			});
-		
-		gapi.load('picker', {'callback': function() {
-				pickerApiLoaded=true;
-		        createPicker();
-	    	   	}
-			});
-	
-		function createPicker() {
-	        if (pickerApiLoaded && oauthToken) {
-	//         	var upview=new google.picker.DocsUploadView();
-	           	var view=new google.picker.DocsView().
-	           		setOwnedByMe(allFiles).
-					setIncludeFolders(true);
-	          	var picker=new google.picker.PickerBuilder().
-	          		addView(view).
-	//         		addView(upview).
-					setOAuthToken(oauthToken).
-					setDeveloperKey(key).
-					setCallback(pickerCallback).
-					build();
-				picker.setVisible(true);
-	       		}
-	    	}
-	
-		function pickerCallback(data) {
-	        if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-         		var doc=data[google.picker.Response.DOCUMENTS][0];
-				if (callback)	 callback(doc)
-	       		}
-			}
-	   
-	}	// End closure
 }
 
 
