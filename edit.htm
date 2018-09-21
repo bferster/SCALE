@@ -74,7 +74,8 @@
 			<img src='img/scaleLogoWhite.png' class='wm-logo'>
 				<span id='courseTitle' class='wm-courseTitle'>Course</span>
 				<span id='menuMsg' style='display:none;margin-left:32px'></span>
-				<img id='showgdoc' style='cursor:pointer;float:right;margin-right:8px' src='img/gdrive.png'>
+				<div id='showgdoc' title='Load new course' style='float:right;margin-right:16px;cursor:pointer;margin-top:6px'>
+				</div>
 			</div>
 		<div id='navDiv' class='wm-nav'></div>
 		<div class='wm-content'>
@@ -177,15 +178,23 @@ class App  {
 	if (!url)																		// No lobs id set
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";							// Use this one
 	app=new App(url);																// Alloc doc w/ course id
+	$("#showgdoc").text("Id: "+app.doc.courseId.substr(-8));						// Show id snippet
 	CKEDITOR.on('instanceLoaded', function(e) { e.editor.resize("100%", h)});		// Resize editor
 	CKEDITOR.instances.editor1.on('change', function(e) { app.editorChange++});		// We've changed something
 
 	$("#showgdoc").on("click",function() {											// Show google doc
-		window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
+		GetSpreadsheet(true, function(id) {											// Get new spreadsheet
+			app.doc.courseId=id;													// Get id
+			$("#showgdoc").text("Id: "+id.substr(-8));								// Show id snippet
+			app.InitCourse(id);														// Init	
+			});		
 		});
 	
 	$(window).on("keydown",function(e) {											// HANDLE KEYPRESS
 		if ((e.which == 84) && e.altKey && e.ctrlKey) {								// Test key (Ctrl+Alt+T)
+			}
+		else if ((e.which == 71) && e.altKey) {										// Show spreadsheet (Alt+G)
+			window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 			}
 		});
 
@@ -769,14 +778,16 @@ class App  {
 // GOOGLE DRIVE
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+var gdClientId="453812393680-8tb3isinl1bap0vqamv45cc5d9c7ohai.apps.googleusercontent.com";		// Google client id
+var gdScope="https://www.googleapis.com/auth/drive";											// Scope of access
+var gdKey="AIzaSyD0jrIlONfTgL-qkfnMTNdjizsNbLBBjTk";											// Google API key
+
 function SaveSpreadsheet(id, data)															// CLEAR AND SAVE DATA TO GDRIVE
 {
 		gapi.load('client:auth2', function() {
 			gapi.client.init({																	// Init
-          	apiKey: "AIzaSyD0jrIlONfTgL-qkfnMTNdjizsNbLBBjTk",									// Key
-			clientId: "453812393680-8tb3isinl1bap0vqamv45cc5d9c7ohai.apps.googleusercontent.com", // Google client id 
-			scope:"https://www.googleapis.com/auth/drive",										// Scope
-          	discoveryDocs:["https://sheets.googleapis.com/$discovery/rest?version=v4"],			// API discovery
+			apiKey: gdKey, clientId: gdClientId, scope:gdScope,									// Params
+           	discoveryDocs:["https://sheets.googleapis.com/$discovery/rest?version=v4"],			// API discovery
         	}).then(function () {																// When initted, listen for sign-in state changes.
 	        	gapi.auth2.getAuthInstance().isSignedIn.listen(doIt);							// Try						
         		doIt(gapi.auth2.getAuthInstance().isSignedIn.get());							// Try
@@ -793,7 +804,7 @@ function SaveSpreadsheet(id, data)															// CLEAR AND SAVE DATA TO GDRIV
 							var request=gapi.client.sheets.spreadsheets.values.update(params,body);	// Send new data
 							request.then(function(r) {											// Good save
 								Sound("ding");													// Ding
-								PopUp("Course<br>course<br>copied to Google Drive");			// Show popup
+								PopUp("Course copied<br>to Google Drive!");						// Show popup
 								}, 
 								function(e) { trace(e.result.error.message); })					// Error reporting for send
 							}, 
@@ -804,6 +815,45 @@ function SaveSpreadsheet(id, data)															// CLEAR AND SAVE DATA TO GDRIV
 		});
 }
 
+function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
+{
+	var oauthToken,pickerApiLoaded=false;
+	gapi.load('auth', { callback: function() {													// LOAD AUTH
+		window.gapi.auth.authorize({															// Authorize
+				apiKey: gdKey, client_id: gdClientId, scope:gdScope,immediate: false },			// Params
+				function(authResult) {															// On auth return
+					if (authResult && !authResult.error) {										// If OK
+						oauthToken=authResult.access_token;										// Set token
+						createPicker();															// Create picker
+						}
+				});																				// End auth.authorize()
+			}																					// End callback()
+		});																						// End auth()
+		
+	gapi.load('picker', {'callback': function() {												// LOAD PICKER							
+			pickerApiLoaded=true;																// Set flag
+			createPicker();																		// Create picker
+			}
+		});
+	
+	function createPicker() {																	// CREATE GDRIVE PICKER
+		if (pickerApiLoaded && oauthToken) {													// If loaded and authed
+			var view=new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS).				// Make view
+			setOwnedByMe(allFiles).setIncludeFolders(true);										// Params
+			var picker=new google.picker.PickerBuilder().										// Make picker
+				addView(view).setOAuthToken(oauthToken).										// Params
+				setDeveloperKey(gdKey).setCallback(pickerCallback).build();						// Do it
+			picker.setVisible(true);															// Show picker
+			}
+		}
+
+	function pickerCallback(data) {																// FILE CHOSEN CALLBACK
+		if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {				// If picked
+			var doc=data[google.picker.Response.DOCUMENTS][0];									// Get doc
+			callback(doc.id,doc.name);															// Return name and id
+			}
+		}
+}																								// End closure
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
