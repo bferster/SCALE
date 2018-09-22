@@ -36,8 +36,8 @@
 							}
 		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
-		.wm-stepEditor {	width:525px; overflow:hidden; margin:24px; background-color: #fff; border: 1px solid #999;
-							padding:32px; border-radius: 16px;
+		.wm-stepEditor {	width:525px; overflow-x:hidden; margin:24px; background-color: #fff; border: 1px solid #999;
+							padding:32px; border-radius: 16px; max-height:75vh;
 							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
 							border-radius: 8px; background-color: #fff; border: 1px solid #009900; box-shadow: 4px 2px 12px 2px #aaa; 
@@ -230,6 +230,7 @@ class App  {
 		str+="<div id='settingsBut' class='wm-bs'>Settings</div>";
 		str+="<br><textarea id='outputDiv' style='width:1px;height:1px;opacity:.01'></textarea>";
 		str+="<br>Help <img src='img/helpicon.gif' style='vertical-align:-4px;cursor:pointer' id='showHelp'>"; 
+		str+="<a style='margin-left:24px;color:#999' href='https://viseyes.org/privacy.htm' target='_blank'>Privacy policy</a>";
 
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
@@ -532,11 +533,13 @@ class App  {
 		str+="<tr><td>Default margin %</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
 		str+="<tr><td>Discussion name|id</td><td><input class='wm-is' type='text' id='setDiscuss' value='"+(app.discussion ? app.discussion : '')+"'></td></tr>";	
 		str+="<tr><td colspan='2'><hr></td></tr>";	
-		str+="<tr><td>Assessment pass level&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
-		str+="<tr><td>User name prefix&nbsp;</td><td><input class='wm-is' type='text' id='setName' value='"+(app.namePrefix ? app.namePrefix : '')+"'></td></tr>";	
+		str+="<tr><td>Assessment&nbsp;passlevel&nbsp;</td><td><input class='wm-is' type='text' id='setPass' value='"+(app.assessLevel ? app.assessLevel : '')+"'></td></tr>";	
+		str+="<tr><td>User name prefix</td><td><input class='wm-is' type='text' id='setName' value='"+(app.namePrefix ? app.namePrefix : '')+"'></td></tr>";	
 		str+="<tr><td>Ask to login</td><td><input type='checkbox' "+(app.login ? "checked" : "")+" id='setLogin'></td></tr>";	
-		str+="<tr><td>Reporting level&nbsp;</td><td><input class='wm-is' type='text' id='setLevel' value='"+(app.reportLevel ? app.reportLevel : '')+"'></td></tr>";	
-		str+="<tr><td>Reporting link&nbsp;</td><td><input class='wm-is' type='text' id='setLink' value='"+(app.reportLink ? app.reportLink : '')+"'></td></tr>";	
+		str+="<tr><td>Reporting level</td><td><input class='wm-is' type='text' id='setLevel' value='"+(app.reportLevel ? app.reportLevel : '')+"'></td></tr>";	
+		str+="<tr><td>Reporting link</td><td><input class='wm-is' type='text' id='setLink' value='"+(app.reportLink ? app.reportLink : '')+"'></td></tr>";	
+		str+="<tr><td colspan='2'><hr></td></tr>";	
+		str+="<tr><td>Deployment link</td><td><i>www.viseyes.org/scale?"+app.doc.courseId+"</i></td></tr>";	
 		str+="<tr><td colspan='2'><hr></td></tr>";	
 		str+="<tr><td>Delete entire course</td><td><div id='deleteCourseBut' class='wm-bs'>Delete</div></td></tr>";	
 		str+="</table>";																			
