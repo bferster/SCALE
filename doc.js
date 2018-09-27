@@ -95,6 +95,12 @@ class Doc {
 			var o=app.doc.asks[i];																					// Point at ask
 			str+=makeTSVLine("ask",o.id,o.name,"",o.step);															// Add ask
 			}
+		str+="\n";																									// Add blank line
+		for (i=0;i<app.ams.skins.length;++i) {																		// For each ams	
+			var o=app.ams.skins[i];																					// Point at ams
+			str+=makeTSVLine("ams",o.id,o.name,"",o.body);															// Add ams
+			}
+	
 		var s="assessLevel="+app.assessLevel;																		// Add assessment level
 		if (!app.setDone) 		s+=" setDone";																		// Don't set done
 		if (app.skipDone) 		s+=" setSkip";																		// Set skipping when done
@@ -361,6 +367,8 @@ class Doc {
 				this.lobs.push({ name:v[2], id:v[1], parent:v[3], body:v[4], status:0 });							// Add learning object
 			else if (v[0] == "ask")																					// An assessment step
 				this.asks.push({ id:v[1], name:v[2], step:v[4]});													// Add ask
+			else if (v[0] == "ams")																					// An active media skin
+				app.ams.AddSkin(v[1],v[2],v[4]);																	// Add skin
 			else if (v[0] == "rul")	{																				// A Rule
 				var o={id:v[1], name:v[2] };																		// Base
 				v[4]=v[4].replace(/ +/g," ");																		// Single space

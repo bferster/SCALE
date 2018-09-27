@@ -12,10 +12,11 @@
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<script src="doc.js"></script>
 	<script src="rules.js"></script>
+	<script src="mediaskin.js"></script>
 	<script src="ckeditor/ckeditor.js"></script>
  	<style type="text/css">
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; 
-		 					box-sizing: border-box; background-color: #eee;	
+		 					box-sizing: border-box; background-color: #f8f8f8;	
 							}
 		.wm-main { 			width:100%;  overflow:auto;  display:none; min-width:1450px;
 							}
@@ -129,6 +130,7 @@ class App  {
 	{
 		this.doc=new Doc(id);														// Alloc doc w/ course id
 		this.rul=new Rules();														// Rules
+		this.ams=new MediaSkin();													// Action skins
 		this.floats=[];																// Holds floats
 		this.editorChange=0;														// Tracks edits
 		this.setDone=true; this.skipDone=false; this.assessLevel=.5;				// Defaults
@@ -230,7 +232,7 @@ class App  {
 		str+="<div id='settingsBut' class='wm-bs'>Settings</div>";
 		str+="<br><textarea id='outputDiv' style='width:1px;height:1px;opacity:.01'></textarea>";
 		str+="<br>Help <img src='img/helpicon.gif' style='vertical-align:-4px;cursor:pointer' id='showHelp'>"; 
-		str+="<a style='margin-left:24px;color:#999' href='https://viseyes.org/privacy.htm' target='_blank'>Privacy policy</a>";
+//		str+="<a style='margin-left:24px;color:#999' href='https://viseyes.org/privacy.htm' target='_blank'>Privacy policy</a>";
 
 		$("#navDiv").html(str);														// Draw nav part
 		app.tree=new Tree();														// Show lobs tree				
