@@ -64,6 +64,11 @@ class Messaging {
 				}
 			if (msg.match(/trigger/)) {																				// Hit a trigger point
 				var o=app.doc.FindLobById(v[1]);																	// Point at triggered lob (typically an assessment)
+				if (!o) {																							// Look for skin
+					o=app.doc.FindLobById(v[1],app.ams.skins);														// Get skin												
+					app.ams.Draw(app.doc.curLobId,o,"#contentIF");													// Draw skin
+					return;																							// Quit 
+					}
 				app.con.triggerId=v[1];																				// Store trigger id
 				app.con.resumeId=app.doc.curLobId;																	// Store resume id
 				app.con.resumeTime=v[2];																			// Store resume time

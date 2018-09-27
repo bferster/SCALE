@@ -56,11 +56,52 @@ class MediaSkin {
 				evts.push(o);																						// Add event
 				}
 			}
-		if (evts.length)	this.skins.push({ id:id, name:name, skins:evts, body:raw });							// Add to skins
+		if (evts.length)	this.skins.push({ id:id, name:name, items:evts, body:raw });							// Add to skins
 		}
 
-	Draw(num)
+	Draw(paneId, skin, div)																							// DRAW SKIN ON PANE
 	{
+		if (!skin) return;																							// Quit if nothing
+		var i,o,d;
+		var x=$(div).offset().left, y=$(div).offset().top;															// Position of base
+		var w=$(div).width(), 		h=$(div).height();																// Size
+		$("#amsDiv").remove();																						// Remove old overlay
+		var str="<div id='amsDiv' style='position:absolute;";														// Add overlay
+		str+="top:"+y+"px;left:"+x+"px;width:"+w+"px;height:"+h+"px'>";												// Position over base
+
+		for (i=0;i<skin.items.length;++i) {																			// For each item
+			o=skin.items[i];																						// Point at item
+			if ((o.type == "click") || (o.type == "hover")) {														// A click or hover event
+				x=o.x-(o.d/2);		y=o.y-(o.d/2); 		d=Math.round(w*o.d/100);									// Define area
+				str+="<div id='click-"+i+"' style='position:absolute;opacity:.3;background-color:blue;pointer-events: none;";			// Add capture div
+				str+="top:"+y+"%;left:"+x+"%;width:"+d+"px;height:"+d+"px;border-radius:"+d+"px'";					// Position over base
+				str+="></div>";
+			}
+		}
+		$("body").append(str+"</div>");																				// Add overlay
+		$("#amsDiv").on("click", (e)=> {																			// On click
+			x=(e.offsetX)/w*100;	y=(e.offsetY)/h*100;															// As %s
+			for (i=0;i<skin.items.length;++i) {																		// For each item
+				o=skin.items[i];																					// Point at item
+				if (o.type == "click")	{																			// If a click event
+					d=o.d/2;																						// Half dx
+					if ((x > o.x-d) &&  (x < o.x-0+d) && (y > o.y-d)  && (y < o.y-0+d))	{							// In hotspot
+						this.SendActions(o.yes);																	// Perform yes actions
+						return;
+						}
+					this.SendActions(o.no);																			// Perform no actions
+					}		
+				}
+	
+			});
+
 	}
+
+
+	SendActions(acts)																							// SEND ACTIONS
+	{
+		trace (acts)
+	}
+
 
 }

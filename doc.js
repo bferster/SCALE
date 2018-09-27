@@ -264,19 +264,23 @@ class Doc {
 			}
 	}
 
-	FindLobById(id) {																							// FIND PTR TO LOB FROM ID
-		var i,n=this.lobs.length;
-		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.lobs[i].id) 																				// A match
-				return this.lobs[i];																				// Return ptr to lob
+	FindLobById(id, objArray) {																					// FIND PTR TO OBJECT FROM ID
+		var i;
+		var o=objArray ? objArray : this.lobs;																		// Point at array of object array
+		var n=o.length;																								// Set length
+		for (i=0;i<n;++i) {																							// For each obj
+			if (id == o[i].id) 																						// A match
+				return o[i];																						// Return ptr to obj
 			}
 		return null;																								// Not found
 		}
 
-	FindLobIndexById(id) {																						// FIND INDEX OF LOB FROM ID
-		var i,n=this.lobs.length;
+	FindLobIndexById(id, objArray ) {																			// FIND INDEX OF OBJECT FROM ID
+		var i;
+		var o=objArray ? objArray : this.lobs;																		// Point at array of object array
+		var n=o.length;																								// Set length
 		for (i=0;i<n;++i) {																							// For each lob
-			if (id == this.lobs[i].id) 																				// A match
+			if (id == o[i].id) 																						// A match
 				return i;																							// Return ptr to lob
 			}
 		return -1;																									// Not found
