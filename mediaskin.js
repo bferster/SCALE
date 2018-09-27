@@ -4,7 +4,8 @@ class MediaSkin {
 	
 	constructor()																								// CONSTRUCTOR
 	{
-		this.skins=[];																							// Holds skins
+		this.skins=[];																								// Holds skins
+		this.macros=[];																								// Holds macros
 	}
 
 	AddSkin(id, name, raw)																						// PARSE SKIN SPEC AND ADD
@@ -14,8 +15,9 @@ class MediaSkin {
 		raw=raw.replace(/\n|\r|\t/g,"");																			// Remove CR/LF/Tab
 		raw=raw.replace(/<\/*p>/g,"");																				// Remove <p>s
 		raw=raw.replace(/&nbsp;/g,"");																				// Remove spaces
-		raw=raw.replace(/=/g,",");																					// = to ,
-		e=raw.split("|");																							// Split into events
+		raw=raw.replace(/\(/g,",");																					// ( to ,
+		e=raw.split(")");																							// Split into events
+
 		for (i=0;i<e.length;++i) {																					// For each event
 			v=e[i].split(",");																						// Split into fields
 			for (j=0;j<v.length;++j) 	v[j]=v[j].trim();															// Trim fields
@@ -41,11 +43,11 @@ class MediaSkin {
 				o.no=v[3] ? v[3] : "";																				// No action
 				if (o.members.length)	evts.push(o);																// Add event if members
 				}
-			else if ((o.type == "pic") && (v.length > 6)) {															// Valid pic event
-				o.x=v[1];	o.y=v[2];	o.d=v[3];																	// Position
-				o.pic=v[4];	o.w=v[5];																				// Pic to drag
-				o.yes=v[6] ? v[6] : "";																				// Yes action
-				o.no=v[7] ? v[7] : "";																				// No action
+			else if ((o.type == "pic") && (v.length > 4)) {															// Valid pic event
+				o.x=v[1];	o.y=v[2];																				// Position
+				o.pic=v[3];	o.w=v[4];																				// Pic to drag
+				o.yes=v[5] ? v[5] : "";																				// Yes action
+				o.no=v[6] ? v[6] : "";																				// No action
 				evts.push(o);																						// Add event
 				}
 			else if ((o.type == "type") && (v.length > 5)) {														// Valid type event
@@ -55,6 +57,8 @@ class MediaSkin {
 				o.no=v[7] ? v[7] : "";																				// No action
 				evts.push(o);																						// Add event
 				}
+			else if ((o.type.charAt(0) == "~") && (v.length > 1)) 													// Valid macro 
+				this.macros[o.type.substr(1)]=v[1];																	// Add macro
 			}
 		if (evts.length)	this.skins.push({ id:id, name:name, items:evts, body:raw });							// Add to skins
 		}
@@ -71,14 +75,44 @@ class MediaSkin {
 
 		for (i=0;i<skin.items.length;++i) {																			// For each item
 			o=skin.items[i];																						// Point at item
-			if ((o.type == "click") || (o.type == "hover")) {														// A click or hover event
+			if (o.type == "hover") {																				// A hover event
 				x=o.x-(o.d/2);		y=o.y-(o.d/2); 		d=Math.round(w*o.d/100);									// Define area
-				str+="<div id='click-"+i+"' style='position:absolute;opacity:.3;background-color:blue;pointer-events: none;";			// Add capture div
-				str+="top:"+y+"%;left:"+x+"%;width:"+d+"px;height:"+d+"px;border-radius:"+d+"px'";					// Position over base
+				str+="<div id='click-"+i+"' style='position:absolute;";												// Add capture div
+				str+="top:"+y+"%;left:"+x+"%;width:"+d+"px;height:"+d+"px'";										// Position over base
+				str+=" onmouseenter='app.ams.SendActions(\""+o.yes+"\")'";											// Over area
+				str+=" onmouseleave='app.ams.SendActions(\""+o.no+"\")'";											// Out
 				str+="></div>";
+				}
+			else if (o.type == "pic") {																				// A pic event
+				str+="<img src='"+o.pic+"' style='position:absolute;";												// Add pic
+				str+="top:"+o.y+"%;left:"+o.x+"%;width:"+o.w+"%'";													// Position and size
+				str+=" onclick='app.ams.SendActions(\""+o.yes+"\")'";												// Over area
+				str+=">";
+				}
+			else if (o.type == "drag") {																			// A drag event
+				str+="<img id='drag-"+i+"' src='"+o.pic+"' style='position:absolute;cursor:pointer;";				// Add pic
+				str+="top:"+o.y1+"%;left:"+o.x1+"%;width:"+o.w+"%'";												// Position and size
+				str+=">";
+				}
 			}
-		}
 		$("body").append(str+"</div>");																				// Add overlay
+
+		for (i=0;i<skin.items.length;++i) {																			// For each item
+			o=skin.items[i];																						// Point at item
+			if (o.type == "drag") {																					// A drag event
+				$("#drag-"+i).draggable({ stop:(e,ui)=> {															// Make it draggable
+					o=skin.items[e.target.id.substr(5)];															// Point at item
+					var x=(ui.position.left-0+e.target.width/2)/w*100;												// Get center point X as %
+					var y=(ui.position.top-0+e.target.height/2)/h*100;												// Get center point X as %
+					d=o.d/2;																						// Half dx
+					if ((x > o.x2-d) &&  (x < o.x2-0+d) && (y > o.y2-d)  && (y < o.y2-0+d))							// In hotspot
+						this.SendActions(o.yes);																	// Perform yes actions
+					else																							// No
+						this.SendActions(o.no);																		// Perform no actions
+					}});
+				}
+			}
+
 		$("#amsDiv").on("click", (e)=> {																			// On click
 			x=(e.offsetX)/w*100;	y=(e.offsetY)/h*100;															// As %s
 			for (i=0;i<skin.items.length;++i) {																		// For each item
@@ -94,14 +128,16 @@ class MediaSkin {
 				}
 	
 			});
-
 	}
-
 
 	SendActions(acts)																							// SEND ACTIONS
 	{
+		if (!acts)	return;																							// Nothing to do
+		var macro=acts.match(/~(.*?)~/);																			// Extract macro
+		if (macro)																									// If found
+			acts=acts.replace(RegExp(macro[0]),this.macros[macro[1]]);												// Replace
 		trace (acts)
-	}
+		}
 
 
 }
