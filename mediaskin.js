@@ -52,11 +52,17 @@ class MediaSkin {
 				o.no=v[6] ? v[6] : "";																				// No action
 				evts.push(o);																						// Add event
 				}
-			else if ((o.type == "type") && (v.length > 5)) {														// Valid type event
+			else if ((o.type == "type") && (v.length > 4)) {														// Valid type event
 				o.x=v[1];	o.y=v[2];	o.w=v[3];																	// Position
-				o.style=v[4];	o.value=v[5];	o.title=[5];														// Pic to drag
-				o.yes=v[6] ? v[6] : "";																				// Yes action
-				o.no=v[7] ? v[7] : "";																				// No action
+				o.style=v[4];	o.value=v[5];	o.place=v[6];														// Pic to drag
+				o.yes=v[7] ? v[7] : "";																				// Yes action
+				o.no=v[8] ? v[8] : "";																				// No action
+				evts.push(o);																						// Add event
+				}
+			else if ((o.type == "button") && (v.length > 5)) {														// Valid button event
+				o.x=v[1];	o.y=v[2];	o.label=v[3];	o.style=v[4];												// Position
+				o.yes=v[5] ? v[5] : "";																				// Yes action
+				o.no=v[6] ? v[6] : "";																				// No action
 				evts.push(o);																						// Add event
 				}
 			else if ((o.type.charAt(0) == "~") && (v.length > 1)) 													// Valid macro 
@@ -100,8 +106,21 @@ class MediaSkin {
 				}
 			else if (o.type == "pic") {																				// A pic event
 				str+="<img id='pic-"+i+"' src='"+o.pic+"' style='position:absolute;";								// Add pic
-				str+="top:"+o.y+"%;left:"+o.x+"%;width:"+o.w+"%'";													// Position and size
+				str+="top:"+o.y+"%;left:"+o.x+"%;width:"+o.w+"%'>";													// Position and size
+				}
+			else if (o.type == "type") {																			// A type event
+				str+="<input id='type-"+i+"' type='text' style='position:absolute;border:none;";					// Add type
+				str+="top:"+o.y+"%;left:"+o.x+"%;width:"+o.w+"%;";													// Position and size
+				if (o.style) str+=o.style;		str+="'";															// Add style
+				if (o.value) str+=" value='"+o.value+"'";															// Add def value
+				if (o.place) str+=" placeholder='"+o.place+"'";														// Add placeholder
 				str+=">";
+				}
+			else if (o.type == "button") {																			// A button event
+				str+="<button id='but-"+i+"' type='button' style='position:absolute;";								// Add button
+				str+="top:"+o.y+"%;left:"+o.x+"%;border-radius:16px;font-size:16px;padding:2px 8px;";				// Position and size
+				if (o.style) str+=o.style;																			// Add style
+				str+="'>"+o.label+"</button>";																		// Add label
 				}
 			else if (o.type == "drag") {																			// A drag event
 				str+="<img id='drag-"+i+"' src='"+o.pic+"' style='position:absolute;cursor:pointer;";				// Add pic
@@ -129,15 +148,29 @@ class MediaSkin {
 						this.SendActions(o.no);																		// Perform no actions
 					}});
 				}
-			if (o.type == "pic") {																					// A pic event
+			else if (o.type == "pic") {																				// A pic event
 				$("#pic-"+i).on("click", (e)=> {																	// On click
 					o=skin.items[e.target.id.substr(4)];															// Point at item
 					this.SendActions(o.yes);																		// Send action
 					o.right=1;																						// Correct
 					});
 				}
+			if (o.type == "button") {																				// A button event
+				$("#but-"+i).on("click", (e)=> {																	// On click
+					o=skin.items[e.target.id.substr(4)];															// Point at item
+					this.SendActions(o.yes);																		// Send action
+					o.right=1;																						// Correct
+					});
+				}
+			else if (o.type == "type") {																			// A type event
+				$("#type-"+i).on("change", (e)=> {																	// On enter
+					o=skin.items[e.target.id.substr(5)];															// Point at item
+					this.SendActions(o.yes,$("#"+e.target.id).val());												// Send action and value
+					o.right=1;																						// Correct
+					});
+				}
 			}
-
+		
 		$("#amsDiv").on("click", (e)=> {																			// On click
 			x=(e.offsetX)/w*100;	y=(e.offsetY)/h*100;															// As %s
 			for (i=0;i<skin.items.length;++i) {																		// For each item
@@ -156,14 +189,18 @@ class MediaSkin {
 			});
 	}
 
-	SendActions(acts)																							// SEND ACTIONS
+	SendActions(acts, param)																					// SEND ACTIONS
 	{
 		var i,o,v,s,macro;
 		if (!acts)	return;																							// Nothing to do
-		if ((macro=acts.match(/~(.*?)~/)))																			// Extract macro
-			acts=acts.replace(RegExp(macro[0]),this.macros[macro[1]]);												// Replace
+		if ((macro=acts.match(/~(.*?)~/))) {																		// Extract macro
+			if (macro[0] != "~p~")																					// If not param
+				acts=acts.replace(RegExp(macro[0]),this.macros[macro[1]]);											// Replace
+			}
 		acts=acts.split('+');																						// Split into array of actions
 		for (i=0;i<acts.length;++i) {																				// For each action
+			if (acts[i].match(/~p~/) && param) 																		// Params macro
+				acts[i]=acts[i].replace(/~p~/g,param);																// Replace with param
 			o=acts[i].split(':');																					// Split off opcode
 			s=o[0].toLowerCase();																					// Make lc
 			if (s == "banner")																						// BANNER
@@ -178,7 +215,9 @@ class MediaSkin {
 			else if (s == "show") 																				// SHOW
 				app.msg.OnMessage({ data:"ActiveMediaSkin=show|"+o[1]});											// Send show message
 			else if (s == "report") 																			// REPORT
-				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin.id});							// Send show message
+				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin.id});						// Send report message
+			else if (s == "clear") 																				// CLEAR
+				this.Clear(),trace(1111);																						// Clear skin
 			else if (s == "play") {																				// PLAY
 				this.Clear();																						// Clear skin
 				SendToIframe("ScaleAct=play"+(o[1] ? "|"+o[1] : ""));												// Send play to iFrame
