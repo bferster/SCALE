@@ -25,7 +25,7 @@ class Messaging {
 		else if (msg.match(/Assess=ready/)) {																		// Assessment module loaded
 			var i,o;
 			var str='ScaleAct=data|{"pages":[';																		// Header
-			for (i=1;i<v.length-1;++i) {																				// For each step
+			for (i=1;i<v.length-1;++i) {																			// For each step
 				o=app.doc.FindAskById(v[i]);																		// Point at step
 				if (!o)	continue;																					// Invalid step
 				str+=o.step;																						// Add step
@@ -82,6 +82,18 @@ class Messaging {
 			app.doc.InitFromTSV(msg.substr(13));																	// Init show
 			app.Draw();																								// Redraw
 			}														
+		else if (msg.match(/ActiveMediaSkin/)) {																	// AMS
+			if (msg.match(/show/)) 																					// Show pane
+				app.con.Draw(v[1]-0);																				// Go	
+			else if (msg.match(/goto/)) {																			// Goto pane
+				if (v[1].toLowerCase() == "next")																	// Advance to next pos
+					app.doc.NextLob(),app.Draw();																	// Go 																				
+				else																								// To a specific pane
+					app.Draw(app.doc.FindLobIndexById(v[1]-0))														// Go	
+				}
+			else if (msg.match(/report/)) 																			// REPORT
+				app.msg.SaveToForm("Skin"+v[2]+"="+v[1]);															// Save value to form, if set		
+			}
 		else
 			trace(msg)
 		}

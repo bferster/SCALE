@@ -388,10 +388,8 @@ class App  {																								 // APP
 	function Sound(sound, mute)												// PLAY SOUND
 	{
 		var snd=new Audio();													// Init audio object
-		if (!snd.canPlayType("audio/mpeg") || (snd.canPlayType("audio/mpeg") == "maybe")) 
-			snd=new Audio("img/"+sound+".ogg");									// Use ogg
-		else	
-			snd=new Audio("img/"+sound+".mp3");									// Use mp3
+		if (sound.match(/\.mp3/i))		snd=new Audio(sound)					// If an MP3 file
+		else							snd=new Audio("img/"+sound+".mp3");		// Use built in mp3
 		if (!mute)	{															// If not initing or muting	
 			snd.volume=50/100;													// Set volume
 			snd.play();															// Play it

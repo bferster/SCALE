@@ -14,8 +14,8 @@ class Content  {
 
 	Draw(id) 																									// REDRAW
 	{	
+		app.ams.Clear();																							// Clear any overlay skins
 		var h=$("#mainDiv").height()-24;																			// Get height
-	
 		if (!app.hideHeader && !app.fullScreen)																		// If not hiding header and not full
 			h-=Math.max($("#headerDiv").height(),32)+10;															// Accommodate for it
 		if (!app.fullScreen && ($("#mainDiv").width() > 599))														// If not full screen

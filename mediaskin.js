@@ -5,7 +5,9 @@ class MediaSkin {
 	constructor()																								// CONSTRUCTOR
 	{
 		this.skins=[];																								// Holds skins
-		this.macros=[];																								// Holds macros
+		this.macros=[];																								// Holds macros (associative_
+		this.settings={};																							// Holds settings (associative)
+		this.curSkin;																								// Currently active skin
 	}
 
 	AddSkin(id, name, raw)																						// PARSE SKIN SPEC AND ADD
@@ -59,20 +61,33 @@ class MediaSkin {
 				}
 			else if ((o.type.charAt(0) == "~") && (v.length > 1)) 													// Valid macro 
 				this.macros[o.type.substr(1)]=v[1];																	// Add macro
+			else if ((o.type == "settings")) 																		// Settings
+				for (i=1;i<v.length;++i)																			// For each setting
+					this.settings[v[i].split('=')[0].toLowerCase()]=v[i].split('=')[1];								// Add to settings object
 			}
 		if (evts.length)	this.skins.push({ id:id, name:name, items:evts, body:raw });							// Add to skins
 		}
 
-	Draw(paneId, skin, div)																							// DRAW SKIN ON PANE
+	Clear()																										// CLEAR SKINS
 	{
+		$("#amsDiv").remove();																						// Remove old overlay
+		$("#amsTextDiv").remove();																					// Remove text box
+		}
+
+	Draw(paneId, skin, div)																						// DRAW SKIN ON PANE
+	{
+		this.Clear();																								// Clear old overlays
 		if (!skin) return;																							// Quit if nothing
 		var i,o,d;
+		this.curSkin=skin.id;																						// Save id of current skin
 		var x=$(div).offset().left, y=$(div).offset().top;															// Position of base
 		var w=$(div).width(), 		h=$(div).height();																// Size
-		$("#amsDiv").remove();																						// Remove old overlay
 		var str="<div id='amsDiv' style='position:absolute;";														// Add overlay
-		str+="top:"+y+"px;left:"+x+"px;width:"+w+"px;height:"+h+"px'>";												// Position over base
-
+		str+="top:"+y+"px;left:"+x+"px;width:"+w+"px;height:"+h+"px"												// Position over base
+		if (this.settings["background-color"])	str+=";background-color:"+this.settings["background-color"];		// Background color
+		if (this.settings["opacity"])			str+=";opacity:"+this.settings["opacity"]/100;						// Opacity
+		str+="'>";
+	
 		for (i=0;i<skin.items.length;++i) {																			// For each item
 			o=skin.items[i];																						// Point at item
 			if (o.type == "hover") {																				// A hover event
@@ -95,7 +110,11 @@ class MediaSkin {
 				str+=">";
 				}
 			}
-		$("body").append(str+"</div>");																				// Add overlay
+		x=$(div).offset().left;	 y=$(div).offset().top+$(div).height();												// Position
+		var h2=$("#nextBut").offset().top-y;																		// Size
+		str+="</div><div id='amsTextDiv' style='position:absolute;";													// Add overlay text area
+		str+="top:"+y+"px;left:"+x+"px;width:"+w+"px;height:"+h2+"px'></div>"										// Position below
+		$("body").append(str);																						// Add overlay
 
 		for (i=0;i<skin.items.length;++i) {																			// For each item
 			o=skin.items[i];																						// Point at item
@@ -132,11 +151,52 @@ class MediaSkin {
 
 	SendActions(acts)																							// SEND ACTIONS
 	{
+		var i,o,v,s,macro;
 		if (!acts)	return;																							// Nothing to do
-		var macro=acts.match(/~(.*?)~/);																			// Extract macro
-		if (macro)																									// If found
+		if ((macro=acts.match(/~(.*?)~/)))																			// Extract macro
 			acts=acts.replace(RegExp(macro[0]),this.macros[macro[1]]);												// Replace
-		trace (acts)
+		acts=acts.split('+');																						// Split into array of actions
+		for (i=0;i<acts.length;++i) {																				// For each action
+			o=acts[i].split(':');																					// Split off opcode
+			s=o[0].toLowerCase();																					// Make lc
+			if (s == "banner")																						// BANNER
+				$("#amsTextDiv").html(o[1]);																		// Show it
+			else if (s == "sound") {																				// SOUND
+				s=o[1].toLowerCase();																				// Make lc
+				if ((s == "ding") || (s == "click") || (s == "delete"))		Sound(s)								// Built in sound
+				else														Sound(o[1]);							// MP3
+				}
+			else if (s == "goto") 																				// GOTO
+				app.msg.OnMessage({ data:"ActiveMediaSkin=goto|"+o[1]});											// Send goto message
+			else if (s == "show") 																				// SHOW
+				app.msg.OnMessage({ data:"ActiveMediaSkin=show|"+o[1]});											// Send show message
+			else if (s == "report") 																			// REPORT
+				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin});							// Send show message
+			else if (s == "play") {																				// PLAY
+				this.Clear();																						// Clear skin
+				SendToIframe("ScaleAct=play"+(o[1] ? "|"+o[1] : ""));												// Send play to iFrame
+				}
+			else if (s == "var") 																				// VAR
+				app.doc.vars[o[1].split('=')[0]]=o[1].split('=')[1];												// Set var
+			else if (s == "if") {																				// IF
+				var act=false;																						// Assume nothing
+				o[1]=o[1].replace(/ +/g," ");																		// Single space
+				for (i=2;i<o.length;++i)	o[1]+=":"+o[i];															// Rejoin colon'd off pieces
+				v=o[1].split(" ");																					// Split by space														
+				if (v.length < 5)	return;																			// Skip if not well formed
+				s=app.doc.vars[v[0]];																				// Get var value
+				switch(v[1].toUpperCase()) {																		// Route on verb
+					case "EQ": if (s == v[2])		act=true;	break;												// EQ							
+					case "NE": if (s != v[2])		act=true;	break;												// NE							
+					case "GT": if (s >  v[2])		act=true;	break;												// GT							
+					case "GE": if (s >= v[2])		act=true;	break;												// GE							
+					case "LT": if (s <  v[2])		act=true;	break;												// LT							
+					case "LE": if (s <= v[2])		act=true;	break;												// LE							
+					}
+				if (act) 	this.SendActions(v[3]);																	// Yes action
+				else 		this.SendActions(v[4])																	// No action
+				}
+			}
 		}
 
 
