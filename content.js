@@ -62,12 +62,11 @@ class Content  {
 			app.con.resumeId=app.con.triggerId=app.con.resumeTime=0;												// Clear resume
 			});				
 
-		$("#fullBut").on("click",()=> { 																			// Full screen button
+		$("#fullBut").on("click", ()=> { 																			// Full screen button
 			app.fullScreen=!app.fullScreen;																			// Toggle mode
 			app.Draw(); 																							// Draw it
 			$("#mainDiv").height($(window).height());																// Set main
 		});
-	
 	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
@@ -136,7 +135,7 @@ class Content  {
 
 			$("#contentDiv").append(str+"</div>");																	// Set content
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "1000px" )						// Reset width
-			
+	
 			if (margin && (margin != "0"))	{																		// If a margin set
 				var pct=100-margin-margin;																			// Width
 				margin+="%";																						// Add %

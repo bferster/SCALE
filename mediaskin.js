@@ -173,6 +173,9 @@ class MediaSkin {
 		
 		$("#amsDiv").on("click", (e)=> {																			// On click
 			x=(e.offsetX)/w*100;	y=(e.offsetY)/h*100;															// As %s
+			if (e.altKey)			PopUp(x.toFixed(3)+","+y.toFixed(3),4000);										// Show pos
+			
+			
 			for (i=0;i<skin.items.length;++i) {																		// For each item
 				o=skin.items[i];																					// Point at item
 				if (o.type == "click")	{																			// If a click event
@@ -217,7 +220,7 @@ class MediaSkin {
 			else if (s == "report") 																			// REPORT
 				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin.id});						// Send report message
 			else if (s == "clear") 																				// CLEAR
-				this.Clear(),trace(1111);																						// Clear skin
+				this.Clear();																						// Clear skin
 			else if (s == "play") {																				// PLAY
 				this.Clear();																						// Clear skin
 				SendToIframe("ScaleAct=play"+(o[1] ? "|"+o[1] : ""));												// Send play to iFrame
