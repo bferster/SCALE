@@ -7,7 +7,7 @@ class MediaSkin {
 		this.skins=[];																								// Holds skins
 		this.macros=[];																								// Holds macros (associative_
 		this.settings={};																							// Holds settings (associative)
-		this.curSkin;																								// Currently active skin
+		this.curSkin;																								// Currently active skin ojject
 	}
 
 	AddSkin(id, name, raw)																						// PARSE SKIN SPEC AND ADD
@@ -23,7 +23,7 @@ class MediaSkin {
 		for (i=0;i<e.length;++i) {																					// For each event
 			v=e[i].split(",");																						// Split into fields
 			for (j=0;j<v.length;++j) 	v[j]=v[j].trim();															// Trim fields
-			o={};																									// Init obj
+			o={ right:0 };																							// Init obj
 			o.type=v[0].toLowerCase();																				// Set type
 			if (((o.type == "click") || (o.type == "hover")) && (v.length > 4)) {									// Valid click/hover event
 				o.x=v[1];	o.y=v[2];	o.d=v[3];																	// Position
@@ -79,7 +79,7 @@ class MediaSkin {
 		this.Clear();																								// Clear old overlays
 		if (!skin) return;																							// Quit if nothing
 		var i,o,d;
-		this.curSkin=skin.id;																						// Save id of current skin
+		this.curSkin=skin;																							// Set curent skin
 		var x=$(div).offset().left, y=$(div).offset().top;															// Position of base
 		var w=$(div).width(), 		h=$(div).height();																// Size
 		var str="<div id='amsDiv' style='position:absolute;";														// Add overlay
@@ -99,9 +99,8 @@ class MediaSkin {
 				str+="></div>";
 				}
 			else if (o.type == "pic") {																				// A pic event
-				str+="<img src='"+o.pic+"' style='position:absolute;";												// Add pic
+				str+="<img id='pic-"+i+"' src='"+o.pic+"' style='position:absolute;";								// Add pic
 				str+="top:"+o.y+"%;left:"+o.x+"%;width:"+o.w+"%'";													// Position and size
-				str+=" onclick='app.ams.SendActions(\""+o.yes+"\")'";												// Over area
 				str+=">";
 				}
 			else if (o.type == "drag") {																			// A drag event
@@ -112,7 +111,7 @@ class MediaSkin {
 			}
 		x=$(div).offset().left;	 y=$(div).offset().top+$(div).height();												// Position
 		var h2=$("#nextBut").offset().top-y;																		// Size
-		str+="</div><div id='amsTextDiv' style='position:absolute;";													// Add overlay text area
+		str+="</div><div id='amsTextDiv' style='position:absolute;";												// Add overlay text area
 		str+="top:"+y+"px;left:"+x+"px;width:"+w+"px;height:"+h2+"px'></div>"										// Position below
 		$("body").append(str);																						// Add overlay
 
@@ -125,10 +124,17 @@ class MediaSkin {
 					var y=(ui.position.top-0+e.target.height/2)/h*100;												// Get center point X as %
 					d=o.d/2;																						// Half dx
 					if ((x > o.x2-d) &&  (x < o.x2-0+d) && (y > o.y2-d)  && (y < o.y2-0+d))							// In hotspot
-						this.SendActions(o.yes);																	// Perform yes actions
+						o.right=1,this.SendActions(o.yes);															// Perform yes actions
 					else																							// No
 						this.SendActions(o.no);																		// Perform no actions
 					}});
+				}
+			if (o.type == "pic") {																					// A pic event
+				$("#pic-"+i).on("click", (e)=> {																	// On click
+					o=skin.items[e.target.id.substr(4)];															// Point at item
+					this.SendActions(o.yes);																		// Send action
+					o.right=1;																						// Correct
+					});
 				}
 			}
 
@@ -139,6 +145,7 @@ class MediaSkin {
 				if (o.type == "click")	{																			// If a click event
 					d=o.d/2;																						// Half dx
 					if ((x > o.x-d) &&  (x < o.x-0+d) && (y > o.y-d)  && (y < o.y-0+d))	{							// In hotspot
+						o.right=1;																					// Right
 						this.SendActions(o.yes);																	// Perform yes actions
 						return;
 						}
@@ -171,7 +178,7 @@ class MediaSkin {
 			else if (s == "show") 																				// SHOW
 				app.msg.OnMessage({ data:"ActiveMediaSkin=show|"+o[1]});											// Send show message
 			else if (s == "report") 																			// REPORT
-				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin});							// Send show message
+				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin.id});							// Send show message
 			else if (s == "play") {																				// PLAY
 				this.Clear();																						// Clear skin
 				SendToIframe("ScaleAct=play"+(o[1] ? "|"+o[1] : ""));												// Send play to iFrame
@@ -197,7 +204,21 @@ class MediaSkin {
 				else 		this.SendActions(v[4])																	// No action
 				}
 			}
+		this.CheckGroups();																							// Check to see if agroup rule needs to be triggered			
 		}
 
+		CheckGroups()																							// CHECK GROUPS TO TEST TRIGGER
+		{
+			var i,j,o,n;
+			for (i=0;i<this.curSkin.items.length;++i) {																// For each item
+				o=this.curSkin.items[i];																			// Point at item
+				if (o.type != "group")	continue;																	// Only groups
+				n=0;																								// Reset counter
+				for (j=0;j<o.members.length;++j)																	// For each group member
+					n+=this.curSkin.items[o.members[j]-1].right;													// Add right/wrong count
+				if ((n == o.members.length) && !o.right)															// Done, but do only once
+					++o.right,this.SendActions(o.yes);																// Send right
+				}
+			}
 
 }
