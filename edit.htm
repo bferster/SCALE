@@ -225,6 +225,7 @@ class App  {
 		str+="<tr><td><b>Floats&nbsp;</b></td><td>"+MakeSelect("floatsBut",false,["Choose"])+"</td><td>&nbsp;<div id='addFloatBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAskBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose"])+"</td><td>&nbsp;<div id='addRuleBut'  class='wm-bs'>Add</div></td>";
+		str+="<tr><td><b>AMS&nbsp;</b></td><td>"+MakeSelect("amsBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAMSBut' class='wm-bs'>Add</div></td>";
 		str+="</table>";
 		str+="<br><hr><br><div id='saveCourseBut' class='wm-bs'>Save course</div>&nbsp;&nbsp;&nbsp;";
 		str+="<div id='previewBut' class='wm-bs'>Preview course</div>&nbsp;&nbsp;&nbsp;";
@@ -252,6 +253,11 @@ class App  {
 				app.floats.push(o.id);												// Add to floats
 				}
 			}
+		for (i=0;i<app.ams.skins.length;++i) {										// For each ams
+			o=app.ams.skins[i];														// Point at ams
+			$("#amsBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
+			}
+
 		$("#showHelp").on("click",function() { 										// ON HELP
 			window.open("https://docs.google.com/document/d/1QC4T1dE7xtjCM9C43AyUNiSPl-gKxjj4xziqm4JLd4I/edit?usp=sharing","_blank");
 			});
@@ -331,6 +337,20 @@ class App  {
 			Sound("ding"); 															// Ding
 			});
 
+		$("#addAMSBut").on("click", ()=> {  										// ON ADD NEW AMS
+			var o={id:"000", name:"Change this!", body:"", items:[] };				// Blank skin
+			app.ams.skins.push(o);													// Add to asks
+			$("#amsBut").append("<option>000 - Change this!</option>");				// Add option
+			$("#amsBut")[0].selectedIndex=app.ams.skins.length-1;					// Select it
+			app.con.Draw("ams",app.ams.skins.length-1);								// Show editor																							
+			Sound("ding");															// Ding sound
+			});
+	
+		$("#amsBut").on("change", function() {  									// ON EDIT AMS
+			app.con.Draw("ams",$(this)[0].selectedIndex-1);							// Show pane
+			Sound("click"); 														// Click
+			});
+		
 		$("#addAskBut").on("click", ()=> { 											// ON ADD QUESTION
 			var o={id:"000", name:"Change this!", step:"{\"optionType\":\"radio\",\"options\":[]}"};	// Step
 			app.doc.asks.push(o);													// Add to asks
@@ -459,10 +479,25 @@ class App  {
 				this.curEditId=id;															// Save id
 				this.RuleEditor(o);															// Run editor
 				}
+			else if (type == "ams") {														// Draw AMS
+				o=app.ams.skins[id];														// Point at skin
+				if (!o) { 																	// Invalid pane
+					this.Draw("splash");													// Show splash																								
+					return;																	// Quit
+					}
+				this.curEditId=id;															// Save id
+				this.AMSEditor(o);															// Run editor
+				}
 			else if (type == "setting") 													// Draw settings
 				this.SettingsEditor();														// Run editor
 		}
-	
+
+		
+	AMSEditor(skin)																		// AMS EDITOR
+	{
+		trace(skin)
+	}
+
 	RuleEditor(r)																		// RULE EDITOR
 	{
 		var i,ids=[];
