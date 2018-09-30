@@ -453,7 +453,7 @@ class App  {
 					this.Draw("splash");													// Show splash																								
 					return;																	// Quit
 					}
-				str+=o.name ? "<div id='pageTitle' class='wm-pageTitle' contentEditable='true'> "+o.name+"</div>" : "";			// Get page title
+				str+=o.name ? "<div id='pageTitle' class='wm-pageTitle' contentEditable='true'>"+o.name+"</div>" : "";			// Get page title
 				$("#contentDiv").html(str);													// Add page title
 				CKEDITOR.instances.editor1.setData(o.body);									// Add body data
 				app.editorChange=0;															// Reset change flag
