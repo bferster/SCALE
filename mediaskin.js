@@ -16,70 +16,21 @@ class MediaSkin {
 		if (!raw) return;																							// Quit if no data
 		raw=raw.replace(/\n|\r|\t/g,"");																			// Remove CR/LF/Tab
 		raw=raw.replace(/<\/*p>/g,"");																				// Remove <p>s
-		raw=raw.replace(/&nbsp;/g,"");																				// Remove spaces
 		raw=raw.replace(/\(/g,",");																					// ( to ,
-		e=raw.split(")");																							// Split into events
-
+		raw=raw.replace(/&nbsp;/g,"");																				// Remove spaces
+		e=raw.split(")");																							// Split into events	
 		for (i=0;i<e.length;++i) {																					// For each event
+			if (!e[i])	continue;																					// Skip blank
 			v=e[i].split(",");																						// Split into fields
-			for (j=0;j<v.length;++j) 	v[j]=v[j].trim();															// Trim fields
 			o={ right:0 };																							// Init obj
-			o.type=v[0].toLowerCase();																				// Set type
-
-			if (((o.type == "click") || (o.type == "hover")) && (v.length > 3)) {									// Valid click/hover event
-				o.x=v[1];	o.y=v[2];	o.d=v[3];																	// Position
-				o.yes=v[4];																							// Yes action
-				o.no=v[5] ? v[5] : "";																				// No action
-				evts.push(o);																						// Add event
-				}
-			else if ((o.type == "banner") && (v.length > 1)) {														// Valid banner event
-				o.text=v[1];																						// Text
-				evts.push(o);																						// Add event
-				}
-			else if ((o.type == "drag") && (v.length > 7)) {														// Valid drag event
-				o.x=v[1];	o.y=v[2];																				// Start position
-				o.x2=v[3];	o.y2=v[4];	o.d=v[5];																	// Target position
-				o.pic=v[6];	o.w=v[7];																				// Pic to drag
-				o.yes=v[8];																							// Yes action
-				o.no=v[9] ? v[9] : "";																				// No action
-				evts.push(o);																						// Add event
-				}
-			else if ((o.type == "group") && (v.length > 2)) {														// Valid group event
-				o.members=v[1].split("+");																			// Get members																				
-				o.yes=v[2];																							// Yes action
-				o.no=v[3] ? v[3] : "";																				// No action
-				if (o.members.length)	evts.push(o);																// Add event if members
-				}
-			else if ((o.type == "pic") && (v.length > 4)) {															// Valid pic event
-				o.x=v[1];	o.y=v[2];	o.w=v[3];																	// Position
-				o.pic=v[4];																							// Pic to drag
-				o.alpha=v[5] ? v[5]/100 : "";																		// Alpha
-				o.yes=v[6] ? v[6] : "";																				// Yes action
-				o.no=v[7] ? v[7] : "";																				// No action
-				evts.push(o);																						// Add event
-				}
-			else if ((o.type == "type") && (v.length > 7)) {														// Valid type event
-				o.x=v[1];	o.y=v[2];	o.w=v[3];																	// Position
-				o.style=v[4];	o.value=v[5];	o.place=v[6];														// Pic to drag
-				o.yes=v[7] ? v[7] : "";																				// Yes action
-				o.no=v[8] ? v[8] : "";																				// No action
-				evts.push(o);																						// Add event
-				}
-			else if ((o.type == "button") && (v.length > 5)) {														// Valid button event
-				o.x=v[1];	o.y=v[2];	o.label=v[3];	o.style=v[4];												// Position
-				o.yes=v[5] ? v[5] : "";																				// Yes action
-				o.no=v[6] ? v[6] : "";																				// No action
-				evts.push(o);																						// Add event
-				}
-			else if ((o.type.charAt(0) == "~") && (v.length > 1)) 													// Valid macro 
-				this.macros[o.type.substr(1)]=v[1];																	// Add macro
-			else if ((o.type == "settings")) {																		// Settings
-				for (i=1;i<v.length;++i)																			// For each setting
-					this.settings[v[i].split('=')[0].toLowerCase()]=v[i].split('=')[1];								// Add to settings object
-				}
+			o.type=v[0].toLowerCase().trim();																		// Set type
+			for (j=1;j<v.length;++j)																				// For each param
+				if (v[j])	o[v[j].split('=')[0].trim().toLowerCase()]=v[j].split('=')[1].trim();					// Add params
+			evts.push(o);																							// Add event
 			}
-		if (evts.length)	this.skins.push({ id:id, name:name, items:evts, body:raw });							// Add to skins
-		}
+		if (evts.length)																							// If anything there
+			this.skins.push({ id:id, name:name, items:evts, body:raw });											// Add to skins
+	}
 
 	Clear()																										// CLEAR SKINS
 	{
@@ -184,8 +135,13 @@ class MediaSkin {
 				}
 			else if (o.type == "banner") {																			// A banner event
 				$("#amsTextDiv").html(o.text);																		// Show it
-				}
+				if (o.sound) {																						// If sound																							
+					str=o.sound.toLowerCase();																		// Make lc
+				if ((str == "ding") || (str == "click") || (str == "delete"))		Sound(str)						// Built in sound
+				else																Sound(o.sound);					// MP3
+				}	
 			}
+		}
 
 		$("#amsDiv").on("click", (e)=> {																			// On click
 			x=(e.offsetX)/w*100;	y=(e.offsetY)/w*100;															// As %s

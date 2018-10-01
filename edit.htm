@@ -47,6 +47,9 @@
 		.wm-is {			border-radius:10px; padding-left:8px; padding-right:8px; padding-top:1px;
 							border:1px solid #999; font-size:12px; height:20px; width:300px;
 							}
+		.wm-is2 {			border-radius:10px; padding-left:8px; padding-right:8px; padding-top:1px;
+							border:1px solid #999; font-size:12px; height:18px; width:120px;
+							}
 		.wm-bs {			border-radius: 16px; padding-left: 8px; padding-right: 8px; display: inline-block; height: 17px; padding-top: 1px;
 							font-size: 12px; background-color: #27ae5f; cursor: pointer; text-align: center; color:#fff; user-select: none;
 							}
@@ -99,6 +102,8 @@
 	</div>
 		
 <script>
+
+if ((location.protocol != 'https:') && (window.location.host != "localhost")) location.href = 'https:' + window.location.href.substring(window.location.protocol.length); // FORCE HTTPS!
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // APP
@@ -495,7 +500,126 @@ class App  {
 		
 	AMSEditor(skin)																		// AMS EDITOR
 	{
-		trace(skin)
+		var i,j;
+		var str="<div class='wm-stepEditor'>";
+		var o=skin.items;
+		str+="<img src='img/scalelogo.png' style='vertical-align:-8px;margin-right:16px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
+		str+="<div style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
+		for (i=0;i<o.length;++i) {															// For each item in skin
+			str+="<div id='item-"+i+"' style='cursor:pointer'>"+(i+1)+". <b>"+o[i].type+"</b> "; // Add type
+			for (var key in o[i]) {															// For each param
+				if ((key != "type") && (key != "right"))									// If not a type or right
+					str+=key+"="+o[i][key]+" ";												// Add param
+				}
+			str+="</div>";																	// LF
+			}
+		str+="</div><hr><div id='amsParamDiv' style='width:100%'></div>";		
+		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
+		str+="<div id='saveAMSBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
+		str+="<img id='removeAMSBut' title='Delete this rule' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
+		$("#contentDiv").html(str);	
+
+		$("[id^=item-]").on("click", (e)=> {												// On item click
+			
+			var id=e.currentTarget.id.substr(5);											// Get id
+			var o=skin.items[id];															// Point at item
+			$("[id^=item-]").css("background-color","#fff");								// Clear highlights
+			$("#item-"+id).css("background-color","#eee");									// Highlight this one
+			var s="<table><tr><td>Type&nbsp;&nbsp;</td><td>"+MakeSelect("amsType",false,["banner","button","click","code","drag","group","macro","pic","type"],o.type);	
+			s+="<img id='removeAMSItemBut' title='Delete this item' style='vertical-align:-5px;float:right' src='img/trashbut.gif'></td></tr>";	// Trash button
+
+			if (o.type == "banner") {
+				s+="<tr><td>Text</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsText' value='"+(o.text ? o.text :'')+"'></td></tr>";	
+				s+="<tr><td>Sound</td><td><input class='wm-is' style='width:200px;height:16px' type='text' id='amsSound' value='"+(o.sound ? o.sound :'')+"'></td></tr>";	
+				}
+			else if (o.type == "button") {
+				s+="<tr><td>Horizontal %</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Vertical % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'></td></tr>";
+				s+="<tr><td>Label</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsLabel' value='"+(o.label ? o.label :'')+"'></td></tr>";	
+				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
+				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				}
+			else if ((o.type == "click") || (o.type == "hover")) {
+				s+="<tr><td>Horiz&nbsp%target&nbsp%%</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Vert target % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Proximity % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
+				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
+				}
+			else if (o.type == "code") {
+				s+="<tr><td>Text</td><td><textarea style='width:400px;width:300px;height:100px' id='amsText'>"+(o.text ? o.text :'')+"</textarea></td></tr>";	
+				}
+			else if (o.type == "drag") {
+				s+="<tr><td>Start&nbsp;horiz&nbsp%</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Start&nbsp;vert&nbsp;<input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Image&nbsp;width% <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Image</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
+				s+="<tr><td>Horiz&nbsp;target&nbsp;%</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX2' value='"+(o.x2 ? o.x2 :'')+"'>";	
+				s+="&nbsp;&nbsp;Vert target % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY2' value='"+(o.y2 ? o.y2 :'')+"'>";
+				s+="&nbsp;&nbsp;Proximity %<input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
+				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
+				}
+			else if (o.type == "group") {
+				s+="<tr><td>Members </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsMem' value='"+(o.members ? o.members :'')+"'></td></tr>";	
+				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
+				}
+			else if (o.type == "macro") {
+				s+="<tr><td>Id </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsId' value='"+(o.id ? o.id :'')+"'></td></tr>";	
+				s+="<tr><td>Text</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsText' value='"+(o.text ? o.text :'')+"'></td></tr>";	
+				}
+			else if (o.type == "pic") {
+				s+="<tr><td>Left %</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Top % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Width % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Image </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
+				s+="<tr><td>Yes action </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				}
+			else if (o.type == "type") {
+				s+="<tr><td>Horizontal %</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Vertical % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Width % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Target value </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsValue' value='"+(o.value ? o.value :'')+"'></td></tr>";	
+				s+="<tr><td>Placeholder </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPlace' value='"+(o.place ? o.place :'')+"'></td></tr>";	
+				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
+				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
+				}
+			$("#amsParamDiv").html(s+"</table");
+			
+			var ids=["banner:","clear:","goto:","if:","play:","report:","sound:","var:"];
+			$("#amsYes").autocomplete({ source: ids, minLength: 0});						// Auto complete Yes
+			$("#amsNo").autocomplete({ source: ids, minLength: 0});							// Auto complete No
+			$("#amsSound").autocomplete({ source: ["click","delete","ding"], minLength: 0}); // Auto complete Sound
+
+			$("#amsX").on("change", function()		{ o.x=$(this).val(); });				// Set x on change
+			$("#amsY").on("change", function() 		{ o.y=$(this).val(); });				// Set y on change
+			$("#amsW").on("change", function() 		{ o.w=$(this).val(); });				// Set w on change
+			$("#amsAcc").on("change", function() 	{ o.d=$(this).val(); });				// Set d on change
+			$("#amsLabel").on("change", function() 	{ o.label=$(this).val(); });			// Set label on change
+			$("#amsStyle").on("change", function() 	{ o.style=$(this).val(); });			// Set style on change
+			$("#amsYes").on("change", function() 	{ o.yes=$(this).val(); });				// Set yes on change
+			$("#amsNo").on("change", function() 	{ o.no=$(this).val(); });				// Set no on change
+			$("#amsText").on("change", function() 	{ o.text=$(this).val(); });				// Set text on change
+			$("#amsSound").on("change", function() 	{ o.sound=$(this).val(); });			// Set sound on change
+			$("#amsValue").on("change", function() 	{ o.value=$(this).val(); });			// Set value on change
+			$("#amsPlace").on("change", function() 	{ o.place=$(this).val(); });			// Set place on change
+			$("#amsPic").on("change", function() 	{ o.pic=$(this).val(); });				// Set pic on change
+			$("#amsMem").on("change", function() 	{ o.members=$(this).val(); });			// Set members on change
+			$("#amsId").on("change", function() 	{ o.id=$(this).val(); });				// Set id on change
+			$("#amsX2").on("change", function()		{ o.x2=$(this).val(); });				// Set x2 on change
+			$("#amsY2").on("change", function() 	{ o.y2=$(this).val(); });				// Set y2 on change
+			
+			$("#removeAMSItemBut").on("click", ()=> {		
+				skin.items.splice(id,1);													// Remove it
+				Sound("delete");															// Delete sound
+				this.AMSEditor(skin);														// Redraw
+				});
+			
+
+			});
+
 	}
 
 	RuleEditor(r)																		// RULE EDITOR
