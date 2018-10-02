@@ -184,15 +184,19 @@
 			if (playerNext == "true")	SendScaleMessage("next");				// Send next if set
 			}
 		else if (triggers) {													// If triggers defined
-			var i;
+			var i,t;
 			for (i=0;i<triggers.length;++i) {									// For each trigger
 				if (Math.abs(now-triggers[i][0]) < .15)	{						// Near trigger point
 					if (slideSource) {											// Has slides
 						$("#slideDivIF").prop("src",slideSource+"?slide="+triggers[i][1]);	// Next slide	
 						}
 					else{														// Straight video
-						RunPlayer("pause");										// Pause
-						SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+						if (triggers[i][1].charAt(0) == '*')					// If not pausing video
+							SendScaleMessage("trigger",triggers[i][1].substr(1)+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+						else{
+							RunPlayer("pause");									// Pause
+							SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+							}
 						}
 					break;														// Quit
 					}

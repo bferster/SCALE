@@ -505,7 +505,7 @@ class App  {
 		str+="<img src='img/scalelogo.png' style='vertical-align:-8px;margin-right:16px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
 		str+="<div id='amsItemsDiv' style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
 		for (i=0;i<o.length;++i) {															// For each item in skin
-			str+="<div id='item-"+i+"' style='cursor:pointer'>"+(i+1)+". <b>"+o[i].type+"</b> "; // Add type
+			str+="<div id='item-"+i+"' style='cursor:pointer;padding:2px 0'>"+(i+1)+". <b>"+o[i].type+"</b> "; // Add type
 			for (var key in o[i]) {															// For each param
 				if ((key != "type") && (key != "right"))									// If not a type or right
 					str+=key+"="+o[i][key]+" ";												// Add param
