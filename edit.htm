@@ -497,66 +497,115 @@ class App  {
 				this.SettingsEditor();														// Run editor
 		}
 
-		
 	AMSEditor(skin)																		// AMS EDITOR
 	{
 		var i,j;
-		var str="<div class='wm-stepEditor'>";
+		var str="<div id='amsEditorDiv' class='wm-stepEditor'>";
 		var o=skin.items;
 		str+="<img src='img/scalelogo.png' style='vertical-align:-8px;margin-right:16px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
-		str+="<div style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
+		str+="<div id='amsItemsDiv' style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
 		for (i=0;i<o.length;++i) {															// For each item in skin
 			str+="<div id='item-"+i+"' style='cursor:pointer'>"+(i+1)+". <b>"+o[i].type+"</b> "; // Add type
 			for (var key in o[i]) {															// For each param
 				if ((key != "type") && (key != "right"))									// If not a type or right
 					str+=key+"="+o[i][key]+" ";												// Add param
 				}
-			str+="</div>";																	// LF
+			str+="</div>";																	// End item div
 			}
-		str+="</div><hr><div id='amsParamDiv' style='width:100%'></div>";		
-		str+="</div><div style='margin-left:48px;margin-top:-15px'>";																		
-		str+="<div id='saveAMSBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
-		str+="<img id='removeAMSBut' title='Delete this rule' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
+		str+="<p id='addAMSItemBut' class='wm-bs'>Add new item</p>";						// Add item button				
+		str+="</div><hr><div id='amsParamDiv' style='width:100%'>Choose item above to edit</div>";// End itemsDiv, add params div	
+		str+="</div><div style='margin-left:48px;margin-top:-15px'>";						// End editorDiv  Add buttons div																	
+		str+="<div id='saveAMSBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";			// Save button				
+		str+="<img id='removeAMSBut' title='Delete this item' style='vertical-align:-5px' src='img/trashbut.gif'>";	// Trash button
+		str+="&nbsp;&nbsp;&nbsp;Title: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='skinName' value='"+skin.name+"'>";
+		str+="&nbsp;&nbsp;&nbsp;Id: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='skinId' value='"+skin.id+"'></div>";
 		$("#contentDiv").html(str);	
 
+		$("#saveAMSBut").on("click", ()=> { 												// ON SAVE SKIN
+			var s="";
+			var o=skin.items;
+			for (i=0;i<o.length;++i) {														// For each item in skin
+				s+=o[i].type+"~%#";															// Add op and special chars
+				for (var key in o[i]) 														// For each param
+					if ((key != "type") && (key != "right")) s+=","+key+"="+o[i][key];		// If not a type or right,add param
+				s+=")  ";																	// End command
+				}
+			if (s)	s=s.replace(/~%#,/g,"(");												// Remove leading comma
+			skin.body=s;																	// Set new body
+			app.Do();																		// Save for undo
+			Sound("ding");																	// Ding sound
+			});
+
+		$("#skinId").on("change", ()=> { 													// ON SKIN ID
+			app.Do();																		// Save for undo
+			skin.id=$("#skinId").val();														// Set it
+			$('#amsBut').find(":selected").html("<option value='"+skin.id+"'>"+skin.id+" - "+skin.name+"</option>");	// Change pulldown
+			Sound("click");																	// Click sound
+			});
+
+		$("#skinName").on("change", ()=> { 													// ON SKIN NAME
+			app.Do();																		// Save for undo
+			skin.name=$("#skinName").val();													// Set it
+			$('#amsBut').find(":selected").html("<option value='"+skin.id+"'>"+skin.id+" - "+skin.name+"</option>");	// Change pulldown
+			Sound("click");																	// Click sound
+			});
+
+		$("#addAMSItemBut").on("click", ()=> { 												// ON ADD ITEM
+			skin.items.push({ right:0, type:"" });											// Add blank
+			app.Do();																		// Save for undo
+			this.AMSEditor(skin);															// Redraw
+			Sound("ding");																	// Ding sound
+			});
+
+		$("#removeAMSBut").on("click", ()=> { 												// ON REMOVE AMS
+			ConfirmBox("Are you sure?","This will remove this skin from your course.", ()=> {	// If sure
+				app.ams.skins.splice($('#amsBut')[0].selectedIndex-1,1);					// Remove from ams
+				$('#amsBut').find(":selected").remove();									// Remove from pulldown			
+				$("#amsBut")[0].selectedIndex=0;											// Clear selection
+				this.Draw("splash");														// Show splash																								
+				app.Do();																	// Save for undo
+				Sound("delete");															// Delete sound
+				});
+			});
+
+
 		$("[id^=item-]").on("click", (e)=> {												// On item click
-			
 			var id=e.currentTarget.id.substr(5);											// Get id
 			var o=skin.items[id];															// Point at item
 			$("[id^=item-]").css("background-color","#fff");								// Clear highlights
-			$("#item-"+id).css("background-color","#eee");									// Highlight this one
-			var s="<table><tr><td>Type&nbsp;&nbsp;</td><td>"+MakeSelect("amsType",false,["banner","button","click","code","drag","group","macro","pic","type"],o.type);	
+			$("#item-"+id).css("background-color","#dee7f1");								// Highlight this one
+			var s="<table><tr><td>Type&nbsp;&nbsp;</td><td>"+MakeSelect("amsType",false,["","banner","button","click","code","drag","group","macro","pic","type"],o.type);	
 			s+="<img id='removeAMSItemBut' title='Delete this item' style='vertical-align:-5px;float:right' src='img/trashbut.gif'></td></tr>";	// Trash button
 
 			if (o.type == "banner") {
 				s+="<tr><td>Text</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsText' value='"+(o.text ? o.text :'')+"'></td></tr>";	
-				s+="<tr><td>Sound</td><td><input class='wm-is' style='width:200px;height:16px' type='text' id='amsSound' value='"+(o.sound ? o.sound :'')+"'></td></tr>";	
+				s+="<tr><td>Sound&nbsp;&nbsp;</td><td><input class='wm-is' style='width:200px;height:16px' type='text' id='amsSound' value='"+(o.sound ? o.sound :'')+"'></td></tr>";	
 				}
 			else if (o.type == "button") {
-				s+="<tr><td>Horizontal %</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
-				s+="&nbsp;&nbsp;Vertical % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'></td></tr>";
+				s+="<tr><td>Left</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Top&nbsp; <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'></td></tr>";
 				s+="<tr><td>Label</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsLabel' value='"+(o.label ? o.label :'')+"'></td></tr>";	
 				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
-				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				s+="<tr><td>Yes&nbsp;&nbsp;action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
 			else if ((o.type == "click") || (o.type == "hover")) {
-				s+="<tr><td>Horiz&nbsp%target&nbsp%%</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
-				s+="&nbsp;&nbsp;Vert target % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
-				s+="&nbsp;&nbsp;Proximity % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
+				s+="<tr><td>Left&nbsp;target&nbsp;&nbsp;</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Top target <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Proximity <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
 				}
 			else if (o.type == "code") {
-				s+="<tr><td>Text</td><td><textarea style='width:400px;width:300px;height:100px' id='amsText'>"+(o.text ? o.text :'')+"</textarea></td></tr>";	
+				s+="<tr><td>Text</td><td><textarea style='width:400px;width:300px;height:100px' id='amsText'>"+(o.code ? o.code :'')+"</textarea></td></tr>";	
 				}
 			else if (o.type == "drag") {
-				s+="<tr><td>Start&nbsp;horiz&nbsp%</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
-				s+="&nbsp;&nbsp;Start&nbsp;vert&nbsp;<input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
-				s+="&nbsp;&nbsp;Image&nbsp;width% <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Start&nbsp;left</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Start&nbsp;top <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Image&nbsp;width <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
 				s+="<tr><td>Image</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
-				s+="<tr><td>Horiz&nbsp;target&nbsp;%</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX2' value='"+(o.x2 ? o.x2 :'')+"'>";	
-				s+="&nbsp;&nbsp;Vert target % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY2' value='"+(o.y2 ? o.y2 :'')+"'>";
-				s+="&nbsp;&nbsp;Proximity %<input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
+				s+="<tr><td>Left&nbsp;target&nbsp;</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX2' value='"+(o.x2 ? o.x2 :'')+"'>";	
+				s+="&nbsp;&nbsp;Top target <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY2' value='"+(o.y2 ? o.y2 :'')+"'>";
+				s+="&nbsp;&nbsp;Proximity <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
 				}
@@ -570,18 +619,18 @@ class App  {
 				s+="<tr><td>Text</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsText' value='"+(o.text ? o.text :'')+"'></td></tr>";	
 				}
 			else if (o.type == "pic") {
-				s+="<tr><td>Left %</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
-				s+="&nbsp;&nbsp;Top % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
-				s+="&nbsp;&nbsp;Width % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Left </td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Top <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Width <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
 				s+="<tr><td>Image </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
-				s+="<tr><td>Yes action </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				s+="<tr><td>Yes&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
 			else if (o.type == "type") {
-				s+="<tr><td>Horizontal %</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
-				s+="&nbsp;&nbsp;Vertical % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
-				s+="&nbsp;&nbsp;Width % <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.w ? o.w :'')+"'></td></tr>";
-				s+="<tr><td>Target value </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsValue' value='"+(o.value ? o.value :'')+"'></td></tr>";	
-				s+="<tr><td>Placeholder </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPlace' value='"+(o.place ? o.place :'')+"'></td></tr>";	
+				s+="<tr><td>Left</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Top <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="&nbsp;&nbsp;Width <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Target value&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsValue' value='"+(o.value ? o.value :'')+"'></td></tr>";	
+				s+="<tr><td>Placeholder</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPlace' value='"+(o.place ? o.place :'')+"'></td></tr>";	
 				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
@@ -601,7 +650,6 @@ class App  {
 			$("#amsStyle").on("change", function() 	{ o.style=$(this).val(); });			// Set style on change
 			$("#amsYes").on("change", function() 	{ o.yes=$(this).val(); });				// Set yes on change
 			$("#amsNo").on("change", function() 	{ o.no=$(this).val(); });				// Set no on change
-			$("#amsText").on("change", function() 	{ o.text=$(this).val(); });				// Set text on change
 			$("#amsSound").on("change", function() 	{ o.sound=$(this).val(); });			// Set sound on change
 			$("#amsValue").on("change", function() 	{ o.value=$(this).val(); });			// Set value on change
 			$("#amsPlace").on("change", function() 	{ o.place=$(this).val(); });			// Set place on change
@@ -610,16 +658,28 @@ class App  {
 			$("#amsId").on("change", function() 	{ o.id=$(this).val(); });				// Set id on change
 			$("#amsX2").on("change", function()		{ o.x2=$(this).val(); });				// Set x2 on change
 			$("#amsY2").on("change", function() 	{ o.y2=$(this).val(); });				// Set y2 on change
+		
+			$("#amsText").on("change", function() 	{ 										// Set text on change
+				o.text=$(this).val(); 														// Get val
+				if (o.text) {																// If something there																	
+					o.text=o.text.replace(/'/g,"&apos;");									// Apos entity
+					o.text=o.text.replace(/,/g,"&comma;");									// Comma entity
+					}
+				});				
 			
-			$("#removeAMSItemBut").on("click", ()=> {		
+			$("#amsType").on("change", ()=> 	{ 											// Set type on change
+				o.type=$("#amsType").val(); 												// Get val
+				Sound("click");																// Click sound
+				this.AMSEditor(skin);														// Redraw
+				});
+	
+			$("#removeAMSItemBut").on("click", ()=> {										// ON REMOVE ITEM	
 				skin.items.splice(id,1);													// Remove it
 				Sound("delete");															// Delete sound
 				this.AMSEditor(skin);														// Redraw
 				});
 			
-
 			});
-
 	}
 
 	RuleEditor(r)																		// RULE EDITOR
