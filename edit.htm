@@ -300,7 +300,8 @@ class App  {
 			if (app.previewWin && app.previewWin.closed)							// No longer open
 				app.previewWin=false;												// Force a reopen
 			if (!app.previewWin) {													// No window open
-				app.previewWin=window.open("index.html?preview","scalePreview");	// Open preview tab
+				trace(123)
+				app.previewWin=window.open("index.html?preview","_blank","scalePreview");	// Open preview tab
 				setTimeout(function() {												// Open timer
 					if (app.previewWin) {											// If preview window has opened
 						app.previewWin.postMessage("ScalePreview|"+str,"*");		// Send message	

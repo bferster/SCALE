@@ -221,14 +221,15 @@ class MediaSkin {
 
 		CheckGroups()																							// CHECK GROUPS TO TEST TRIGGER
 		{
-			var i,j,o,n;
+			var i,j,o,n,mem;
 			for (i=0;i<this.curSkin.items.length;++i) {																// For each item
 				o=this.curSkin.items[i];																			// Point at item
 				if (o.type != "group")	continue;																	// Only groups
 				n=0;																								// Reset counter
-				for (j=0;j<o.members.length;++j)																	// For each group member
-					n+=this.curSkin.items[o.members[j]-1].right;													// Add right/wrong count
-				if ((n == o.members.length) && !o.right)															// Done, but do only once
+				mem=o.members.split("+");																			// Into array
+				for (j=0;j<mem.length;++j) 																			// For each group member
+					n+=this.curSkin.items[mem[j]-1].right;															// Add right/wrong count
+				if ((n == mem.length) && !o.right)																	// Done, but do only once
 					++o.right,this.SendActions(o.yes);																// Send right
 				}
 			}

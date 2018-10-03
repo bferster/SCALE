@@ -58,20 +58,27 @@ class Messaging {
 				app.msg.SaveToForm("Answer"+app.doc.curLobId+":"+v[2]+"="+v[3]);									// Save answer to form, if set		
 			}
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
-			if (msg.match(/next/)) {																				// Go onto next event
-				app.doc.NextLob(); 																					// Advance to next pos
-				app.Draw();																							// Redraw
-				}
+//			if (msg.match(/next/)) {																				// Go onto next event
+//				app.doc.NextLob(); 																					// Advance to next pos
+//				app.Draw();																							// Redraw
+//				}
 			if (msg.match(/trigger/)) {																				// Hit a trigger point
+				if (v[1].toLowerCase() == "next") {																	// Advance to next pos
+					app.doc.NextLob();																				// Advance
+					app.Draw();																						// Draw																																		
+					return;
+					}
 				var o=app.doc.FindLobById(v[1]);																	// Point at triggered lob (typically an assessment)
 				if (!o) {																							// Look for skin
 					o=app.doc.FindLobById(v[1],app.ams.skins);														// Get skin												
 					app.ams.Draw(app.doc.curLobId,o,"#contentIF");													// Draw skin
 					return;																							// Quit 
 					}
-				app.con.triggerId=v[1];																				// Store trigger id
-				app.con.resumeId=app.doc.curLobId;																	// Store resume id
-				app.con.resumeTime=v[2];																			// Store resume time
+				if (o.body.match(/assess\(/i)) {																	// If an assessment
+					app.con.triggerId=v[1];																			// Store trigger id
+					app.con.resumeId=app.doc.curLobId;																// Store resume id
+					app.con.resumeTime=v[2];																		// Store resume time
+					}
 				if (app.skipDone && o && (o.status > 9)) 															// If seen and skipping
 					app.con.Draw(app.doc.curLobId);																	// Resume playing
 				else																								// Run trigger mob

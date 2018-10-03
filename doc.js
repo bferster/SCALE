@@ -15,6 +15,7 @@ class Doc {
 		this.vars=[];																								// Associative array to hold
 		this.curPos=0;																								// Start at lesson
 		this.courseId=id;																							// Default course id
+		this.curLevel=this.curLesson=this.curTopic=this.curConcept=this.curStep=-1;									// Nowhere yet
 		
 		if (id == "preview") {																						// Preview instructions
 			var str="<br><br><p style='text-align:center'><img src='img/scalelogo.png'>";
@@ -57,6 +58,7 @@ class Doc {
 	SetCurVars(id)																								// SET CURRENT AREAS
 	{
 		id=Math.min(id,this.lobs.length-1);																			// Cap at max
+		if (id < 0) return;																							// Quit if no lobs yet
 		this.curLevel=this.lobs[id].level;																			// Current level
 		this.curLobId=this.lobs[id].id;																				// Current lob id
 		this.curLob=this.FindLobById(this.lobs[id].id);																// Current lob pointer
