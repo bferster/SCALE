@@ -20,7 +20,7 @@ class MediaSkin {
 		raw=raw.replace(/&nbsp;/g,"");																				// Remove spaces
 		e=raw.split(")");																							// Split into events	
 		for (i=0;i<e.length;++i) {																					// For each event
-			if (!e[i])	continue;																					// Skip blank
+			if (!e[i] || (e[i].length < 10))	continue;															// Skip blank
 			v=e[i].split(",");																						// Split into fields
 			o={ right:0 };																							// Init obj
 			o.type=v[0].toLowerCase().trim();																		// Set type
@@ -69,6 +69,12 @@ class MediaSkin {
 				if (o.alpha) str+="opacity:"+o.alpha;																// Add alpha
 				str+="'>";													
 				}
+			else if (o.type == "text") {																			// A text event
+				str+="<div id='text-"+i+"' type='text' style='font-size:18px;color:#fff;font-weight:bold;";			// Add div
+				str+="cursor:pointer;position:absolute;top:"+y+"px;left:"+o.x+"%;";									// Position 
+				if (o.style) str+=o.style;		str+="'";															// Add style
+				str+=">"+o.text+"</div>";																			// Add text to show
+				}
 			else if (o.type == "type") {																			// A type event
 				str+="<input id='type-"+i+"' type='text' style='position:absolute;border:none;";					// Add type
 				str+="border-radius:16px;font-size:16px;padding:2px 8px;";
@@ -77,7 +83,7 @@ class MediaSkin {
 				if (o.place) str+=" placeholder='"+o.place+"'";														// Add placeholder
 				str+=">";
 				}
-			else if (o.type == "button") {																			// A button event
+				else if (o.type == "button") {																			// A button event
 				str+="<button id='but-"+i+"' type='button' style='position:absolute;";								// Add button
 				str+="top:"+y+"px;left:"+o.x+"%;border-radius:16px;font-size:16px;padding:2px 8px;";				// Position and size
 				if (o.style) str+=o.style;																			// Add style
@@ -119,6 +125,13 @@ class MediaSkin {
 			if (o.type == "button") {																				// A button event
 				$("#but-"+i).on("click", (e)=> {																	// On click
 					o=skin.items[e.target.id.substr(4)];															// Point at item
+					this.SendActions(o.yes);																		// Send action
+					o.right=1;																						// Correct
+					});
+				}
+			else if (o.type == "text") {																			// A type event
+				$("#text-"+i).on("click", (e)=> {																	// On click
+					o=skin.items[e.target.id.substr(5)];															// Point at item
 					this.SendActions(o.yes);																		// Send action
 					o.right=1;																						// Correct
 					});

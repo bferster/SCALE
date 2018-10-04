@@ -300,8 +300,7 @@ class App  {
 			if (app.previewWin && app.previewWin.closed)							// No longer open
 				app.previewWin=false;												// Force a reopen
 			if (!app.previewWin) {													// No window open
-				trace(123)
-				app.previewWin=window.open("index.html?preview","_blank","scalePreview");	// Open preview tab
+				app.previewWin=window.open("index.html?preview","scalePreview");	// Open preview tab
 				setTimeout(function() {												// Open timer
 					if (app.previewWin) {											// If preview window has opened
 						app.previewWin.postMessage("ScalePreview|"+str,"*");		// Send message	
@@ -347,7 +346,7 @@ class App  {
 			var o={id:"000", name:"Change this!", body:"", items:[] };				// Blank skin
 			app.ams.skins.push(o);													// Add to asks
 			$("#amsBut").append("<option>000 - Change this!</option>");				// Add option
-			$("#amsBut")[0].selectedIndex=app.ams.skins.length-1;					// Select it
+			$("#amsBut")[0].selectedIndex=app.ams.skins.length;						// Select it
 			app.con.Draw("ams",app.ams.skins.length-1);								// Show editor																							
 			Sound("ding");															// Ding sound
 			});
@@ -502,17 +501,11 @@ class App  {
 	{
 		var i,j;
 		var str="<div id='amsEditorDiv' class='wm-stepEditor'>";
-		var o=skin.items;
-		str+="<img src='img/scalelogo.png' style='vertical-align:-8px;margin-right:16px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
-		str+="<div id='amsItemsDiv' style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
-		for (i=0;i<o.length;++i) {															// For each item in skin
-			str+="<div id='item-"+i+"' style='cursor:pointer;padding:2px 0'>"+(i+1)+". <b>"+o[i].type+"</b> "; // Add type
-			for (var key in o[i]) {															// For each param
-				if ((key != "type") && (key != "right"))									// If not a type or right
-					str+=key+"="+o[i][key]+" ";												// Add param
-				}
-			str+="</div>";																	// End item div
-			}
+			str+="<img src='img/scalelogo.png' style='vertical-align:-8px;margin-right:16px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
+			str+="<div id='amsItemsDiv' style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
+		var o=skin.items;																	// Point at items
+		for (i=0;i<o.length;++i) 															// For each item in skin
+			str+="<div id='item-"+i+"' style='cursor:pointer;padding:2px 0'></div>"			// Add item line div
 		str+="<p id='addAMSItemBut' class='wm-bs'>Add new item</p>";						// Add item button				
 		str+="</div><hr><div id='amsParamDiv' style='width:100%'>Choose item above to edit</div>";// End itemsDiv, add params div	
 		str+="</div><div style='margin-left:48px;margin-top:-15px'>";						// End editorDiv  Add buttons div																	
@@ -521,10 +514,12 @@ class App  {
 		str+="&nbsp;&nbsp;&nbsp;Title: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='skinName' value='"+skin.name+"'>";
 		str+="&nbsp;&nbsp;&nbsp;Id: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='skinId' value='"+skin.id+"'></div>";
 		$("#contentDiv").html(str);	
+		RefreshSkinItems();																	// Populate items
 
 		$("#saveAMSBut").on("click", ()=> { 												// ON SAVE SKIN
 			var s="";
-			var o=skin.items;
+			app.Do();																		// Save for undo
+			var o=skin.items;																// Point at items
 			for (i=0;i<o.length;++i) {														// For each item in skin
 				s+=o[i].type+"~%#";															// Add op and special chars
 				for (var key in o[i]) 														// For each param
@@ -533,7 +528,7 @@ class App  {
 				}
 			if (s)	s=s.replace(/~%#,/g,"(");												// Remove leading comma
 			skin.body=s;																	// Set new body
-			app.Do();																		// Save for undo
+			RefreshSkinItems();																// Refresh item list
 			Sound("ding");																	// Ding sound
 			});
 
@@ -569,13 +564,25 @@ class App  {
 				});
 			});
 
+		function RefreshSkinItems()	{														// REFRESH SKIN ITEMS																		
+			var i,str;
+			var o=skin.items;																// Point at items
+			for (i=0;i<o.length;++i) {														// For each item in skin
+				str=(i+1)+". <b>"+o[i].type+"</b> "; 										// Add type
+				for (var key in o[i]) {														// For each param
+					if ((key != "type") && (key != "right"))								// If not a type or right
+						str+=key+"="+o[i][key]+" ";											// Add param
+					}
+				$("#item-"+i).html(str);
+				}
+			}
 
 		$("[id^=item-]").on("click", (e)=> {												// On item click
 			var id=e.currentTarget.id.substr(5);											// Get id
 			var o=skin.items[id];															// Point at item
 			$("[id^=item-]").css("background-color","#fff");								// Clear highlights
 			$("#item-"+id).css("background-color","#dee7f1");								// Highlight this one
-			var s="<table><tr><td>Type&nbsp;&nbsp;</td><td>"+MakeSelect("amsType",false,["","banner","button","click","code","drag","group","macro","pic","type"],o.type);	
+			var s="<table><tr><td>Type&nbsp;&nbsp;</td><td>"+MakeSelect("amsType",false,["","banner","button","click","code","drag","group","macro","pic","text","type"],o.type);	
 			s+="<img id='removeAMSItemBut' title='Delete this item' style='vertical-align:-5px;float:right' src='img/trashbut.gif'></td></tr>";	// Trash button
 
 			if (o.type == "banner") {
@@ -625,6 +632,13 @@ class App  {
 				s+="&nbsp;&nbsp;Width <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
 				s+="<tr><td>Image </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
 				s+="<tr><td>Yes&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
+				}
+			else if (o.type == "text") {
+				s+="<tr><td>Left</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
+				s+="&nbsp;&nbsp;Top <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
+				s+="<tr><td>Text&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsText' value='"+(o.value ? o.value :'')+"'></td></tr>";	
+				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
+				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
 			else if (o.type == "type") {
 				s+="<tr><td>Left</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
