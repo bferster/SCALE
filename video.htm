@@ -51,10 +51,7 @@
 	var playerSlideRatio=1;														// Player slider ratio
 	var paneAnimationTimer=null;												// Animating panes
 
-
 	var v=window.location.search.substring(1).split("|");						// Get query string
-
-
 	for (i=0;i<v.length;++i) {													// For each param
 		if (v[i].match(/src=/i))		playerSource=GetDirectLink(v[i].substr(4));  // Set src
 		if (v[i].match(/start=/i))		playerStart=v[i].substr(6)-0;			// Set start
@@ -171,14 +168,13 @@
 
 	function OnPlayerTimer()												// GET TIME FROM PLAYER
 	{
-		var now=playerCurTime;													// Set now
 		if ((!player) || (playerMode != "play"))								// Not playing
 			return;																// Quit
 		if (playerType == "youtube") 											// If YouTube
-			now=player.getCurrentTime();										// Get curtime
+			playerCurTime=player.getCurrentTime();								// Get curtime
 		else if (playerType == "html5") 										// If HTML5
-			now=player.currentTime;												// Get cur time
-		if (playerEnd && (now >= playerEnd))	{								// Past end
+			playerCurTime=player.currentTime;									// Get cur time
+		if (playerEnd && (playerCurTime >= playerEnd))	{						// Past end
 			RunPlayer("pause");													// Pause
 			SendScaleMessage("stop",playerEnd);									// Send stop
 			if (playerNext == "true")	SendScaleMessage("next");				// Send next if set
@@ -186,7 +182,7 @@
 		else if (triggers) {													// If triggers defined
 			var i,t;
 			for (i=0;i<triggers.length;++i) {									// For each trigger
-				if (Math.abs(now-triggers[i][0]) < .15)	{						// Near trigger point
+				if (Math.abs(playerCurTime-triggers[i][0]) < .15)	{			// Near trigger point
 					if (slideSource) {											// Has slides
 						$("#slideDivIF").prop("src",slideSource+"?slide="+triggers[i][1]);	// Next slide	
 						}
@@ -272,11 +268,13 @@
 			if ((playerMode == "empty") && isMobile)							// Mobiles need user to initiate touch before controlled play
 				return;															// Quit
 			playerMode="play";													// Set mode
- 			if (param != undefined) {											// If playing to a time
+ 			if ((param != undefined) && (param != "")) {						// If playing to a time
 				if ((""+param).match(/:/))										// In tc format
 					param=TimecodeToSeconds(param);								// Convert to secs
 				playerCurTime=playerNow=param;									// Set cur time
 				}	
+			else if (playerCurTime)												// No time set, so resume if not at start
+				playerCurTime=playerNow=playerCurTime-0+.3						// Set cur time
 			if (!player) {														// If no player yet
 				return;															// Quit
 				}
