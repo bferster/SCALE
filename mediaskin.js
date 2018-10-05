@@ -57,41 +57,41 @@ class MediaSkin {
 			y=o.y*w/100;																							// Y is based on % of width
 			if (o.type == "hover") {																				// A hover event
 				x=o.x-(o.d/2);		y=o.y-(o.d/2); 		d=Math.round(w*o.d/100);									// Define area
-				str+="<div id='click-"+i+"' style='position:absolute;";												// Add capture div
+				str+="<div id='amsClick-"+i+"' style='position:absolute;";											// Add capture div
 				str+="top:"+y+"px;left:"+x+"%;width:"+d+"px;height:"+d+"px'";										// Position over base
 				str+=" onmouseenter='app.ams.SendActions(\""+o.yes+"\")'";											// Over area
 				str+=" onmouseleave='app.ams.SendActions(\""+o.no+"\")'";											// Out
 				str+="></div>";
 				}
 			else if (o.type == "pic") {																				// A pic event
-				str+="<img id='pic-"+i+"' src='"+o.pic+"' style='position:absolute;";								// Add pic
+				str+="<img id='amsPic-"+i+"' src='"+o.pic+"' style='position:absolute;";							// Add pic
 				str+="top:"+y+"px;left:"+o.x+"%;width:"+o.w+"%;"													// Position and size
 				if (o.motion) 	str+="display:none;";																// Hide if animating
 				if (o.alpha) 	str+="opacity:"+o.alpha/100;														// Add alpha
 				str+="'>";													
 				}
 			else if (o.type == "text") {																			// A text event
-				str+="<div id='text-"+i+"' type='text' style='font-size:18px;color:#fff;font-weight:bold;";			// Add div
+				str+="<div id='amsText-"+i+"' type='text' style='font-size:18px;color:#fff;font-weight:bold;";		// Add div
 				str+="cursor:pointer;position:absolute;top:"+y+"px;left:"+o.x+"%;";									// Position 
 				if (o.style) str+=o.style;		str+="'";															// Add style
 				str+=">"+o.text+"</div>";																			// Add text to show
 				}
 			else if (o.type == "type") {																			// A type event
-				str+="<input id='type-"+i+"' type='text' style='position:absolute;border:none;";					// Add type
+				str+="<input id='amsType-"+i+"' type='text' style='position:absolute;border:none;";					// Add type
 				str+="border-radius:16px;font-size:16px;padding:2px 8px;";
 				str+="top:"+y+"px;left:"+o.x+"%;width:"+o.w+"%;";													// Position and size
 				if (o.style) str+=o.style;		str+="'";															// Add style
 				if (o.place) str+=" placeholder='"+o.place+"'";														// Add placeholder
 				str+=">";
 				}
-				else if (o.type == "button") {																			// A button event
-				str+="<button id='but-"+i+"' type='button' style='position:absolute;";								// Add button
+				else if (o.type == "button") {																		// A button event
+				str+="<button id='amsBut-"+i+"' type='button' style='position:absolute;";							// Add button
 				str+="top:"+y+"px;left:"+o.x+"%;border-radius:16px;font-size:16px;padding:2px 8px;";				// Position and size
 				if (o.style) str+=o.style;																			// Add style
 				str+="'>"+o.label+"</button>";																		// Add label
 				}
 			else if (o.type == "drag") {																			// A drag event
-				str+="<img id='drag-"+i+"' src='"+o.pic+"' style='position:absolute;cursor:pointer;";				// Add pic
+				str+="<img id='amsDrag-"+i+"' src='"+o.pic+"' style='position:absolute;cursor:pointer;";			// Add pic
 				str+="top:"+y+"px;left:"+o.x+"%;width:"+o.w+"%'";													// Position and size
 				str+=">";
 				}
@@ -105,8 +105,8 @@ class MediaSkin {
 		for (i=0;i<skin.items.length;++i) {																			// For each item
 			o=skin.items[i];																						// Point at item
 			if (o.type == "drag") {																					// A drag event
-				$("#drag-"+i).draggable({ stop:(e,ui)=> {															// Make it draggable
-					o=skin.items[e.target.id.substr(5)];															// Point at item
+				$("#amsDrag-"+i).draggable({ stop:(e,ui)=> {														// Make it draggable
+					o=skin.items[e.target.id.substr(8)];															// Point at item
 					var x=(ui.position.left-0+e.target.width/2)/w*100;												// Get center point X as %
 					var y=(ui.position.top-0+e.target.height/2)/w*100;												// Get center point Y as %
 					d=o.d/2;																						// Half dx
@@ -118,31 +118,47 @@ class MediaSkin {
 				}
 			else if (o.type == "pic") {																				// A pic event
 				if (o.motion) {
-					if (o.motion.toLowerCase() == "fade-in")		$("#pic-"+i).fadeIn();							// Fade in
+					var m=o.motion.toLowerCase();																	// Motion spec'd
+					if (m == "fade in")		$("#amsPic-"+i).fadeIn(800);											// Fade in
+					else if (m == "center zoom") {																	// Zoom out
+						$("#amsPic-"+i).css({width:0,left:o.x-0+o.w/2+"%",top:o.y-0+o.w/2+"%"}); 					// Starting pos
+						$("#amsPic-"+i).show(0);																	// Show it		
+						$("#amsPic-"+i).animate({ left: o.x+"%",top: o.y+"%",width:+o.w+"%"});						// Zoom out
+						}
+					else if (m == "bottom zoom") {																	// Zoom from bottom
+						$("#amsPic-"+i).css({width:0,left:o.x-0+o.w/2+"%",top:"100%"}); 							// Starting pos
+						$("#amsPic-"+i).show(0);																	// Show it		
+						$("#amsPic-"+i).animate({ left: o.x+"%",top: o.y+"%",width:+o.w+"%"});						// Zoom out
+						}
+					else if (m == "top zoom") {																		// Zoom from top
+						$("#amsPic-"+i).css({width:0,left:o.x-0+o.w/2+"%",top:0}); 									// Starting pos
+						$("#amsPic-"+i).show(0);																	// Show it		
+						$("#amsPic-"+i).animate({ left: o.x+"%",top: o.y+"%",width:+o.w+"%"});						// Zoom out
+						}
 					}
-				$("#pic-"+i).on("click", (e)=> {																	// On click
-					o=skin.items[e.target.id.substr(4)];															// Point at item
+				$("#amsPic-"+i).on("click", (e)=> {																	// On click
+					o=skin.items[e.target.id.substr(7)];															// Point at item
 					this.SendActions(o.yes);																		// Send action
 					o.right=1;																						// Correct
 					});
 				}
 			if (o.type == "button") {																				// A button event
-				$("#but-"+i).on("click", (e)=> {																	// On click
-					o=skin.items[e.target.id.substr(4)];															// Point at item
+				$("#amsBut-"+i).on("click", (e)=> {																	// On click
+					o=skin.items[e.target.id.substr(7)];															// Point at item
 					this.SendActions(o.yes);																		// Send action
 					o.right=1;																						// Correct
 					});
 				}
 			else if (o.type == "text") {																			// A type event
-				$("#text-"+i).on("click", (e)=> {																	// On click
-					o=skin.items[e.target.id.substr(5)];															// Point at item
+				$("#amsText-"+i).on("click", (e)=> {																	// On click
+					o=skin.items[e.target.id.substr(8)];															// Point at item
 					this.SendActions(o.yes);																		// Send action
 					o.right=1;																						// Correct
 					});
 				}
 			else if (o.type == "type") {																			// A type event
-				$("#type-"+i).on("change", (e)=> {																	// On enter
-					o=skin.items[e.target.id.substr(5)];															// Point at item
+				$("#amsType-"+i).on("change", (e)=> {																// On enter
+					o=skin.items[e.target.id.substr(8)];															// Point at item
 					if ((o.value.toLowerCase() == $("#"+e.target.id).val().toLowerCase()) || !o.value)				// A math or no value				
 						this.SendActions(o.yes,$("#"+e.target.id).val());											// Send yes action and value
 					else

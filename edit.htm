@@ -631,7 +631,7 @@ class App  {
 				s+="&nbsp;&nbsp;Top: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
 				s+="&nbsp;&nbsp;Width: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
 				s+="<tr><td>Opacity </td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsAlpha' value='"+(o.alpha ? o.alpha :'')+"'>";	
-				s+="&nbsp;&nbsp;Effect: "+MakeSelect("amsMotion",false,["","Fade-In"],o.motion)+"</td></tr>";
+				s+="&nbsp;&nbsp;Effect: "+MakeSelect("amsMotion",false,["","Fade In", "Center zoom", "Top zoom", "Bottom zoom"],o.motion)+"</td></tr>";
 				s+="<tr><td>Image </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
 				s+="<tr><td>Yes&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
