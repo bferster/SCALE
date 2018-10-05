@@ -118,7 +118,7 @@ class MediaSkin {
 				}
 			else if (o.type == "pic") {																				// A pic event
 				if (o.motion) {
-					if (o.motion.toLowerCase() == "fadein")		$("#pic-"+i).fadeIn();								// Fade in
+					if (o.motion.toLowerCase() == "fade-in")		$("#pic-"+i).fadeIn();							// Fade in
 					}
 				$("#pic-"+i).on("click", (e)=> {																	// On click
 					o=skin.items[e.target.id.substr(4)];															// Point at item
