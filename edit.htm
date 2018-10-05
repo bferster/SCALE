@@ -630,6 +630,8 @@ class App  {
 				s+="<tr><td>Left </td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
 				s+="&nbsp;&nbsp;Top <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
 				s+="&nbsp;&nbsp;Width <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="<tr><td>Opacity </td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsAlpha' value='"+(o.alpha ? o.alpha :'')+"'>";	
+				s+="&nbsp;&nbsp;Motion <input class='wm-is' style='width:30px;height:16px' type='text' id='amsMotion' value='"+(o.motion ? o.motion :'')+"'></td></tr>";
 				s+="<tr><td>Image </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
 				s+="<tr><td>Yes&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
@@ -673,6 +675,8 @@ class App  {
 			$("#amsId").on("change", function() 	{ o.id=$(this).val(); });				// Set id on change
 			$("#amsX2").on("change", function()		{ o.x2=$(this).val(); });				// Set x2 on change
 			$("#amsY2").on("change", function() 	{ o.y2=$(this).val(); });				// Set y2 on change
+			$("#amsAlpha").on("change", function() 	{ o.alpha=$(this).val(); });			// Seta lpha on change
+			$("#amsMotion").on("change", function() { o.motion=$(this).val(); });			// Seta lpha on change
 		
 			$("#amsText").on("change", function() 	{ 										// Set text on change
 				o.text=$(this).val(); 														// Get val

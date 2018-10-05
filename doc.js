@@ -365,6 +365,7 @@ class Doc {
 		this.lobs=[];																								// Init lobs
 		this.asks=[];																								// Init assessment
 		app.rul.rules=[];																							// Init rules
+		app.ams.skins=[];																							// Init skins
 		tsv=tsv.replace(/\\r/,"");																					// Remove CRs
 		tsv=tsv.split("\n");																						// Split into lines
 		for (i=1;i<tsv.length;++i) {																				// For each line

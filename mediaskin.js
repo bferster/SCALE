@@ -66,7 +66,8 @@ class MediaSkin {
 			else if (o.type == "pic") {																				// A pic event
 				str+="<img id='pic-"+i+"' src='"+o.pic+"' style='position:absolute;";								// Add pic
 				str+="top:"+y+"px;left:"+o.x+"%;width:"+o.w+"%;"													// Position and size
-				if (o.alpha) str+="opacity:"+o.alpha;																// Add alpha
+				if (o.motion) 	str+="display:none;";																// Hide if animating
+				if (o.alpha) 	str+="opacity:"+o.alpha/100;														// Add alpha
 				str+="'>";													
 				}
 			else if (o.type == "text") {																			// A text event
@@ -116,6 +117,9 @@ class MediaSkin {
 					}});
 				}
 			else if (o.type == "pic") {																				// A pic event
+				if (o.motion) {
+					if (o.motion.toLowerCase() == "fadein")		$("#pic-"+i).fadeIn();								// Fade in
+					}
 				$("#pic-"+i).on("click", (e)=> {																	// On click
 					o=skin.items[e.target.id.substr(4)];															// Point at item
 					this.SendActions(o.yes);																		// Send action
