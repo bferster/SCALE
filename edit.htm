@@ -644,7 +644,7 @@ class App  {
 			else if (o.type == "type") {
 				s+="<tr><td>Left</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
 				s+="&nbsp;&nbsp;Top: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
-				s+="&nbsp;&nbsp;Width: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.w ? o.w :'')+"'></td></tr>";
+				s+="&nbsp;&nbsp;Width: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsW' value='"+(o.w ? o.w :'')+"'></td></tr>";
 				s+="<tr><td>Target value&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsValue' value='"+(o.value ? o.value :'')+"'></td></tr>";	
 				s+="<tr><td>Placeholder</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPlace' value='"+(o.place ? o.place :'')+"'></td></tr>";	
 				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
@@ -1196,13 +1196,13 @@ function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
 	function Sound(sound, mute)												// PLAY SOUND
 	{
 		var snd=new Audio();													// Init audio object
-		if (!snd.canPlayType("audio/mpeg") || (snd.canPlayType("audio/mpeg") == "maybe")) 
-			snd=new Audio("img/"+sound+".ogg");									// Use ogg
-		else	
-			snd=new Audio("img/"+sound+".mp3");									// Use mp3
-		if (!mute)																// If not initing or muting	
-			snd.play();															// Play sound
-	}
+		if (sound.match(/\.mp3/i))		snd=new Audio(sound)					// If an MP3 file
+		else							snd=new Audio("img/"+sound+".mp3");		// Use built in mp3
+		if (!mute)	{															// If not initing or muting	
+			snd.volume=50/100;													// Set volume
+			snd.play();															// Play it
+			}
+		}
 	
 	function PopUp(msg, time, div)											// TIMED POPUP
 	{
