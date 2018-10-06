@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="img/favicon.ico">
@@ -15,7 +15,7 @@
 	<script src="rules.js"></script>
 	<script src="mediaskin.js"></script>
 	<script src="navigation.js"></script>
-	<style type="text/css">
+	<style>
 		 body { 			font-family:Verdana,Geneva,sans-serif;font-size:13px; box-sizing:border-box; 
 							padding:0;margin:0; 
 							}
@@ -58,11 +58,11 @@
 							}
 		.wm-topicDot:hover{ border:2px solid #6699ff;
 							}
-		.wm-topicDotLab { 	position:absolute; top:4px; width:200px; text-align:center; padding-left:-100px; padding-bottom: 4px;
+		.wm-topicDotLab { 	position:absolute; top:4px; width:200px; text-align:center; padding-bottom: 4px;
 							text-shadow: 1px 1px #fff;font-weight: bold; color:#555;
 							}
 		.wm-conceptBar { 	position: absolute; height:18px;background-color: #bbb; text-align:center; top: 48px;
-							background-color: 999; border:1px solid #bbb; cursor:pointer; color:#333;
+							border:1px solid #bbb; cursor:pointer; color:#333;
 							}
 		.wm-conceptBar:hover{ border:1px solid #6699ff;
 							}
@@ -70,7 +70,7 @@
 							}
 		.wm-stepBarItem { 	color:#333; padding: 0 16px;  cursor:pointer;
 							}
-		.wm-stepBarItem:Hover { text-shadow: 0px 1  #6699ff;
+		.wm-stepBarItem:Hover { color: #6699ff;
 							}
 		.wm-pageTitle {		color:#333;	font-size: 24px; text-align:center; font-weight: bold; padding-top:16px; padding-bottom:8px;
 							}
@@ -107,24 +107,24 @@
 	
 	<div id="mainDiv" class="wm-main">
 		<div id="headerDiv" class="wm-header">
-			<img src="img/scaleLogoWhite.png" class="wm-logo">
+			<img src="img/scaleLogoWhite.png" alt="" class="wm-logo">
 				<span id="courseTitle" class="wm-courseTitle">Course</span>
 				<span id="lessonTitle" class="wm-lessonTitle">Lesson</span>
 				<div id="lessonBut" class="wm-lessonTri"></div>
 				<span id="menuMsg" style="display:none;margin-left:32px"></span>
 				<div style="float:right">
-					<img id="showDesktop" title="Desktop size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/desktop.png">
-					<img id="showIpad" title="Tablet size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/ipad.png">
-					<img id="showIphone" title="Phone size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/iphone.png">
-					<img id="showDiscuss" title="Discussion" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" src="img/chatbut.png">
+					<img id="showDesktop" title="Desktop size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" alt="" src="img/desktop.png">
+					<img id="showIpad" title="Tablet size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" alt="" src="img/ipad.png">
+					<img id="showIphone" title="Phone size" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" alt="" src="img/iphone.png">
+					<img id="showDiscuss" title="Discussion" style="cursor:pointer;display:none;margin-right:12px;margin-top:8px" alt="" src="img/chatbut.png">
 				</div>
 			</div>
 			<div id="contentDiv" class="wm-content"></div>
 			<div id="navDiv" class="wm-navigation"></div>
 	</div>
 	<div id="splashDiv" class="wm-splash">
-		<img src="img/scalelogo.png"><br><br>
-		<h1 style="font-size:18pt;font-family:trebuchet ms,sans-serif"><p></p>S C A L E</p>Student-Centered Adaptive Learning Environment</h1>
+		<img src="img/scalelogo.png" alt=""><br><br>
+		<h1 style="font-size:18pt;font-family:trebuchet ms,sans-serif">S C A L E<br><br>Student-Centered Adaptive Learning Environment</h1>
 		<br><p style="color:#000;font-size:14px"><em>A platform to guide learning- not just deliver it.</em></p>
 	</div>
 
