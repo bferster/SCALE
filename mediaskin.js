@@ -84,7 +84,7 @@ class MediaSkin {
 				if (o.place) str+=" placeholder='"+o.place+"'";														// Add placeholder
 				str+=">";
 				}
-				else if (o.type == "button") {																		// A button event
+			else if (o.type == "button") {																			// A button event
 				str+="<button id='amsBut-"+i+"' type='button' style='position:absolute;";							// Add button
 				str+="top:"+y+"px;left:"+o.x+"%;border-radius:16px;font-size:16px;padding:2px 8px;";				// Position and size
 				if (o.style) str+=o.style;																			// Add style

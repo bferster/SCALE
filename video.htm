@@ -193,6 +193,7 @@
 							RunPlayer("pause");									// Pause
 							SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
 							}
+						triggers[i][0]=-10;										// Disable trigger from firing again
 						}
 					break;														// Quit
 					}
@@ -353,10 +354,8 @@
 			ResizePanes();														// Resize panes
 			if (playerAuto == "true")											// If autoplay
 				RunPlayer("play",playerStart);									// Play
-			else if (playerStart) {												// Normal pause start
+			else if (playerStart) 												// Normal pause start
 				RunPlayer("seek",playerStart);									// Seek
-//				RunPlayer("pause");												// Pause
-				}
 			$("#playerDiv").css("display","block");								// Show	
 			}
 		else if (what == "init") {												// Init player
@@ -370,8 +369,12 @@
 	         	 	events:{													// Add event handlers
 	            		"onStateChange": function(s) {							// Change of state
 		         			if (s.data == 1) {									// In play
-	   							if (playerMode == "empty" && !isMobile) 		// If first time
-       								player.pauseVideo();						// Pause
+							if (playerMode == "empty") {						// If first time playing
+       							if (isMobile)									// If mobile
+									player.seekTo(playerStart,true);			// Seek to start
+								else											// Desktop   	
+									player.pauseVideo();						// Pause
+									}
 								playerMode="play";								// Set mode
        							playerStarted=playerNow;						// Save start point
     							}
@@ -557,6 +560,10 @@
 			console.log(msg);
 	}
 
+  	function trace2(msg)													// IOS TRACE 
+	{
+		$("#playerDiv").append(msg+" ");
+	}
   
   </script>
   

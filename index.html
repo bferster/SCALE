@@ -384,6 +384,13 @@ class App  {																								 // APP
 			console.log(msg);
 	}
 
+	function trace2(msg, p1, p2, p3, p4)									// IOS CONSOLE 
+	{
+		msg+=" "+p1 ? p1 : ""; msg+=" "+p2 ? p2 : ""; msg+=" "+p3 ? p3 : "";
+		$("#contentBodyDiv").append(msg+" ")
+		console.log(msg)
+	}
+
 	function Sound(sound, mute)												// PLAY SOUND
 	{
 		var snd=new Audio();													// Init audio object
