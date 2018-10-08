@@ -85,16 +85,17 @@ class MediaSkin {
 				str+=">";
 				}
 			else if (o.type == "button") {																			// A button event
-				str+="<button id='amsBut-"+i+"' type='button' style='position:absolute;";							// Add button
+				str=str+"<"+(isMobile ? "div" : "button");															// Div if mobile
+				str+=" id='amsBut-"+i+"' type='button' style='position:absolute;background-color:#eee;";			// Add button
 				str+="top:"+y+"px;left:"+o.x+"%;border-radius:16px;font-size:16px;padding:2px 8px;";				// Position and size
 				if (o.style) str+=o.style;																			// Add style
-				str+="'>"+o.label+"</button>";																		// Add label
+				str=str+"'>"+o.label+"</"+(isMobile ? "div>" : "button>");											// Div if mobile
 				}
 			else if (o.type == "drag") {																			// A drag event
 				str+="<img id='amsDrag-"+i+"' src='"+o.pic+"' style='position:absolute;cursor:pointer;";			// Add pic
 				str+="top:"+y+"px;left:"+o.x+"%;width:"+o.w+"%'";													// Position and size
 				str+=">";
-				}
+			}
 			}
 		x=$(div).offset().left;	 y=$(div).offset().top+$(div).height();												// Position
 		var h2=$("#nextBut").offset().top-y;																		// Size

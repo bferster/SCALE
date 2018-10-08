@@ -522,7 +522,7 @@
  				if (playerHgt)													// If have both parts
  					playerAspect=playerHgt/playerWid;							// Calc asp		
 				}
- 			else if (ev.event == "ready"){										// If ready			
+ 			else if (ev.event == "ready") {										// If ready			
 	 			var f=$("#vplayer");											// Point at iframe
 				f[0].contentWindow.postMessage("{\"method\":\"addEventListener\",\"value\":\"play\"}","*");
 				f[0].contentWindow.postMessage("{\"method\":\"addEventListener\",\"value\":\"pause\"}","*");
@@ -560,9 +560,11 @@
 			console.log(msg);
 	}
 
-  	function trace2(msg)													// IOS TRACE 
+ 	function trace2(msg, p1, p2, p3, p4)									// IOS CONSOLE 
 	{
-		$("#playerDiv").append(msg+" ");
+		msg+=" "+p1 ? p1 : ""; msg+=" "+p2 ? p2 : ""; msg+=" "+p3 ? p3 : "";
+		$("#contentBodyDiv").append(msg+" ")
+		console.log(msg)
 	}
   
   </script>
