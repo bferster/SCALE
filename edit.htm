@@ -545,17 +545,20 @@ class App  {
 		else if ((which == "ScaleMedia") || (which == "ScaleVideo")) {						// Add/edit media
 			if (tag=o.body.match(/scale.....\((.*?)\)/i)) 									// If a scalemedia/scalevideo() tag
 				params=tag[1].split(",");													// Get frame items
-			str+="<table><tr><td>URL</td><td><input class='wm-is' style='width:350px;height:16px' type='text' id='param-0' value='"+(params[0] ? params[0] :'')+"'></td></tr>";	
+			str+="<table><tr><td>Media</td><td><input class='wm-is' style='width:350px;height:16px' type='text' id='param-0' value='"+(params[0] ? params[0] :'')+"'></td></tr>";	
 			str+="<tr><td>Width&nbsp;%&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'>";
 			str+="&nbsp;&nbsp;Height % <input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'>";
 			str+="&nbsp;&nbsp;Border (0 or 1) <input class='wm-is' style='width:10px;height:16px' type='text' id='param-3' value='"+(params[3] ? 1 :'')+"'></td></tr>";
 			if (which == "ScaleVideo")	{
 				if (params[0])
-					v=params[0].split("|");														// Get video items
+					v=params[0].split("|");													// Get video items
 				str+="<tr><td>Start&nbsp;time&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pStart' value='"+(o.x ? o.x :'')+"'>";	
 				str+="&nbsp;&nbsp;End&nbsp;time&nbsp;&nbsp;<input class='wm-is' style='width:50px;height:16px' type='text' id='pEnd' value='"+(o.y ? o.y :'')+"'>";
 				str+="&nbsp;&nbsp;Autoplay? (0 or 1)&nbsp;<input class='wm-is' style='width:10px;height:16px' type='text' id='pAuto' value='"+(o.y ? o.y :'')+"'></td></tr>";
-				}				
+				str+="<tr><td>Slides&nbsp;link&nbsp;&nbsp;</td><td><input class='wm-is' style='width:300px;height:16px' type='text' id='pSlide' value='"+(o.x ? o.x :'')+"'></td></tr>";	
+				str+="<tr><td>Ratio&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pRatio value='"+(o.x ? o.x :'')+"'>";	
+				str+="&nbsp;&nbsp;Next after end? (0 or 1)&nbsp;<input class='wm-is' style='width:10px;height:16px' type='text' id='pNext' value='"+(o.y ? o.y :'')+"'></td></tr>";
+					}				
 			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
 			}
@@ -582,14 +585,14 @@ class App  {
 				if (tag)	o.body=o.body.replace(/assess\(.*?\)/i,str);					// Get tag and replace it with new macro
 				else		o.body+=str;													// Simply append
 				}
-			else if ((which == "ScaleMedia") || (which == "ScaleMedia")) {					// Add/edit media and video
-				str="scaleMedia(";															// Add head
+			else if ((which == "ScaleMedia") || (which == "ScaleVideo")) {					// Add/edit media and video
+				str=which+"(";																// Add head
 				str+=$("#param-0").val() ? $("#param-0").val() : "";						// Add url
 				str+=$("#param-1").val() ? ","+$("#param-1").val() : "";					// Add height
 				str+=$("#param-2").val() ? ","+$("#param-2").val() : "";					// Add width
 				str+=$("#param-3").val() ? ",1" : "";										// Add border
 				str+=")";																	// Close 
-				if (tag)	o.body=o.body.replace(/scale....\(.*?\)/i,str);				// Get tag and replace it with new macro
+				if (tag)	o.body=o.body.replace(/scale.....\(.*?\)/i,str);				// Get tag and replace it with new macro
 				else		o.body+=str;													// Simply append
 				}
 			CKEDITOR.instances.editor1.setData(o.body);										// Add body data
