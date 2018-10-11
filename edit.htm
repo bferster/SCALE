@@ -576,8 +576,9 @@ class App  {
 		$("#saveMacroBut").on("click", function() {											// ON SAVE CHANGES
 			o=app.doc.lobs[app.con.curEditId];												// Point at lob
 			$("#addMacroBut")[0].selectedIndex=0;											// Clear selection
+			str=which+"(";																	// Add head
 			if (which == "Assessment") {													// Add/edit assessment
-				str="assess(";																// Add head
+				str="Assess(";																// Add head
 				$("#assessItemsList li").each(function() {									// For each list item
 					str+=$(this).text().split(" - ")[0]+"|";								// Add to list
 					});				
@@ -586,7 +587,6 @@ class App  {
 				else		o.body+=str;													// Simply append
 				}
 			else if ((which == "ScaleMedia") || (which == "ScaleVideo")) {					// Add/edit media and video
-				str=which+"(";																// Add head
 				str+=$("#param-0").val() ? $("#param-0").val() : "";						// Add url
 				str+=$("#param-1").val() ? ","+$("#param-1").val() : "";					// Add height
 				str+=$("#param-2").val() ? ","+$("#param-2").val() : "";					// Add width
