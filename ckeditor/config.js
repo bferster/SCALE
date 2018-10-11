@@ -6,9 +6,9 @@ CKEDITOR.editorConfig = function( config ) {
 	config.resize_enabled = false;
 
 	config.toolbar =[
-		{ name: 'clipboard', items : [ 'Source','Undo','Redo' ] },
+		{ name: 'clipboard', items : ['Undo','Redo' ] },
 		{ name: 'editing', items : [ 'SpellChecker', 'Scayt' ] },
-		{ name: 'insert', items : ['Table','SpecialChar','HorizontalRule','Image','Link'] },
+		{ name: 'insert', items : ['Table','SpecialChar','HorizontalRule','CreateDiv','Image','Link'] },
 		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Superscript','RemoveFormat',
 			'-','NumberedList','BulletedList','-','Outdent','Indent',
 			'JustifyLeft','JustifyCenter','JustifyRight', ] },

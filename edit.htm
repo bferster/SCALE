@@ -40,6 +40,9 @@
 		.wm-stepEditor {	width:525px; overflow-x:hidden; margin:24px; background-color: #fff; border: 1px solid #999;
 							padding:32px; border-radius: 16px; max-height:75vh;
 							}
+		.wm-macroEditor {	position:absolute;;width:525px; overflow-x:hidden; background-color: #fff; border: 1px solid #999;
+							padding:16px; border-radius: 16px; max-height:75vh; margin-top:60px; margin-left: 24px;
+							}
 		.wm-popup {			position: absolute;  width: auto; padding: 12px; left: calc(50% - 100px); top: calc(50% - 50px);
 							border-radius: 8px; background-color: #fff; border: 1px solid #009900; box-shadow: 4px 2px 12px 2px #aaa; 
 							text-align:center; display: none;
@@ -86,7 +89,15 @@
 			<div id='contentDiv'></div>
 			<div id='editorDiv'>
 				<textarea class='ckeditor' id='editor1' name='editor1'></textarea>
-				<br><div style='float:right'>id: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='paneId'></div>
+				<br><div style='float:right'>
+					<select id="addMacroBut" class='wm-is' style="width:auto">
+						<option>Macro</option>
+						<option>ScaleVideo</option>
+						<option>ScaleMedia</option>
+						<option>Assessment</option>
+					</select>&nbsp;&nbsp;
+					id: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='paneId'>
+				</div>
 				<div style='margin-left:470px'>
 					<div id='savePaneBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;
 					<img id='removePaneBut' alt="" style='vertical-align:-5px' src='img/trashbut.gif'>	
@@ -377,6 +388,10 @@ class App  {
 			app.con.Draw("rule",app.rul.rules.length-1);							// Show editor																							
 			Sound("ding");															// Ding sound
 			});
+
+		$("#addMacroBut").on("change", function() {  								// ON ADD MACRO
+			app.con.MacroEditor($(this).val());										// Add/edit macro
+			});
 	}	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -496,11 +511,111 @@ class App  {
 				this.SettingsEditor();														// Run editor
 		}
 
+	MacroEditor(which)																	// MACRO EDITOR
+	{
+		var tag,i,o,v;
+		var items=[],params=[];
+		$("#macroEditorDiv").remove();														// Remove any existing ones
+		var str="<div id='macroEditorDiv' class='wm-macroEditor'>";
+		str+="<img src='img/scalelogo.png' style='vertical-align:-12px;margin-right:16px' width='32'><span style='font-size:16px'><b>"+which+" Editor</b></span><br><p><hr></p>";	
+		var o=app.doc.lobs[this.curEditId];													// Point at lob
+		if (which == "Assessment") {														// Add/edit assessment
+			if (tag=o.body.match(/assess\((.*?)\)/i)) 										// If an assess() tag
+				items=tag[1].split("|");													// Get items
+			str+="<ol id='assessItemsList' style='max-height:300px;overflow-x:hidden'></ol><hr>";	// Add list container
+			str+=MakeSelect("addNewAskBut",false,["Choose new question to add"]);			// Add select
+			str+="<span style='float:right'><i>Drag here to remove</i> &nbsp;";				// Directions
+			str+="<img title='Delete this item' style='vertical-align:-5px' src='img/trashbut.gif'></span>";	// Trash button
+			str+="<hr><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";			// Save button				
+			$("#contentDiv").append(str+"</div>");											// Add to content div
+			for (i=0;i<app.doc.asks.length;++i) {											// For each ask
+				o=app.doc.asks[i];															// Point at ask
+				$("#addNewAskBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
+				}
+			Populate();																		// Add current items
+
+			$("#addNewAskBut").on("change", function() {									// ON ADD NEW ITEM
+				var id=$(this).val().split(" - ")[0];										// Get id
+				items.push(id);																// Add to list
+				$("#addNewAskBut")[0].selectedIndex=0;										// Clear selection
+				Sound("ding");																// Ding sound
+				Populate();																	// Reshow items
+				});
+			}																				// Assignment closure
+		else if ((which == "ScaleMedia") || (which == "ScaleVideo")) {						// Add/edit media
+			if (tag=o.body.match(/scale.....\((.*?)\)/i)) 									// If a scalemedia/scalevideo() tag
+				params=tag[1].split(",");													// Get frame items
+			str+="<table><tr><td>URL</td><td><input class='wm-is' style='width:350px;height:16px' type='text' id='param-0' value='"+(params[0] ? params[0] :'')+"'></td></tr>";	
+			str+="<tr><td>Width&nbsp;%&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'>";
+			str+="&nbsp;&nbsp;Height % <input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'>";
+			str+="&nbsp;&nbsp;Border (0 or 1) <input class='wm-is' style='width:10px;height:16px' type='text' id='param-3' value='"+(params[3] ? 1 :'')+"'></td></tr>";
+			if (which == "ScaleVideo")	{
+				if (params[0])
+					v=params[0].split("|");														// Get video items
+				str+="<tr><td>Start&nbsp;time&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pStart' value='"+(o.x ? o.x :'')+"'>";	
+				str+="&nbsp;&nbsp;End&nbsp;time&nbsp;&nbsp;<input class='wm-is' style='width:50px;height:16px' type='text' id='pEnd' value='"+(o.y ? o.y :'')+"'>";
+				str+="&nbsp;&nbsp;Autoplay? (0 or 1)&nbsp;<input class='wm-is' style='width:10px;height:16px' type='text' id='pAuto' value='"+(o.y ? o.y :'')+"'></td></tr>";
+				}				
+			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
+			$("#contentDiv").append(str+"</div>");											// Add to content div
+			}
+																						// ALL TYPES
+
+		$("#assessItemsList").sortable({ stop: function(e, ui) {							// Can be sorted
+				if (ui.position.left > 400) {												// In delete area
+					items.splice(ui.item[0].id.substr(5),1);								// Remove item
+					Sound("delete");														// Delete sound
+					Populate();																// Reshow items
+					}
+				}
+			});											
+		
+		$("#saveMacroBut").on("click", function() {											// ON SAVE CHANGES
+			o=app.doc.lobs[app.con.curEditId];												// Point at lob
+			$("#addMacroBut")[0].selectedIndex=0;											// Clear selection
+			if (which == "Assessment") {													// Add/edit assessment
+				str="assess(";																// Add head
+				$("#assessItemsList li").each(function() {									// For each list item
+					str+=$(this).text().split(" - ")[0]+"|";								// Add to list
+					});				
+				str=str.substr(0,str.length-1)+")";											// Close		
+				if (tag)	o.body=o.body.replace(/assess\(.*?\)/i,str);					// Get tag and replace it with new macro
+				else		o.body+=str;													// Simply append
+				}
+			else if ((which == "ScaleMedia") || (which == "ScaleMedia")) {					// Add/edit media and video
+				str="scaleMedia(";															// Add head
+				str+=$("#param-0").val() ? $("#param-0").val() : "";						// Add url
+				str+=$("#param-1").val() ? ","+$("#param-1").val() : "";					// Add height
+				str+=$("#param-2").val() ? ","+$("#param-2").val() : "";					// Add width
+				str+=$("#param-3").val() ? ",1" : "";										// Add border
+				str+=")";																	// Close 
+				if (tag)	o.body=o.body.replace(/scale....\(.*?\)/i,str);				// Get tag and replace it with new macro
+				else		o.body+=str;													// Simply append
+				}
+			CKEDITOR.instances.editor1.setData(o.body);										// Add body data
+			$("#macroEditorDiv").remove();													// Remove popup
+			Sound("ding");																	// Ding sound
+			});
+			
+
+		function Populate()	{																// ADD ITEMS
+			var i,j,s;
+			$("#assessItemsList").empty();													// Clear list
+			for (i=0;i<items.length;++i)   													// For each item
+				for (j=0;j<app.doc.asks.length;++j)											// For each ask
+					if (items[i] == app.doc.asks[j].id) {									// A match
+						s="<li style='clear:both' id='item-"+i+"'>"+items[i]+" - "+app.doc.asks[j].name;		// Add line
+						$("#assessItemsList").append(s+"</li>"); 							// Add to list
+						break;																// Quit looking
+						}
+					}	
+	}																					
+
 	AMSEditor(skin)																		// AMS EDITOR
 	{
 		var i,j;
 		var str="<div id='amsEditorDiv' class='wm-stepEditor'>";
-			str+="<img src='img/scalelogo.png' style='vertical-align:-8px;margin-right:16px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
+			str+="<img src='img/scalelogo.png' style='vertical-align:-4px;margin-right:20px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
 			str+="<div id='amsItemsDiv' style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
 		var o=skin.items;																	// Point at items
 		for (i=0;i<o.length;++i) 															// For each item in skin
@@ -684,10 +799,7 @@ class App  {
 					o.text=o.text.replace(/,/g,"&comma;");									// Comma entity
 					}
 				});	
-							
-//				http://getdrawings.com/cliparts/good-job-clipart-38.png
-				
-
+	
 			$("#amsType").on("change", ()=> 	{ 											// Set type on change
 				o.type=$("#amsType").val(); 												// Get val
 				Sound("click");																// Click sound
