@@ -182,6 +182,8 @@ class App  {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	var app=null;																	// Hold course data 
+	var currentTime=0;																// Current time for triggers
+
 	$(document).ready(function() {													// WHEN PAGE LOADED
 		if (window.addEventListener) 												// If supported this way
 			window.addEventListener("message",eventHandler,false);					// Add event handler
@@ -219,6 +221,10 @@ class App  {
 
 	function eventHandler(e)													// ON HTML5 EVENT
 	{
+		if (e.data && e.data.match(/ScaleVideo=time/)) {							// Trigger time
+			currentTime=e.data.substr(16);											// Extract time as timecode
+			$("#addTriggerBut").trigger("click");									// Add it
+			}			
 		if (e.data && e.data.match(/INS:/))	{										// Insert macro
 			CKEDITOR.instances.editor1.insertText(e.data.substring(4));				// Insert text	
 			Sound("ding");															// Ding	
@@ -515,7 +521,8 @@ class App  {
 		var tag,i,o,v,t;
 		var items=[],params=[];
 		var body=CKEDITOR.instances.editor1.getData();										// Get body data
-		$("#macroEditorDiv").remove();														// Remove any existing one
+		$("#macroEditorDiv").remove();														// Remove any existing ones
+		$("#playEditorDiv").remove();														
 //		$("#addMacroBut")[0].selectedIndex=0;												// Clear selection
 		var str="<div id='macroEditorDiv' class='wm-macroEditor'>";
 		str+="<img src='img/scalelogo.png' style='vertical-align:-12px;margin-right:16px' width='32'><span style='font-size:16px'><b>"+which+" Editor</b></span><br><p><hr></p>";	
@@ -543,14 +550,15 @@ class App  {
 				});
 
 			$("#macroItemsList").sortable({ stop: function(e, ui) {							// Can be sorted
-				if (ui.position.left > 400) {												// In delete area
-					items.splice(ui.item[0].id.substr(5),1);								// Remove item
-					Sound("delete");														// Delete sound
-					Populate();																// Reshow items
+					if (ui.position.left > 400) {											// In delete area
+						items.splice(ui.item[0].id.substr(5),1);							// Remove item
+						Sound("delete");													// Delete sound
+						Populate();															// Reshow items
+						}
 					}
-				}
-			});											
-		}																				// Assignment closure
+				});											
+			} 																				// ASSIGNMENT CLOSURE
+		
 		else if (which == "Media") {														// Add/edit media
 			if (tag=body.match(/scalemedia\((.*?)\)/i)) 									// If a scalemedia() tag
 				params=tag[1].split(",");													// Get frame items
@@ -560,22 +568,23 @@ class App  {
 			str+="&nbsp;&nbsp;Border? <input type='checkbox' "+(params[3] ? "checked" : "")+" id='param-3'></td></tr>";
 			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
-			}
+			} 																				// MEDIA CLOSURE
+		
 		else if (which == "Video") {														// Add/edit video
 			var curTriggerItem="";
 			params[0]="";
 			if (tag=body.match(/scalevideo\((.*?)\)/i)) 									// If a scalevideo() tag
 				params=tag[1].split(",");													// Get frame items
 			params[0]+="|";																	// To help matching
-			t=params[0].match(/src=(.+?)\|+/i);												// Get src
+			t=params[0].match(/src=(.*?)\|+/i);												// Get src
 			str+="<table><tr><td>Video Id</td><td><input class='wm-is' style='width:300px;height:16px' type='text' id='param-0' value='"+(t ? t[1] :'')+"'></td></tr>";	
 			str+="<tr><td>Width&nbsp;%&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'>";
 			str+="&nbsp;&nbsp;&nbsp;Height % <input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'>";
 			str+="&nbsp;&nbsp&nbsp;Border? <input type='checkbox' "+(params[3] ? "checked" : "")+" id='param-3'></td></tr>";
 			t=params[0].match(/start=(.+?)\|/i);											// Get start
-			str+="<tr><td>Start&nbsp;time</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pStart' value='"+(t ? t[1] :'')+"'>";	
+			str+="<tr><td>Start&nbsp;time</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pStart' value='"+(t ? SecondsToTimecode(t[1]) :'')+"'>";	
 			t=params[0].match(/end=(.+?)\|/i);												// End
-			str+="&nbsp;&nbsp;&nbsp;End&nbsp;time&nbsp;&nbsp;<input class='wm-is' style='width:50px;height:16px' type='text' id='pEnd' value='"+(t ? t[1] :'')+"'>";
+			str+="&nbsp;&nbsp;&nbsp;End&nbsp;time&nbsp;&nbsp;<input class='wm-is' style='width:50px;height:16px' type='text' id='pEnd' value='"+(t ? SecondsToTimecode(t[1]) :'')+"'>";
 			t=params[0].match(/auto=(.+?)\|/i);												// Auto
 			str+="&nbsp;&nbsp;&nbsp;Autoplay?<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pAuto'></td></tr>";
 			t=params[0].match(/slides=(.+?)\|/i);											// Slides
@@ -586,7 +595,8 @@ class App  {
 			str+="&nbsp;&nbsp;&nbsp;Go to next pane after video ends?&nbsp;<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNext'></td></tr>";
 			str+="<tr><td colspan='2'><hr></td></tr>";										// Rule
 			str+="<tr><td>Triggers:</td><td><span style='float:right'><div id='addTriggerBut' class='wm-bs'>Add trigger</div>";	// Add but
-			str+="&nbsp;&nbsp;<img id='deleteTrigger' style='vertical-align:-5px' src='img/trashbut.gif'></span>";
+			str+="&nbsp;&nbsp;<img id='deleteTrigger' title='Delete trigger' style='vertical-align:-5px;cursor:pointer' src='img/trashbut.gif'>";
+			str+="&nbsp;&nbsp;<img id='showPlayerBut' title='Show player' style='vertical-align:-5px;cursor:pointer' src='img/playbut.gif'></span>";
 			str+="<ul style='list-style-type:none;padding:0;margin:0;margin-left:4px;max-height:180px;overflow-x:hidden' id='macroItemsList'></ul></td></tr>";
 			str+="</table><hr><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
@@ -595,6 +605,25 @@ class App  {
 
 			$("[id^=item-]").on("click", (e)=> {											// On TRIGGER CLICK
 				curTriggerItem=e.currentTarget.id;											// Get id
+				});
+
+			$("#showPlayerBut").on("click", (e)=> {											// ON PLAYER CLICK
+				$("#playEditorDiv").remove();												// Kill old one
+				var h=$("#macroEditorDiv").width()*.6;										// Set height based on aspect												
+				var str="<div id='playEditorDiv' class='wm-macroEditor' style='text-align:center'>";	// Div
+				var src="video.htm?src="+$("#param-0").val();								// Add src
+				src+=$("#pStart").val() ? ("|start="+TimecodeToSeconds($("#pStart").val())) : "";	// Add start
+				str+="<img id='vpcb' style='float:right;cursor:pointer;margin-bottom:4px' src='img/closedot.gif'>";
+				str+="<iframe id='contentIF' class='wm-media' align='middle' src='"+src+"' frameborder='0' style='height:"+h+"px;width:100%'></iframe>";	// Load in iframe
+				str+="<div id='playerTriggerBut' class='wm-bs'>Add trigger</div>";			// Add button
+				$("#contentDiv").append(str+"</div>");										// Add to content div
+				$("#playEditorDiv").draggable();											// Draggable
+				$("#playEditorDiv").css({top:"40px",left:"0px"});							// Position
+				$("#vpcb").click(function() { $("#playEditorDiv").remove(); });				// Remove on click of close button
+
+				$("#playerTriggerBut").on("click", (e)=> {									// ON PLAYER ADD TRIGGER
+					SendToIframe("ScaleAct=time");											// Ask for time
+					});
 				});
 
 			$("#deleteTrigger").on("click", (e)=> {											// ON DELETE
@@ -608,7 +637,7 @@ class App  {
 			$("#addTriggerBut").on("click", function() {									// ON ADD TRIGGER
 				var id=$("#macroItemsList li").length;										// Id
 				var s="<li id='item-"+id;													// Header
-				s+="'><span contenteditable='true'>??:??";									// Add time					
+				s+="'><span contenteditable='true'>"+SecondsToTimecode(currentTime);		// Add time					
 				s+="</span>&nbsp; &rarr; &nbsp;<span contenteditable='true'>????<span></li>";	// Add id
 				$("#macroItemsList").append(s); 											// Add to list
 				$("#item-"+id).on("click", (e)=> { curTriggerItem=e.currentTarget.id; });	// ON TRIGGER CLICK
@@ -625,8 +654,7 @@ class App  {
 					$("#macroItemsList").append(s); 										// Add to list
 					}
 				}	
-
-		}
+			}																				// VIDEO CLOSURE
 
 		$("#saveMacroBut").on("click", function() {											// ON SAVE CHANGES
 			o=app.doc.lobs[app.con.curEditId];												// Point at lob
@@ -646,8 +674,8 @@ class App  {
 					str+=$("#param-0").val() ? $("#param-0").val() : "";					// Add url
 				else{																		// Video
 					str+="src="+$("#param-0").val();										// Add src
-					str+=$("#pStart").val() ? ("|start="+$("#pStart").val()) : ""			// Add start
-					str+=$("#pEnd").val() ? ("|end="+$("#pEnd").val()) : ""					// Add end
+					str+=$("#pStart").val() ? ("|start="+TimecodeToSeconds($("#pStart").val())) : ""	// Add start
+					str+=$("#pEnd").val() ? ("|end="+TimecodeToSeconds($("#pEnd").val())) : ""			// Add end
 					str+=$("#pAuto").prop("checked") ? "|auto=true" : "";					// Add border
 					str+=$("#pSlides").val() ? ("|slides="+$("#pSlides").val()) : ""		// Add slides
 					str+=$("#pRatio").val() ? ("|ratio="+$("#pRatio").val()) : ""			// Add ratio
@@ -671,6 +699,7 @@ class App  {
 				}
 			CKEDITOR.instances.editor1.setData(body);										// Add body data
 			$("#macroEditorDiv").remove();													// Remove popup
+			$("#playEditorDiv").remove();													// Kill old one
 			Sound("ding");																	// Ding sound
 			});
 
@@ -685,7 +714,7 @@ class App  {
 						break;																// Quit looking
 						}
 			}	
-	}																					
+	}																						// MACRO CLOSURE																					
 
 	AMSEditor(skin)																		// AMS EDITOR
 	{
@@ -1076,7 +1105,7 @@ class App  {
 		$("#saveStepBut").on("click", function() { 											// ON SAVE STEP
 				var i;
 				o.optionType=$("#optionType").val();	o.title=$("#title").val();			// Get values from inputs						
-				o.text=$("#text").val();				o.prompt=$("#text").val();									
+				o.text=$("#text").val();				o.prompt=$("#prompt").val();									
 				o.pic=$("#pic").val();					o.whyRight=$("#whyRight").val();								
 				o.whyWrong=$("#whyWrong").val();		o.whyPartial=$("#whyPartial").val();	
 				o.fontSize=$("#fontSize").val();		o.numTries=$("#numTries").val();	
@@ -1150,7 +1179,7 @@ class App  {
 		Open(id)																		// OPEN TREE AT ID
 		{
 			var i;
-			var row=$("#tr-"+id);															// Trace row
+			var row=$("#tr-"+id);															// Row
 			var par=row.parent();															// Point at previous line
 			$('.wm-tree li a').each( function() {                          					// For each line
 				$(this).css({"color":"#000","font-weight":"normal"});      					// Normal
@@ -1405,6 +1434,12 @@ function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
 		$(div ? "#"+div : "body").append(str);									// Add popup to div or body
 		$("#pu-close").click(function() { $("#popupDiv").remove(); });			// Remove on click of close but
 		$("#popupDiv").fadeIn(500).delay(time ? time : 2000).fadeOut(500)		// Animate in and out		
+	}
+
+	function SendToIframe(msg) 												// SENT MESSAGE TO CURRENT CONTENT IFRAME
+	{
+		if (!$("#contentIF").length)		return;								// Quit if no iframe	
+		$("#contentIF")[0].contentWindow.postMessage(msg,"*");	 				// Send message 
 	}
 
 	function TimecodeToSeconds(timecode) 									// CONVERT TIMECODE TO SECONDS

@@ -166,14 +166,21 @@
 			}
 	}
 
-	function OnPlayerTimer()												// GET TIME FROM PLAYER
+	
+	function GetPlayerTime()												// GET TIME FROM PLAYER
 	{
-		if ((!player) || (playerMode != "play"))								// Not playing
-			return;																// Quit
 		if (playerType == "youtube") 											// If YouTube
 			playerCurTime=player.getCurrentTime();								// Get curtime
 		else if (playerType == "html5") 										// If HTML5
 			playerCurTime=player.currentTime;									// Get cur time
+		return playerCurTime;													// Return time
+	}
+	
+	function OnPlayerTimer()												// TIMER HANHDLER
+	{
+		if ((!player) || (playerMode != "play"))								// Not playing
+			return;																// Quit
+		playerCurTime=GetPlayerTime();											// Get time
 		if (playerEnd && (playerCurTime >= playerEnd))	{						// Past end
 			RunPlayer("pause");													// Pause
 			SendScaleMessage("stop",playerEnd);									// Send stop
@@ -542,6 +549,10 @@
 				RunPlayer("pause");												// Pause
 			else if (v[0] == "ScaleAct=seek")									// SEEK
 				RunPlayer("seek",v[1]);											// Seek
+			if (v[0] == "ScaleAct=time") {										// TIME
+				GetPlayerTime();												// Get time
+				SendScaleMessage("time",playerCurTime);							// Send back time
+				}
 			}
 		}
  

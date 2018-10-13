@@ -58,6 +58,11 @@ class Messaging {
 				app.msg.SaveToForm("Answer"+app.doc.curLobId+":"+v[2]+"="+v[3]);									// Save answer to form, if set		
 			}
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
+			if (msg.toLowerCase() == "scalevideo=next") {															// Advance to next pos
+				app.doc.NextLob();																					// Advance
+				app.Draw();																							// Draw																																		
+				return;
+				}
 			if (msg.match(/trigger/)) {																				// Hit a trigger point
 				if (v[1].toLowerCase() == "next") {																	// Advance to next pos
 					app.doc.NextLob();																				// Advance
