@@ -589,8 +589,8 @@ class App  {
 			str+="&nbsp;&nbsp;&nbsp;Autoplay?<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pAuto'></td></tr>";
 			t=params[0].match(/slides=(.+?)\|/i);											// Slides
 			str+="<tr><td>Slides&nbsp;link</td><td><input class='wm-is' style='width:300px;height:16px' type='text' id='pSlides' value='"+(t ? t[1] :'')+"'></td></tr>";	
-			t=params[0].match(/ratio=(.+?)\|/i);											// Ratio
-			str+="<tr><td>Slide&nbsp;ratio&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pRatio' value='"+(t ? t[1] :'')+"'>";	
+			t=params[0].match(/split=(.+?)\|/i);											// Split
+			str+="<tr><td>Slide&nbsp;split&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pSplit' value='"+(t ? t[1] :'')+"'>";	
 			t=params[0].match(/next=(.+?)\|/i);												// Next
 			str+="&nbsp;&nbsp;&nbsp;Go to next pane after video ends?&nbsp;<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNext'></td></tr>";
 			str+="<tr><td colspan='2'><hr></td></tr>";										// Rule
@@ -678,7 +678,7 @@ class App  {
 					str+=$("#pEnd").val() ? ("|end="+TimecodeToSeconds($("#pEnd").val())) : ""			// Add end
 					str+=$("#pAuto").prop("checked") ? "|auto=true" : "";					// Add border
 					str+=$("#pSlides").val() ? ("|slides="+$("#pSlides").val()) : ""		// Add slides
-					str+=$("#pRatio").val() ? ("|ratio="+$("#pRatio").val()) : ""			// Add ratio
+					str+=$("#pSplit").val() ? ("|split="+$("#pSplit").val()) : ""			// Add split
 					str+=$("#pNext").prop("checked") ? "|next=true" : "";					// Add next
 					if ($("#macroItemsList li").length) {
 						str+="|trigger=";													// Head
