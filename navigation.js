@@ -58,7 +58,7 @@ class Navigation {
 		this.UpdateHeader();																						// Update header																						
 		$("#menuSlotDiv").remove();																					// Close lesson picker															
 		$("#navDiv").css("display","block");																		// Make sure it shows
-		if (app.fullScreen || ($("#mainDiv").width() < 600)) {														// If full screeen or too small
+		if (app.fullScreen || ($("#contentDiv").width() < 600)) {													// If full screeen or too small
 			$("#navDiv").css("display","none");																		// Hide it
 			return;																									// Quit
 			}

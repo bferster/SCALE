@@ -23,7 +23,7 @@ class Content  {
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
-		if ($("#mainDiv").width() < 600)																			// If too small																
+		if ($("#contentDiv").width() < 600)																			// If too small																
 			str+="<img id='mobileMenu' src='img/mobilemenu.png' class='wm-mobileBut' onclick='app.nav.MobileNavigator()'>"; // Add mobile button
 		str+="<img id='fullBut' src='img/fullbut.png' class='wm-fullBut'>"; 										// Add full button
 		$("#contentDiv").html(str);																					// Set content

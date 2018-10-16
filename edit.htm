@@ -22,7 +22,7 @@
 							}
 		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1100px); min-width:360px; 
 							}
-		.wm-confirm {		position: absolute;  width: 300px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
+		.wm-confirm {		position: absolute;  width: 350px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
 							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
 							}
 		.wm-content {		width:1000px; overflow:hidden; float:right; margin-right:24px; 
@@ -146,7 +146,6 @@ class App  {
 		this.doc=new Doc(id);														// Alloc doc w/ course id
 		this.rul=new Rules();														// Rules
 		this.ams=new MediaSkin();													// Action skins
-		this.floats=[];																// Holds floats
 		this.editorChange=0;														// Tracks edits
 		this.setDone=true; this.skipDone=false; this.assessLevel=.5;				// Defaults
 		this.Draw(); 																// Draw app
@@ -243,7 +242,6 @@ class App  {
 		str+="<div id='treeDiv' class='wm-tree'></div>";							// Add div to hold tree
 		str+="<div id='addPaneBut' class='wm-bs'>Add new pane</div>&nbsp;&nbsp;";	// Add button
 		str+="<br><br><hr><br><table class='wm-navTable'>";							// Line and table
-		str+="<tr><td><b>Floats&nbsp;</b></td><td>"+MakeSelect("floatsBut",false,["Choose"])+"</td><td>&nbsp;<div id='addFloatBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Questions&nbsp;</b></td><td>"+MakeSelect("asksBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAskBut' class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>Rules&nbsp;</b></td><td>"+MakeSelect("rulesBut",false,["Choose"])+"</td><td>&nbsp;<div id='addRuleBut'  class='wm-bs'>Add</div></td>";
 		str+="<tr><td><b>AMS&nbsp;</b></td><td>"+MakeSelect("amsBut",false,["Choose"])+"</td><td>&nbsp;<div id='addAMSBut' class='wm-bs'>Add</div></td>";
@@ -266,13 +264,6 @@ class App  {
 		for (i=0;i<app.doc.asks.length;++i) {										// For each ask
 			o=app.doc.asks[i];														// Point at ask
 			$("#asksBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
-			}
-		for (i=1;i<app.doc.lobs.length;++i) {										// For each lob
-			o=app.doc.lobs[i];														// Point at  lob
-			if (!app.doc.FindLobById(o.parent))	{									// If no parent
-				$("#floatsBut").append("<option value='"+o.id+"'>"+o.id+" - "+o.name+"</option>");	// Add to pulldown
-				app.floats.push(o.id);												// Add to floats
-				}
 			}
 		for (i=0;i<app.ams.skins.length;++i) {										// For each ams
 			o=app.ams.skins[i];														// Point at ams
@@ -342,22 +333,6 @@ class App  {
 			Sound("ding"); 															// Ding
 			});
 
-		$("#floatsBut").on("change", function() {  									// ON EDIT FLOATING PANE
-			o=app.doc.FindLobById($(this).val());									// Point at float lob
-			if (o)	app.con.Draw("pane",o.id);										// Show float pane if valid
-			Sound("click"); 														// Click
-			});
-
-		$("#addFloatBut").on("click", ()=> {  										// ON ADD NEW FLOATING PANE
-			app.doc.AddNewLob("-");			 										// Add lob
-			var id=app.doc.lobs[app.doc.lobs.length-1].id;							// Get id
-			app.floats.push(id);													// Add to floats
-			$("#floatsBut").append("<option value='"+id+"'>"+id+" - Rename this</option>");	// Add to pulldown
-			$("#floatsBut")[0].selectedIndex=app.floats.length+1;					// Select it
-			app.con.Draw("pane",id);												// Edit new float
-			Sound("ding"); 															// Ding
-			});
-
 		$("#addAMSBut").on("click", ()=> {  										// ON ADD NEW AMS
 			var o={id:"000", name:"Change this!", body:"", items:[] };				// Blank skin
 			app.ams.skins.push(o);													// Add to asks
@@ -376,7 +351,7 @@ class App  {
 			var o={id:"000", name:"Change this!", step:"{\"optionType\":\"radio\",\"options\":[]}"};	// Step
 			app.doc.asks.push(o);													// Add to asks
 			$("#asksBut").append("<option>000 - Change this!</option>");			// Add option
-			$("#asksBut")[0].selectedIndex=app.doc.asks.length-1;					// Select it
+			$("#asksBut")[0].selectedIndex=app.doc.asks.length;						// Select it
 			app.con.Draw("ask",app.doc.asks.length-1);								// Show editor																							
 			Sound("ding");															// Ding sound
 			});
@@ -387,7 +362,7 @@ class App  {
 			});
 		
 		$("#addRuleBut").on("click", ()=> { 										// ON ADD RULE
-			var o={id:"000", name:"Change this!", verb:"=", do:"show"};				// Rule
+			var o={id:"000", name:"Change this!", verb:"=", do:"show", subject:"", object:""};	// Blank rule
 			$("#rulesBut").append("<option>000 - Change this!</option>");			// Add option
 			app.rul.rules.push(o);													// Add to rules
 			$("#rulesBut")[0].selectedIndex=app.rul.rules.length;					// Select it
@@ -413,6 +388,7 @@ class App  {
 
 			$("#savePaneBut").on("click", ()=> {											// ON SAVE CHANGES
 				app.editorChange=0;															// Changes saved
+				app.Do();																	// Save for undo
 				var o=app.doc.lobs[this.curEditId];											// Point at lob
 				o.body=CKEDITOR.instances.editor1.getData();								// Get body
 				o.name=$("#pageTitle").text();												// Get name
@@ -423,29 +399,16 @@ class App  {
 					}
 				else																		// Same id
 					$("#tr-"+o.id).text(o.name)                             				// Reset tree name
-				if (!app.doc.FindLobById(o.parent)) {										// A floating lob
-					$('#floatsBut').find(":selected").text(o.id+" - "+o.name);				// Rename pulldown			
-					$('#floatsBut').find(":selected").val(o.id);							// Rename pulldown value		
-					$("#floatsBut")[0].selectedIndex=0;										// Clear selection
-				}
-				app.Do();																	// Save for undo
-				$("#courseTitle").html(app.doc.lobs[0].name);								// Show course name
 				this.Draw("splash");														// Draw splash
 				Sound("ding");																// Ding
 				});
 
 			$("#removePaneBut").on("click", ()=> {  										// ON REMOVE PANE
 				ConfirmBox("Are you sure?", "This will remove any underlying panes!",()=> { // If sure
-					if ($("#floatsBut")[0].selectedIndex) {									// A floating lob
-						app.doc.lobs.splice(this.curEditId,1);								// Remove lob
-						app.floats.splice($("#floatsBut")[0].selectedIndex,1);				// Remove from array
-						$('#floatsBut').find(":selected").remove();							// Remove from pulldown			
-						$("#floatsBut")[0].selectedIndex=0;									// Clear selection
-						}
+					app.Do();																// Save for undo
 					app.doc.UnlinkLob(app.tree.curPaneId) 									// Remove it
 					app.tree.Init();														// Remake tree
 					this.Draw("splash");													// Draw splash
-					app.Do();																// Save for undo
 					Sound("delete");														// Delete sound
 					});
 			});
@@ -457,9 +420,9 @@ class App  {
 			var o;
 			var str="";
 			if (app.editorChange > 1) {														// If changes still active
-				ConfirmBox("You have unsaved edits!","To save them, click on this <i><b>Cancel</b></i> button and then save them before exiting the editor.",	// Sure?
-						()=>{ 	app.editorChange=0;											// Forget changes
-								this.Draw(type,id);											// Do it anyway
+				ConfirmBox("You have unsaved changes!","To save them, click on <span style='color:#27ae5f'><b>OK</b></span> or <b>Cancel</b> to abandon them.",	// Sure?
+						()=>{ $("#savePaneBut").trigger("click"); },						// Save changes
+						()=>{ app.editorChange=0;	this.Draw(type,id); ;						// Forget changes
 						});
 				return;																		// Quit (let confirm retry if OK)
 				}	
@@ -516,6 +479,10 @@ class App  {
 				this.SettingsEditor();														// Run editor
 		}
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MACRO EDITOR
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	MacroEditor(which)																	// MACRO EDITOR
 	{
 		var tag,i,o,v,t;
@@ -590,7 +557,7 @@ class App  {
 			t=params[0].match(/slides=(.+?)\|/i);											// Slides
 			str+="<tr><td>Slides&nbsp;link</td><td><input class='wm-is' style='width:300px;height:16px' type='text' id='pSlides' value='"+(t ? t[1] :'')+"'></td></tr>";	
 			t=params[0].match(/split=(.+?)\|/i);											// Split
-			str+="<tr><td>Slide&nbsp;split&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pSplit' value='"+(t ? t[1] :'')+"'>";	
+			str+="<tr><td>Slides&nbsp;split&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pSplit' value='"+(t ? t[1] :'')+"'>";	
 			t=params[0].match(/next=(.+?)\|/i);												// Next
 			str+="&nbsp;&nbsp;&nbsp;Go to next pane after video ends?&nbsp;<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNext'></td></tr>";
 			str+="<tr><td colspan='2'><hr></td></tr>";										// Rule
@@ -716,6 +683,10 @@ class App  {
 			}	
 	}																						// MACRO CLOSURE																					
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// AMS EDITOR
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	AMSEditor(skin)																		// AMS EDITOR
 	{
 		var i,j;
@@ -766,19 +737,19 @@ class App  {
 			});
 
 		$("#addAMSItemBut").on("click", ()=> { 												// ON ADD ITEM
-			skin.items.push({ right:0, type:"" });											// Add blank
 			app.Do();																		// Save for undo
+			skin.items.push({ right:0, type:"" });											// Add blank
 			this.AMSEditor(skin);															// Redraw
 			Sound("ding");																	// Ding sound
 			});
 
 		$("#removeAMSBut").on("click", ()=> { 												// ON REMOVE AMS
 			ConfirmBox("Are you sure?","This will remove this skin from your course.", ()=> {	// If sure
+				app.Do();																	// Save for undo
 				app.ams.skins.splice($('#amsBut')[0].selectedIndex-1,1);					// Remove from ams
 				$('#amsBut').find(":selected").remove();									// Remove from pulldown			
 				$("#amsBut")[0].selectedIndex=0;											// Clear selection
 				this.Draw("splash");														// Show splash																								
-				app.Do();																	// Save for undo
 				Sound("delete");															// Delete sound
 				});
 			});
@@ -920,6 +891,10 @@ class App  {
 			});
 	}
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RULES EDITOR
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	RuleEditor(r)																		// RULE EDITOR
 	{
 		var i,ids=[];
@@ -940,7 +915,6 @@ class App  {
 		str+="<div id='saveRuleBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;";						
 		str+="<img id='removeRuleBut' title='Delete this rule' style='vertical-align:-5px' src='img/trashbut.gif'></div>";	// Trash button
 		$("#contentDiv").html(str);	
-
 		i=app.doc.FindLobIndexById(r.subject.split(":")[0]);								// ADD NAMES AND AUTOCOMPLETE - index to subject
 		if (i != -1)																		// If a valid mob
 			$("#ruleSub").val(r.subject+" - "+ShortenString(app.doc.lobs[i].name,30));		// Add name
@@ -954,6 +928,7 @@ class App  {
 
 		$("#saveRuleBut").on("click", ()=> { 												// ON SAVE RULE
 			var o={};
+			app.Do();																		// Save for undo
 			o.subject=$("#ruleSub").val().split(" - ")[0];									// Save just ID
 			o.object=$("#ruleObj").val().split(" - ")[0];									// Save just ID
 			o.id=$("#ruleId").val();	o.name=$("#ruleName").val();						// Get vals						
@@ -964,30 +939,32 @@ class App  {
 			app.rul.rules[$("#rulesBut")[0].selectedIndex-1]=o;								// Set new rule
 			$("#rulesBut")[0].selectedIndex=0;												// Clear selection
 			this.Draw("splash");															// Show splash																								
-			app.Do();																		// Save for undo
 			Sound("ding");																	// Ding sound
 			});
 		
 		$("#removeRuleBut").on("click", ()=> { 												// ON REMOVE RULE
 			ConfirmBox("Are you sure?","This will remove this rule from your course.", ()=> {	// If sure
+				app.Do();																	// Save for undo
 				app.rul.rules.splice($('#rulesBut')[0].selectedIndex-1,1);					// Remove from rules
 				$('#rulesBut').find(":selected").remove();									// Remove from pulldown			
 				$("#rulesBut")[0].selectedIndex=0;											// Clear selection
 				this.Draw("splash");														// Show splash																								
-				app.Do();																	// Save for undo
 				Sound("delete");															// Delete sound
 				});
 			});
 	}
 	
-	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SETTINGS EDITOR
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	SettingsEditor()																	// SETTINGS EDITOR
 	{
 		var str="<div class='wm-stepEditor'>";
 		str+="<img src='img/scalelogo.png' style='vertical-align:-6px' width='32'><span style='font-size:30px;margin-left:16px'><b>Settings</b></span><br><br>";	
 		str+="<table>";
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
-		str+="<tr><td>Skip done if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
+		str+="<tr><td>Skip if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
 		str+="<tr><td>Hide header</td><td><input  type='checkbox' "+(app.hideHeader ? "checked" : "")+" id='setHeader'></td></tr>";	
 		str+="<tr><td>Default margin %</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
 		str+="<tr><td>Discussion name|id</td><td><input class='wm-is' type='text' id='setDiscuss' value='"+(app.discussion ? app.discussion : '')+"'></td></tr>";	
@@ -1015,6 +992,7 @@ class App  {
 		});
 
 		$("#saveSetBut").on("click", ()=> { 												// ON SAVE SETTINGS
+			app.Do();																		// Save for undo
 			app.setDone=$("#setDone").prop("checked");										// Get vals			
 			app.skipDone=$("#setSkip").prop("checked");								
 			app.reportLevel=$("#setLevel").val();	
@@ -1025,10 +1003,13 @@ class App  {
 			app.defMargin=$("#setMargin").val();	
 			app.discussion=$("#setDiscuss").val();	
 			this.Draw("splash");															// Show splash																								
-			app.Do();																		// Save for undo
 			Sound("ding");																	// Ding sound
 			});
 		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// QUESTION EDITOR
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	QuestionEditor(ask) 																	// ASK STEP EDITOR
 	{
@@ -1104,6 +1085,7 @@ class App  {
 
 		$("#saveStepBut").on("click", function() { 											// ON SAVE STEP
 				var i;
+				app.Do();																	// Save for undo
 				o.optionType=$("#optionType").val();	o.title=$("#title").val();			// Get values from inputs						
 				o.text=$("#text").val();				o.prompt=$("#prompt").val();									
 				o.pic=$("#pic").val();					o.whyRight=$("#whyRight").val();								
@@ -1119,18 +1101,17 @@ class App  {
 				ask.step=JSON.stringify(o);													// Copy at JSON string
 				$('#asksBut').find(":selected").text(ask.id+" - "+ask.name);				// Rename pulldown			
 				$("#asksBut")[0].selectedIndex=0;											// Clear selection
-				app.Do();																	// Save for undo
 				_this.Draw("splash");														// Show splash																								
 				Sound("ding");																// Ding sound
 				});
 		
 		$("#removeStepBut").on("click", function() { 										// ON REMOVE STEP
 				ConfirmBox("Are you sure?","This will remove this question from your course.", ()=> {	// If sure
+				app.Do();																	// Save for undo
 				app.doc.asks.splice($('#asksBut')[0].selectedIndex-1,1);					// Remove from rules
 				$('#asksBut').find(":selected").remove();									// Remove from pulldown			
 				$("#asksBut")[0].selectedIndex=0;											// Clear selection
 				_this.Draw("splash");														// Show splash																								
-				app.Do();																	// Save for undo
 				Sound("delete");															// Delete sound
 				});
 			});
@@ -1150,20 +1131,30 @@ class App  {
 
 		Init(id) 																			// INIT TREE
 		{
+			var i,oo;
 			var _this=this;																	// Save context		
 			var o=app.doc.lobs[0];															// Point at root												
 			if (!o)	return;																	// If invalid, quit
 			var str="<ul><li class='parent active'><a id='tr-"+o.id+"'>"+o.name+"</a></li>"; // Add root tree node
 			$("#treeDiv").html(str+"</ul>");												// Add to tree div
 			this.AddChildren($("#tr-"+o.id),0);												// Add children to tree
+		
+			var str="<ul><li class='parent'><a id='tr-float'>Floating Panes</a>"; 			// FLOATS - Add float root 
+			for (i=1;i<app.doc.lobs.length;++i) {											// For each lob
+				oo=app.doc.lobs[i];															// Point at  lob
+				if (!app.doc.FindLobById(oo.parent))										// If no parent
+					str+="<ul><li><a id='tr-"+oo.id+"'>"+oo.name+"</a></li></ul>";			// Add to tree
+				}
+			$("#treeDiv").append(str+"</li></ul>");											// Append floats to tree
+
 			$("#tr-"+o.id).parent().children('ul').slideToggle('fast');            			// Open course
-			$("[id^=tr-]").draggable( {	revert:true });										// Make lines draggable to change parent
-			$("[id^=tr-]").droppable( {														// Make lines droppable to change parent
+			$("[id^=tr-]").draggable( {	revert:true, delay:500 });							// Make lines draggable to change spotin tree
+			$("[id^=tr-]").droppable( {														// Make lines droppable 
 				drop: function(e,ui) {														// On drop
-					var mode=e.shiftKey ? "shift" : "move";									// Move or shift
+					var mode=e.shiftKey ? "move" : "shift";									// Move or shift
+					app.Do();																// Save for undo
 					app.doc.ChangeOrder(ui.draggable[0].id.substr(3),e.target.id.substr(3),mode); // Rearrange
 					_this.Init(ui.draggable[0].id.substr(3));								// Re-init tree	
-					app.Do();																// Save for undo
 					Sound("ding");															// Ding
 					}
 			});
@@ -1234,7 +1225,6 @@ class App  {
 			}
 		}
 }																						// Class closure
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // GOOGLE DRIVE
@@ -1317,7 +1307,6 @@ function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
 		}
 }																								// End closure
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1348,7 +1337,7 @@ function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
 
 		$("#confirmCancel").on("click", function() {										// ON CANCEL BUT
 				$("#confirmBoxDiv").remove();												// Remove 
-				if (callback2)	callback();													// If callback defined, run it
+				if (callback2)	callback2();												// If callback defined, run it
 				Sound("delete");															// Delete sound
 				});
 	}
