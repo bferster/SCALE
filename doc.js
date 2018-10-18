@@ -397,6 +397,8 @@ class Doc {
 				if (v[4] && v[4].match(/discussion=/i))		app.discussion=v[4].match(/discussion=(\.*\S+)/i)[1];	// Discussion link
 				}
 			}
+		if (!this.lobs.length)																						// No lobs defined
+			this.lobs=[ { name:"Course name", id:1, status:0, body:"", children:[], kids:[]}];						// Add start Lob
 		this.AddChildList();																						// Add children	
 		app.Draw();																									// Reset data positions
 		if (app.login)	GetTextBox("Please log in","Type your user name","",function(s) { app.userName=s} ); 		// Login
