@@ -95,6 +95,20 @@
 							text-align: center; border-radius: 16px; display: inline-block; user-select: none;
 							font-size: 12px; background-color: #27ae60; padding: 2px 8px 2px 8px; vertical-align:3px;
 							}
+		.wm-tree {      	user-select: none; width: 100%; margin-left:40px;
+							padding: 0px 0; font-size: 14px; text-align: left; 
+							}
+		.wm-tree ul { 		list-style: none outside none; padding: 0 }
+		.wm-tree li a { 	line-height: 20px; cursor: pointer; }
+		.wm-tree > ul > li > a { color:#000; display: block;  font-weight: normal; position: relative; text-decoration: none; }
+		.wm-tree li.parent > a { padding: 0 0 0 16px;  }
+		.wm-tree li.parent > a:before { background-image: url("img/treebuts.gif"); content: ""; display: block;
+										height: 11px; left: 0; position: absolute; top: 4px; width: 11px;  background-position: 0px;
+										}
+		.wm-tree ul li.active > a:before { background-position: 22px; }
+		.wm-tree ul li ul 	{ border-left: 1px solid #ccc;  display: none; margin: 0 0 0 5px; padding: 0 0 0 10px; }
+		.wm-tree ul li ul li { position: relative; }
+
 		.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix { border:none }
 		.ui-dialog { 		border-radius:12px; box-shadow:2px 2px 6px #ccc }
 		.ui-button { 		border-radius:30px; outline:none }
@@ -414,6 +428,7 @@ class App  {																								 // APP
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
 		var	str="<select class='wm-is' style='width:auto' id='"+id+"'";			// Header
+		str+=" data-lastselect='"+(sel ? sel : '')+"' ";						// Init last selected
 		if (multi)																// Multi select
 			str+="multiple='multiple' size='"+multi+"'";						// Add flag
 		if (extra)																// If extra param

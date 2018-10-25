@@ -71,7 +71,7 @@ class Navigation {
 				str+="<div id='topicDotLab-"+i+"'class='wm-topicDotLab'style='";									// Label container
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic)) str+="color:#c57117;";			// Highlight if current						
 				if (w < 800)			name=ShortenString(name,18);												// If small, shorten label
-//				if (i%2 && (w < 800)) 	str+="margin-top:34px";														// Stagger if small width
+				if (i%2 && (w < 800)) 	str+="margin-top:34px";														// Stagger if small width
 				str+=`'>${name}</div>`;																				// Add label
 				str+="<div id='topicDotDot-"+i+"' class='wm-topicDot'></div>";										// Add dot
 				}
@@ -83,7 +83,7 @@ class Navigation {
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
-//				if (w < 800)					 str+="top:60px;"
+				if (w < 800)					 str+="top:60px;"
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
@@ -190,67 +190,93 @@ class Navigation {
 
 	MobileNavigator()																							// MOBILE NAVIGATION
 	{
-		var i,j,v,children,str="";
-		var conceptName="",topicName="",stepName="";
-		$("#paneTitle").text("Choose pane");														
+		var str="<p class='wm-pageTitle'>Choose pane</p>";															// Title
+		str+="<div id='treeDiv' class='wm-tree'></div>";															// Add tree
+		$("#contentBodyDiv").html(str);																				// Set tree menu
+		var tree=new Tree(app.doc.curLobId);																		// Populate tree
+	}
+} // Nav class closure
+																													
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TREE NAVIGATION 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		if (app.doc.curLesson != -1) {																				// A Lesson
-			v=[];
-			children=app.doc.lobs[app.doc.curLesson].children;														// Get lesson
-			for (i=0;i<children.length;++i) {																		// For each topic 
-				j=app.doc.FindLobIndexById(children[i]);															// Get topic index
-				if ((app.doc.curLobId == children[i]) || (j == app.doc.curTopic))									// If current topic
-					topicName=app.doc.FindLobById(children[i]).name;												// Set topic name
-				v.push(app.doc.FindLobById(children[i]).name);														// Get topic name
-				}
-			str+="<p>"+MakeSelect("topicSel",false,v)+"</p>";														// Add select
-			}
-		if (app.doc.curTopic != -1) {																				// A topic
-			v=[];
-			children=app.doc.lobs[app.doc.curTopic].children;														// Get topic
-			for (i=0;i<children.length;++i) {																		// For each concept 
-				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
-				if ((app.doc.curLobId == children[i]) || (j == app.doc.curConcept))									// If current concept
-					conceptName=app.doc.FindLobById(children[i]).name;												// Set concept name
-				v.push(app.doc.FindLobById(children[i]).name);														// Get concept name
-				}
-			str+="<p>"+MakeSelect("conceptSel",false,v)+"</p>";														// Add select
-			}
-			if (app.doc.curConcept != -1) {																			// A concept
-			v=[];
-			children=app.doc.lobs[app.doc.curConcept].children;														// Get steps
-			for (i=0;i<children.length;++i) {																		// For each step 
-				if (app.doc.curLobId == children[i]) 																// If current step
-					stepName=app.doc.FindLobById(children[i]).name;													// Set step name
-				v.push(app.doc.FindLobById(children[i]).name);														// Get step name
-				}
-			if (children.length) 																					// If any children
-				str+="<p>"+MakeSelect("stepSel",false,v,false)+"</p>";												// Add select
-			}
+class Tree {
 
-		$("#contentBodyDiv").html(str);																				// Set menu
-		if (topicName)		$("#topicSel").val(topicName);															// Highlight it
-		if (conceptName)	$("#conceptSel").val(conceptName);														// Highlight it
-		if (stepName)		$("#stepSel").val(stepName);															// Highlight it
-
-		$("#topicSel").on("change", function() {																	// CHANGE TOPIC
-			var id=$(this)[0].selectedIndex;																		// Index
-			id=app.doc.lobs[app.doc.curLesson].children[id];														// Get topic id
-			app.Draw(app.doc.FindLobIndexById(id));																	// Set new index and redraw
-			});	
-
-		$("#conceptSel").on("change", function() {																	// CHANGE CONCEPT
-			var id=$(this)[0].selectedIndex;																		// Index
-			id=app.doc.lobs[app.doc.curTopic].children[id];															// Get concept id
-			app.Draw(app.doc.FindLobIndexById(id));																	// Set new index and redraw
-			});	
-		
-		$("#stepSel").on("change", function() {																		// CHANGE STEP
-			var id=$(this)[0].selectedIndex;																		// Index
-			id=app.doc.lobs[app.doc.curConcept].children[id];														// Get step id
-			app.Draw(app.doc.FindLobIndexById(id));																	// Set new index and redraw
-			});	
+	constructor(id)  																							// CONSTRUCTOR
+	{
+		this.Init(id);																								// Init tree
 	}
 
+	Init(id) 																									// INIT TREE
+	{
+		var _this=this;																								// Save context		
+		var o=app.doc.lobs[0];																						// Point at root												
+		if (!o)	return;																								// If invalid, quit
+		var str="<ul><li class='parent active'><a id='tr-"+o.id+"'>"+o.name+"</a></li>"; 							// Add root tree node
+		$("#treeDiv").html(str+"</ul>");																			// Add to tree div
+		this.AddChildren($("#tr-"+o.id),0);																			// Add children to tree
+		$("#tr-"+o.id).parent().children('ul').slideToggle('fast');            										// Open course
+		if (id != undefined) this.Open(id);																			// Open pane
 
-}
+		$('.wm-tree li > a').on("click", function(e) {																// ON CLICK OF NODE TEXT
+			_this.handleTreeClick($(this),e);  																		// Handle
+			Sound("click"); 																						// Click
+			});      
+	}
+
+	Open(id)																									// OPEN TREE AT ID
+	{
+		var i;
+		var row=$("#tr-"+id);																						// Row
+		var par=row.parent();																						// Point at previous line
+		$('.wm-tree li a').each( function() {                          												// For each line
+			$(this).css({"color":"#000","font-weight":"normal"});      												// Normal
+			}); 
+		row.css({"color":"#009900","font-weight":"bold"});          												// Bold and green   
+		for (i=0;i<20;++i) {																						// Iterate upwards
+			if ($(par).attr("class") == "wm-tree")	break;															// Quit at top of tree
+			if ($(par).attr("class") == "parent") {																	// Has children
+				par.addClass('active');                         													// Active class on 
+				par.children('ul').slideToggle('fast');            													// Slide into place
+				}
+			par=par.parent();																						// Up a level
+			}
+		}
+
+	handleTreeClick(row, e)																						// HANDLE TREE CLICK
+	{
+		if (e.offsetX < 12) {                                         				  								// In icon
+			row.parent().toggleClass('active');                         											// Toggle active class on or off
+			row.parent().children('ul').slideToggle('fast');            											// Slide into place
+			}
+		else{																										// In text
+			var id=e.target.id.substr(3);																			// Get id
+			app.doc.curPos=app.doc.FindLobIndexById(id);															// Set pos
+			app.Draw();																								// Go to pane
+			}
+		}
+
+	AddChildren(row, id) 																						// ADD CHILDREN TO TREE RECURSIVELY
+	{
+		var i,o,oo;
+		if (id < 0)	return;																							// Invalid index
+		var o=app.doc.lobs[id];																						// Point at parent												
+		if (!o)	return;																								// If invalid, quit
+		if (!o.children)	return;																					// Quit if no children
+		var str="<ul style='display:none'>";																		// Wrapper
+		for (i=0;i<o.children.length;++i) {																			// For each child
+			str+="<li";																								// Start row
+			oo=app.doc.lobs[o.kids[i]];																				// Point at child lob via index
+			if (oo.children.length)	str+=" class='parent'"															// Add parent if it has children
+			str+="><a id='tr-"+oo.id+"'>"+oo.name;																	// Add index and name
+			str+"</a></li>";																						// Add label
+			}
+		row.after(str+"</ul>");																						// Add to tree
+		for (i=0;i<o.children.length;++i) {																			// For each child
+			row=$("#tr-"+o.children[i]);																			// Get row
+			this.AddChildren(row,o.kids[i]);																		// Recurse
+			}
+		}
+	
+	} // Tree class closure
