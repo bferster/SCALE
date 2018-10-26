@@ -13,6 +13,7 @@ class Doc {
 		this.map=[];																								// Map of mobs in order
 		this.asks=[];																								// Assessment
 		this.vars=[];																								// Associative array to hold
+		this.trans=[];																								// Transcripts
 		this.curPos=0;																								// Start at lesson
 		this.courseId=id;																							// Default course id
 		this.curLevel=this.curLesson=this.curTopic=this.curConcept=this.curStep=-1;									// Nowhere yet
@@ -102,7 +103,11 @@ class Doc {
 			var o=app.ams.skins[i];																					// Point at ams
 			str+=makeTSVLine("ams",o.id,o.name,"",o.body);															// Add ams
 			}
-	
+		for (i=0;i<app.doc.trans.length;++i) {																		// For each transcript	
+			var o=app.doc.trans[i];																					// Point at transcript
+			str+=makeTSVLine("tra",o.id,o.name,"",o.text);															// Add it
+			}
+		
 		var s="assessLevel="+app.assessLevel;																		// Add assessment level
 		if (!app.setDone) 		s+=" setDone";																		// Don't set done
 		if (app.skipDone) 		s+="skipDone";																		// Set skipping when done
@@ -363,6 +368,7 @@ class Doc {
 		var i,v;
 		this.lobs=[];																								// Init lobs
 		this.asks=[];																								// Init assessment
+		this.trans=[];																								// Init transcripts
 		app.rul.rules=[];																							// Init rules
 		app.ams.skins=[];																							// Init skins
 		tsv=tsv.replace(/\\r/,"");																					// Remove CRs
@@ -375,6 +381,8 @@ class Doc {
 				this.asks.push({ id:v[1], name:v[2], step:v[4]});													// Add ask
 			else if (v[0] == "ams")																					// An active media skin
 				app.ams.AddSkin(v[1],v[2],v[4]);																	// Add skin
+			else if (v[0] == "tra")																					// A transcript
+				this.trans.push({ id:v[1], name:v[2], text:v[4]});													// Add transcript
 			else if (v[0] == "rul")	{																				// A Rule
 				var o={id:v[1], name:v[2] };																		// Base
 				v[4]=v[4].replace(/ +/g," ");																		// Single space

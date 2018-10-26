@@ -11,8 +11,8 @@
 	<style>
 		body { 				font-family:Verdana,Geneva,sans-serif; font-size:13px;padding:0px;margin:0px }
 		.vp-notes {			cursor: pointer; color:#000; float: right;
-							text-align: center; border-radius: 16px; user-select: none; display:none;
-							font-size: 12px; background-color:#ccc; padding: 2px 8px 2px 8px; vertical-align:3px;
+							text-align: center; border-radius: 16px; user-select: none; display:none; margin-left:8px;margin-top:1px;
+							font-size: 10px; background-color:#999; padding: 0 8px 2px 8px; color: #fff;
 							}
 	</style>
 </head>
@@ -54,7 +54,8 @@
 	var slideSource="";															// Id of slide presentation
 	var playerSlideRatio=1;														// Player slider ratio
 	var paneAnimationTimer=null;												// Animating panes
-	var showNotes=false;														// Show note taker?
+	var showNotes=false;														// Show notes button?
+	var showTrans=false;														// Show transcript button?
 
 	var v=window.location.search.substring(1).split("|");						// Get query string
 	for (i=0;i<v.length;++i) {													// For each param
@@ -67,6 +68,7 @@
 		if (v[i].match(/slides=/i))		slideSource=v[i].substr(7);				// Set slides source
 		if (v[i].match(/split=/i))		playerSlideRatio=v[i].substr(6)/100;	// Set start
 		if (v[i].match(/notes=/i))		showNotes=true;							// Show notes button
+		if (v[i].match(/trans=/i))		showTrans=true;							// Show transcipts button
 		}
 	for (var i=0;i<triggers.length;++i) 										// For each trigger
 		triggers[i]=triggers[i].split("-");										// Split time-action
@@ -88,7 +90,8 @@
 			$("#playerSiz").remove();
 			}
 		Init();																	// Init player
-		$("body").append("<div id='notesBut' onclick='SendScaleMessage(\"notes\")' class='vp-notes'>Take notes</div>");	// Add notes button
+		$("body").append("<span id='notesBut' onclick='SendScaleMessage(\"notes\")' class='vp-notes'>Take notes</span>");	// Add notes button
+		$("body").append("<div id='transBut' onclick='SendScaleMessage(\"trans\")' class='vp-notes'>Transcript</div>");	// Add transcript button
 		});
 
 
@@ -370,8 +373,8 @@
 			else if (playerStart) 												// Normal pause start
 				RunPlayer("seek",playerStart);									// Seek
 			$("#playerDiv").css("display","block");								// Show	
-			if (showNotes)														// If showing notes
-				$("#notesBut").show();											// Show	notes but
+			if (showNotes)	$("#notesBut").show();								// If showing notes, show
+			if (showTrans)	$("#transBut").show();								// If showing transcipt, show
 			}
 		else if (what == "init") {												// Init player
 			if (playerType == "youtube") {										// If YouTube
