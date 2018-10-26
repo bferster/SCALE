@@ -544,7 +544,7 @@ class App  {
 				params=tag[1].split(",");													// Get frame items
 			params[0]+="|";																	// To help matching
 			t=params[0].match(/src=(.*?)\|+/i);												// Get src
-			str+="<table><tr><td>Video Id</td><td><input class='wm-is' style='width:300px;height:16px' type='text' id='param-0' value='"+(t ? t[1] :'')+"'></td></tr>";	
+			str+="<table><tr><td>Video Id</td><td><input class='wm-is' style='width:350px;height:16px' type='text' id='param-0' value='"+(t ? t[1] :'')+"'></td></tr>";	
 			str+="<tr><td>Width&nbsp;%&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'>";
 			str+="&nbsp;&nbsp;&nbsp;Height % <input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'>";
 			str+="&nbsp;&nbsp&nbsp;Border? <input type='checkbox' "+(params[3] ? "checked" : "")+" id='param-3'></td></tr>";
@@ -553,11 +553,13 @@ class App  {
 			t=params[0].match(/end=(.+?)\|/i);												// End
 			str+="&nbsp;&nbsp;&nbsp;End&nbsp;time&nbsp;&nbsp;<input class='wm-is' style='width:50px;height:16px' type='text' id='pEnd' value='"+(t ? SecondsToTimecode(t[1]) :'')+"'>";
 			t=params[0].match(/auto=(.+?)\|/i);												// Auto
-			str+="&nbsp;&nbsp;&nbsp;Autoplay?<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pAuto'></td></tr>";
+			str+="&nbsp;&nbsp;&nbsp;Autoplay? <input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pAuto'></td></tr>";
 			t=params[0].match(/slides=(.+?)\|/i);											// Slides
-			str+="<tr><td>Slides&nbsp;link</td><td><input class='wm-is' style='width:300px;height:16px' type='text' id='pSlides' value='"+(t ? t[1] :'')+"'></td></tr>";	
+			str+="<tr><td>Slides&nbsp;link</td><td><input class='wm-is' style='width:204px;height:16px' type='text' id='pSlides' value='"+(t ? t[1] :'')+"'>";	
 			t=params[0].match(/split=(.+?)\|/i);											// Split
-			str+="<tr><td>Slides&nbsp;split&nbsp;&nbsp;</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='pSplit' value='"+(t ? t[1] :'')+"'>";	
+			str+="&nbsp;&nbsp;&nbsp;Split %&nbsp;&nbsp;<input class='wm-is' style='width:30px;height:16px' type='text' id='pSplit' value='"+(t ? t[1] :'')+"'></td></tr>";	
+			t=params[0].match(/notes=(.+?)\|/i);											// Notes
+			str+="<tr><td>Allow notes?</td><td><input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNotes'>";
 			t=params[0].match(/next=(.+?)\|/i);												// Next
 			str+="&nbsp;&nbsp;&nbsp;Go to next pane after video ends?&nbsp;<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNext'></td></tr>";
 			str+="<tr><td colspan='2'><hr></td></tr>";										// Rule
@@ -647,6 +649,7 @@ class App  {
 					str+=$("#pSlides").val() ? ("|slides="+$("#pSlides").val()) : ""		// Add slides
 					str+=$("#pSplit").val() ? ("|split="+$("#pSplit").val()) : ""			// Add split
 					str+=$("#pNext").prop("checked") ? "|next=true" : "";					// Add next
+					str+=$("#pNotes").prop("checked") ? "|notes=true" : "";					// Add notes
 					if ($("#macroItemsList li").length) {
 						str+="|trigger=";													// Head
 						$("#macroItemsList li").each(function() {							// For each trigger

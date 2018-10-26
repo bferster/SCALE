@@ -9,7 +9,11 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<style>
-		body { 	font-family:Verdana,Geneva,sans-serif; font-size:13px;padding:0px;margin:0px }
+		body { 				font-family:Verdana,Geneva,sans-serif; font-size:13px;padding:0px;margin:0px }
+		.vp-notes {			cursor: pointer; color:#000; float: right;
+							text-align: center; border-radius: 16px; user-select: none; display:none;
+							font-size: 12px; background-color:#ccc; padding: 2px 8px 2px 8px; vertical-align:3px;
+							}
 	</style>
 </head>
 <body>
@@ -50,6 +54,7 @@
 	var slideSource="";															// Id of slide presentation
 	var playerSlideRatio=1;														// Player slider ratio
 	var paneAnimationTimer=null;												// Animating panes
+	var showNotes=false;														// Show note taker?
 
 	var v=window.location.search.substring(1).split("|");						// Get query string
 	for (i=0;i<v.length;++i) {													// For each param
@@ -61,6 +66,7 @@
 		if (v[i].match(/trigger=/i))	triggers=v[i].substr(8).split("+");		// Set triggers
 		if (v[i].match(/slides=/i))		slideSource=v[i].substr(7);				// Set slides source
 		if (v[i].match(/split=/i))		playerSlideRatio=v[i].substr(6)/100;	// Set start
+		if (v[i].match(/notes=/i))		showNotes=true;							// Show notes button
 		}
 	for (var i=0;i<triggers.length;++i) 										// For each trigger
 		triggers[i]=triggers[i].split("-");										// Split time-action
@@ -82,6 +88,7 @@
 			$("#playerSiz").remove();
 			}
 		Init();																	// Init player
+		$("body").append("<div id='notesBut' onclick='SendScaleMessage(\"notes\")' class='vp-notes'>Take notes</div>");	// Add notes button
 		});
 
 
@@ -166,7 +173,6 @@
 			}
 	}
 
-	
 	function GetPlayerTime()												// GET TIME FROM PLAYER
 	{
 		if (playerType == "youtube") 											// If YouTube
@@ -364,6 +370,8 @@
 			else if (playerStart) 												// Normal pause start
 				RunPlayer("seek",playerStart);									// Seek
 			$("#playerDiv").css("display","block");								// Show	
+			if (showNotes)														// If showing notes
+				$("#notesBut").show();											// Show	notes but
 			}
 		else if (what == "init") {												// Init player
 			if (playerType == "youtube") {										// If YouTube
@@ -555,8 +563,7 @@
 				}
 			}
 		}
- 
- 
+  
   	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{
 		if (p4 != undefined)
@@ -578,8 +585,6 @@
 		console.log(msg)
 	}
   
-  </script>
-  
-  
+</script>
 </body>
 </html>

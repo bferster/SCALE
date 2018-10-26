@@ -461,7 +461,32 @@ class App  {																								 // APP
 		$("#contentIF")[0].contentWindow.postMessage(msg,"*");	 				// Send message 
 	}
 
+	function TimecodeToSeconds(timecode) 									// CONVERT TIMECODE TO SECONDS
+	{
+		var h=0,m=0;
+		var v=(""+timecode).split(":");											// Split by colons
+		var s=v[0]																// Add them
+	 	if (v.length == 2)														// Just minutes, seconds
+			s=v[1],m=v[0];														// Add them
+		else if (v.length == 3)													// Hours, minutes, seconds
+			s=v[2],m=v[1],h=v[0];												// Add them
+		return(Number(h*3600)+Number(m*60)+Number(s));							// Convert
+	}
 
+   	function SecondsToTimecode(secs) 										// CONVERT SECONDS TO TIMECODE
+	{
+		var str="",n;
+		n=Math.floor(secs/3600);												// Get hours
+		if (n) str+=n+":";														// Add to tc
+		n=Math.floor(secs/60);													// Get mins
+		if (n < 10) str+="0";													// Add leading 0
+		str+=n+":";																// Add to tc
+		n=Math.floor(secs%60);													// Get secs
+		if (n < 10) str+="0";													// Add leading 0
+		str+=n;																	// Add to tc
+		str+="."+Math.round((secs-Math.floor(secs))*10);						// Add fractional
+		return str;																// Return timecode			
+}
 
 </script>
 
