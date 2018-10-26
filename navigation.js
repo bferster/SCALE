@@ -191,9 +191,9 @@ class Navigation {
 	MobileNavigator()																							// MOBILE NAVIGATION
 	{
 		var str="<p class='wm-pageTitle'>Choose pane</p>";															// Title
-		str+="<div id='treeDiv' class='wm-tree'></div>";															// Add tree
-		$("#contentBodyDiv").html(str);																				// Set tree menu
-		var tree=new Tree(app.doc.curLobId);																		// Populate tree
+		str+="<div id='treeDiv' class='wm-tree' style='margin-left:10%'></div>";									// Add tree
+		$("#contentDiv").html(str);																					// Set tree menu
+		new Tree(app.doc.curLobId);																					// Populate tree
 	}
 } // Nav class closure
 																													
