@@ -63,8 +63,10 @@ class Messaging {
 				app.Draw();																							// Draw																																		
 				return;
 				}
-			if (msg.toLowerCase() == "scalevideo=notes") 															// Toggle notes
-				app.con.VideoNotes();
+			if (v[0].toLowerCase() == "scalevideo=notes") 															// Toggle notes
+				app.con.VideoNotes();																				// Show notes dialog
+			if (v[0].toLowerCase() == "scalevideo=trans") 															// Toggle transcription
+				app.con.Transcript(v[1]);																			// Show transcription dialog
 			if (v[0].toLowerCase() == "scalevideo=time") 															// Incoming time
 				app.con.playerNow=v[1];
 			if (msg.match(/trigger/)) {																				// Hit a trigger point

@@ -158,6 +158,43 @@ class Content  {
 		}
 	}
 
+	Transcript(id) 																							//	SHOW TRANSCRIPT
+	{
+		var v,i,t;
+		var _this=this;
+		$("#transDiv").remove();																					// Clear it
+		RunPlayer("time");																							// Get player time
+		var ts="color:#009900;cursor:pointer";																		// Timecode style
+		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 				// Note style	
+		var str="<div id='transDiv' style='position:absolute;padding:16px;border-radius:8px;";						// Div
+		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
+		str+="top:33%;left:33%;width:500px;height:300px'>";															// Set size/position
+		str+="<div style='text-align:center;font-size:16px;'>Clickable transcript";									// Title
+		str+="<img src='img/closedot.gif' id='nCloser' title='Close transcript' style='float:right;'></div><hr>";	// Closer
+		str+="<div style='width:100%;height:270px;overflow-y:auto;overflow-x:hidden' id='transTxt'></div>";			// Holds transcript
+		$('body').append(str+"</div>");																				// Add to body								
+		v=app.doc.FindLobById(id,app.doc.trans).text.split("|");													// Get body
+		str="";
+		for (i=0;i<v.length;++i) {																					// For each line
+			var t=v[i].substring(0,5);																				// Get timecode
+			var s=TimecodeToSeconds(t);																				// Get time in seconds
+			str+="<span id='ttm-"+s+"' style='color:#006600;cursor:pointer'>"+t+"&nbsp;</span>";					// Timecode
+			str+="<span id='ttt-"+s+"'>"+v[i].substr(5)+"&nbsp;</span><br>";										// Text
+			}
+		$("#transTxt").html(str);																					// Add to div
+		$("#transDiv").draggable();																					// Make draggable
+		$("#nCloser").on("click", ()=> { $("#transDiv").remove(); });												// Handle close
+
+		$("[id^=ttm-]").click(function(e){																			// Add click handler
+			var time=e.currentTarget.id.substr(4);																	// Get time from id
+			RunPlayer("play",time);																					// Cue player
+			});
+
+		function RunPlayer(op, param) {																				// VIDEO PLAYER ACTION
+			SendToIframe("ScaleAct="+op+(param ? "|"+param: ""));													// Send to iFrame
+			}
+	}
+
 	VideoNotes() 																								//	ADD NOTES TO VIDEO
 	{
 		var i,str,v;

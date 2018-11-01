@@ -223,6 +223,7 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 			window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 			}
 		else if ((e.which == 84) && e.altKey && e.ctrlKey) {					// Test key (Ctrl+Alt+T)
+			app.Draw(app.doc.FindLobIndexById(6012));
 		}
 	});
  
