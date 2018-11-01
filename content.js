@@ -11,6 +11,7 @@ class Content  {
 		this.resumeTime=0;																							// Time of trigger
 		this.actionQueue=[];																						// Delayed actions on next button
 		this.playerNow=0;																							// Current player time
+		this.playerTimer=null;																						// Transcript timer
 	}
 
 	Draw(id) 																									// REDRAW
@@ -161,11 +162,12 @@ class Content  {
 	Transcript(id) 																							//	SHOW TRANSCRIPT
 	{
 		var v,i,t;
+		var times=[],last=0;
 		var _this=this;
 		$("#transDiv").remove();																					// Clear it
-		RunPlayer("time");																							// Get player time
+		clearInterval(this.playerTimer);																			// Clear timer
 		var ts="color:#009900;cursor:pointer";																		// Timecode style
-		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 				// Note style	
+		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 
 		var str="<div id='transDiv' style='position:absolute;padding:16px;border-radius:8px;";						// Div
 		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
 		str+="top:33%;left:33%;width:500px;height:300px'>";															// Set size/position
@@ -178,12 +180,28 @@ class Content  {
 		for (i=0;i<v.length;++i) {																					// For each line
 			var t=v[i].substring(0,5);																				// Get timecode
 			var s=TimecodeToSeconds(t);																				// Get time in seconds
+			times.push(s);																							// Add to times array
 			str+="<span id='ttm-"+s+"' style='color:#006600;cursor:pointer'>"+t+"&nbsp;</span>";					// Timecode
 			str+="<span id='ttt-"+s+"'>"+v[i].substr(5)+"&nbsp;</span><br>";										// Text
 			}
 		$("#transTxt").html(str);																					// Add to div
 		$("#transDiv").draggable();																					// Make draggable
-		$("#nCloser").on("click", ()=> { $("#transDiv").remove(); });												// Handle close
+		$("#nCloser").on("click", ()=> {																			// Handle close
+			clearInterval(this.playerTimer);																		// Clear timer
+			$("#transDiv").remove(); 																				// Remove dialog
+			});												
+
+		this.playerTimer=setInterval( ()=> {																		// Set timer 2fps
+			RunPlayer("time");																						// Get player time
+			for (i=0;i<times.length-1;++i) 																			// For each time slice
+				if ((this.playerNow >= times[i]) && (this.playerNow < times[i+1])) {								// In this one
+					$("#ttt-"+times[last]).css("background-color","#fff");											// Clear last
+					$("#ttt-"+times[i]).css("background-color","#ddeeff");											// Highlight
+					$("#transTxt").scrollTop((i-7)*16)
+					last=i;																							// Then is now
+					break;																							// Quit looking
+					}
+			},500);															
 
 		$("[id^=ttm-]").click(function(e){																			// Add click handler
 			var time=e.currentTarget.id.substr(4);																	// Get time from id
