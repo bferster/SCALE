@@ -56,6 +56,7 @@
 	var paneAnimationTimer=null;												// Animating panes
 	var showNotes=false;														// Show notes button?
 	var showTrans=0;															// Show transcript button?
+	var showTOC=0;																// Show TOC button?
 
 	var v=window.location.search.substring(1).split("|");						// Get query string
 	for (i=0;i<v.length;++i) {													// For each param
@@ -68,7 +69,8 @@
 		if (v[i].match(/slides=/i))		slideSource=v[i].substr(7);				// Set slides source
 		if (v[i].match(/split=/i))		playerSlideRatio=v[i].substr(6)/100;	// Set start
 		if (v[i].match(/notes=/i))		showNotes=true;							// Show notes button
-		if (v[i].match(/trans=/i))		showTrans=v[i].substr(6);				// Show transcipts button
+		if (v[i].match(/trans=/i))		showTrans=v[i].substr(6);				// Show transcripts button
+		if (v[i].match(/toc=/i))		showTOC=v[i].substr(4);					// Show TOC button
 		}
 	for (var i=0;i<triggers.length;++i) 										// For each trigger
 		triggers[i]=triggers[i].split("-");										// Split time-action
@@ -92,6 +94,7 @@
 		Init();																	// Init player
 		$("body").append("<span id='notesBut' onclick='SendScaleMessage(\"notes\")' class='vp-notes'>Take notes</span>");					// Add notes button
 		$("body").append("<div id='transBut' onclick='SendScaleMessage(\"trans\",\""+showTrans+"\")' class='vp-notes'>Transcript</div>");	// Add transcript button
+		$("body").append("<div id='tocBut' onclick='SendScaleMessage(\"toc\",\""+showTOC+"\")' class='vp-notes'>Contents</div>");			// Add contents button
 		});
 
 
@@ -375,6 +378,7 @@
 			$("#playerDiv").css("display","block");								// Show	
 			if (showNotes)	$("#notesBut").show();								// If showing notes, show
 			if (showTrans)	$("#transBut").show();								// If showing transcipt, show
+			if (showTOC)	$("#tocBut").show();								// If showing TOC, show
 			}
 		else if (what == "init") {												// Init player
 			if (playerType == "youtube") {										// If YouTube

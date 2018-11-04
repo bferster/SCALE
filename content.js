@@ -159,6 +159,48 @@ class Content  {
 		}
 	}
 
+	TableOfContents(id) 																						//	SHOW TOC
+	{
+		var v,i,s,h;
+		$("#tocDiv").remove();																					// Clear it
+		var ts="color:#009900;cursor:pointer";																		// Timecode style
+		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 
+		var str="<div id='tocDiv' style='position:absolute;padding:16px;border-radius:8px;";						// Div
+		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
+		str+="top:33%;left:33%;width:250px;height:300px'>";															// Set size/position
+		str+="<div style='text-align:center;font-size:18px;'><b>Contents</b>";										// Title
+		str+="<img src='img/closedot.gif' style='float:right' id='tocCloser' title='Close contents'></div><br>";	// Closer				
+		str+="<div style='width:100%;height:270px;overflow-y:auto;overflow-x:hidden' id='tocTxt'></div>";			// Holds toc
+		$('body').append(str+"</div>");																				// Add to body								
+		v=app.doc.FindLobById(id,app.doc.trans).text.split("|");													// Get body
+		str="";
+		for (i=0;i<v.length;++i) {																					// For each line
+			s=TimecodeToSeconds(v[i].substring(0,5));																// Get time in seconds
+			h=v[i].charAt(6);																						// Level
+			str+="<div id='tttc-"+s+"'>";																			// Start div
+			if (h == "1")		str+="<b><span style='color:#aaa'>&bull; </span>";									// Level 1
+			else if (h == "2")	str+="&nbsp;&nbsp;&nbsp;<span style='color:#aaa'><b>- </b></span>";					// Level 2
+			else if (h == "3")	str+="<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#aaa'><b>- </b></span>";	// Level 3
+			else if (h == "4")	str+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#aaa'><b>- </b></span>";		// Level 4
+			str+=v[i].substr(8)+"</i></b></div>";																	// Text
+			}
+		$("#tocTxt").html(str);																						// Add to div
+		$("#tocDiv").draggable();																					// Make draggable
+		$("#tocCloser").on("click", ()=> {																			// Handle close
+			$("#tocDiv").remove(); 																					// Remove dialog
+			});												
+
+		$("[id^=tttc-]").click(function(e){																			// Add click handler
+			var time=e.currentTarget.id.substr(5);																	// Get time from id
+			RunPlayer("play",time);																					// Cue player
+			});
+	
+		function RunPlayer(op, param) {																				// VIDEO PLAYER ACTION
+			SendToIframe("ScaleAct="+op+(param ? "|"+param: ""));													// Send to iFrame
+			}
+	
+	}
+
 	Transcript(id) 																							//	SHOW TRANSCRIPT
 	{
 		var v,i,t;
