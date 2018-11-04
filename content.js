@@ -197,7 +197,7 @@ class Content  {
 				if ((this.playerNow >= times[i]) && (this.playerNow < times[i+1])) {								// In this one
 					$("#ttt-"+times[last]).css("background-color","#fff");											// Clear last
 					$("#ttt-"+times[i]).css("background-color","#ddeeff");											// Highlight
-					$("#transTxt").scrollTop((i-7)*16)
+					if (last != i)	$("#transTxt").scrollTop((i-7)*16);												// If different place, scroll there
 					last=i;																							// Then is now
 					break;																							// Quit looking
 					}

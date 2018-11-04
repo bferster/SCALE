@@ -158,7 +158,7 @@ $(window).resize(function() {                                         	// ON WIN
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
 	var url=window.location.search.substring(1);						   	// Get query string
-	if (!url)																// No lobs id set
+	if (!url || url.match(/elearningindustry.com/i))						// No id set
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
 	app=new App(url);                                                      	// Alloc app
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag

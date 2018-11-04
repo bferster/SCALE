@@ -560,8 +560,10 @@ class App  {
 			str+="&nbsp;&nbsp;&nbsp;Split %&nbsp;&nbsp;<input class='wm-is' style='width:30px;height:16px' type='text' id='pSplit' value='"+(t ? t[1] :'')+"'></td></tr>";	
 			t=params[0].match(/notes=(.+?)\|/i);											// Notes
 			str+="<tr><td>Allow notes?</td><td><input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNotes'>";
+			t=params[0].match(/trans=(.+?)\|/i);											// Split
+			str+="&nbsp;&nbsp;&nbsp;Transcript Id&nbsp;&nbsp;<input class='wm-is' style='width:30px;height:16px' type='text' id='pTrans' value='"+(t ? t[1] :'')+"'>";	
 			t=params[0].match(/next=(.+?)\|/i);												// Next
-			str+="&nbsp;&nbsp;&nbsp;Go to next pane after video ends?&nbsp;<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNext'></td></tr>";
+			str+="&nbsp;&nbsp;&nbsp;Next pane when done?&nbsp;<input type='checkbox' "+(t && (t[1] == "true") ? "checked" : "")+" id='pNext'></td></tr>";
 			str+="<tr><td colspan='2'><hr></td></tr>";										// Rule
 			str+="<tr><td>Triggers:</td><td><span style='float:right'><div id='addTriggerBut' class='wm-bs'>Add trigger</div>";	// Add but
 			str+="&nbsp;&nbsp;<img id='deleteTrigger' title='Delete trigger' style='vertical-align:-5px;cursor:pointer' src='img/trashbut.gif'>";
@@ -650,6 +652,7 @@ class App  {
 					str+=$("#pSplit").val() ? ("|split="+$("#pSplit").val()) : ""			// Add split
 					str+=$("#pNext").prop("checked") ? "|next=true" : "";					// Add next
 					str+=$("#pNotes").prop("checked") ? "|notes=true" : "";					// Add notes
+					str+=$("#pTrans").val() ? ("|trans="+$("#pTrans").val()) : ""			// Add trans
 					if ($("#macroItemsList li").length) {
 						str+="|trigger=";													// Head
 						$("#macroItemsList li").each(function() {							// For each trigger
