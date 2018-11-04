@@ -162,7 +162,7 @@ class Content  {
 	Transcript(id) 																							//	SHOW TRANSCRIPT
 	{
 		var v,i,t;
-		var times=[],last=0;
+		var times=[],words=[],last=0;
 		var _this=this;
 		$("#transDiv").remove();																					// Clear it
 		clearInterval(this.playerTimer);																			// Clear timer
@@ -172,7 +172,9 @@ class Content  {
 		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
 		str+="top:33%;left:33%;width:500px;height:300px'>";															// Set size/position
 		str+="<div style='text-align:center;font-size:16px;'>Clickable transcript";									// Title
-		str+="<img src='img/closedot.gif' id='nCloser' title='Close transcript' style='float:right;'></div><hr>";	// Closer
+		str+="<div style='float:right'>";									
+		str+="<input style='width:100px;border-radius:16px;text-align:center;height:14px' id='transSearch' placeholder='Search'>";
+		str+="&nbsp;<img src='img/closedot.gif' id='nCloser' title='Close transcript'></div></div><hr>";					
 		str+="<div style='width:100%;height:270px;overflow-y:auto;overflow-x:hidden' id='transTxt'></div>";			// Holds transcript
 		$('body').append(str+"</div>");																				// Add to body								
 		v=app.doc.FindLobById(id,app.doc.trans).text.split("|");													// Get body
@@ -181,6 +183,7 @@ class Content  {
 			var t=v[i].substring(0,5);																				// Get timecode
 			var s=TimecodeToSeconds(t);																				// Get time in seconds
 			times.push(s);																							// Add to times array
+			words.push( { label:v[i], t:s } );																		// Add to words array
 			str+="<span id='ttm-"+s+"' style='color:#006600;cursor:pointer'>"+t+"&nbsp;</span>";					// Timecode
 			str+="<span id='ttt-"+s+"'>"+v[i].substr(5)+"&nbsp;</span><br>";										// Text
 			}
@@ -207,11 +210,17 @@ class Content  {
 			var time=e.currentTarget.id.substr(4);																	// Get time from id
 			RunPlayer("play",time);																					// Cue player
 			});
-
+	
 		function RunPlayer(op, param) {																				// VIDEO PLAYER ACTION
 			SendToIframe("ScaleAct="+op+(param ? "|"+param: ""));													// Send to iFrame
 			}
-	}
+	
+		$("#transSearch").autocomplete({ source: words, 															// SEARCH AUTOCOMPLETE HANDLER
+			select: function(event, ui)  { RunPlayer("seek",ui.item.t); },											// On select cue player
+			close: function()			 { $("#transSearch").val("");	}											// Clear text	
+			});
+
+		}
 
 	VideoNotes() 																								//	ADD NOTES TO VIDEO
 	{
