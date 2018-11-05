@@ -162,42 +162,34 @@ class Content  {
 	TableOfContents(id) 																						//	SHOW TOC
 	{
 		var v,i,s,h;
-		$("#tocDiv").remove();																					// Clear it
+		$("#tocDiv").remove();																						// Clear it
 		var ts="color:#009900;cursor:pointer";																		// Timecode style
 		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 
 		var str="<div id='tocDiv' style='position:absolute;padding:16px;border-radius:8px;";						// Div
-		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
-		str+="top:33%;left:33%;width:250px;height:300px'>";															// Set size/position
-		str+="<div style='text-align:center;font-size:18px;'><b>Contents</b>";										// Title
-		str+="<img src='img/closedot.gif' style='float:right' id='tocCloser' title='Close contents'></div><br>";	// Closer				
-		str+="<div style='width:100%;height:270px;overflow-y:auto;overflow-x:hidden' id='tocTxt'></div>";			// Holds toc
+		str+="background-color:#f8f8f8;border:1px solid #ccc;";														// Set coloring
+		str+="top:33%;left:50%;min-width:200px;max-width:400px;height:300px'>";										// Set size/position
+		str+="<img src='img/closedot.gif' style='float:right;margin:-12px' id='tocCloser' title='Close contents'>";	// Closer				
+		str+="<div style='text-align:center;font-size:18px;color:#009900;'><b>Contents</b></div><hr>"; // Title
+		str+="<div style='width:100%;height:270px;margin-top:12px;overflow-y:auto;overflow-x:hidden' id='tocTxt'></div>"; // Holds toc
 		$('body').append(str+"</div>");																				// Add to body								
 		v=app.doc.FindLobById(id,app.doc.trans).text.split("|");													// Get body
-		str="";
+		str="";																										// Start fresh
 		for (i=0;i<v.length;++i) {																					// For each line
 			s=TimecodeToSeconds(v[i].substring(0,5));																// Get time in seconds
 			h=v[i].charAt(6);																						// Level
-			str+="<div id='tttc-"+s+"'>";																			// Start div
-			if (h == "1")		str+="<b><span style='color:#aaa'>&bull; </span>";									// Level 1
-			else if (h == "2")	str+="&nbsp;&nbsp;&nbsp;<span style='color:#aaa'><b>- </b></span>";					// Level 2
-			else if (h == "3")	str+="<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#aaa'><b>- </b></span>";	// Level 3
-			else if (h == "4")	str+="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style='color:#aaa'><b>- </b></span>";		// Level 4
+			str+="<div id='tttc-"+s+"'";																			// Start div
+			str+="style='cursor:pointer;line-height:1.3;margin-left:"+h*16+"px'>";									// Add style
+			if (h == "1")		str+="<b><span style='color:#27ae60'>&bull; </span>";								// Level 1
+			else 				str+="<span style='color:#27ae60'>&bull; </span>";									// Level 2+
 			str+=v[i].substr(8)+"</i></b></div>";																	// Text
 			}
 		$("#tocTxt").html(str);																						// Add to div
 		$("#tocDiv").draggable();																					// Make draggable
-		$("#tocCloser").on("click", ()=> {																			// Handle close
-			$("#tocDiv").remove(); 																					// Remove dialog
-			});												
-
+		$("#tocCloser").on("click", ()=> {	$("#tocDiv").remove(); 	});												// Handle close
 		$("[id^=tttc-]").click(function(e){																			// Add click handler
 			var time=e.currentTarget.id.substr(5);																	// Get time from id
-			RunPlayer("play",time);																					// Cue player
+			SendToIframe("ScaleAct=play|"+time);																	// Send to iFrame
 			});
-	
-		function RunPlayer(op, param) {																				// VIDEO PLAYER ACTION
-			SendToIframe("ScaleAct="+op+(param ? "|"+param: ""));													// Send to iFrame
-			}
 	
 	}
 
@@ -205,18 +197,17 @@ class Content  {
 	{
 		var v,i,t;
 		var times=[],words=[],last=0;
-		var _this=this;
 		$("#transDiv").remove();																					// Clear it
 		clearInterval(this.playerTimer);																			// Clear timer
 		var ts="color:#009900;cursor:pointer";																		// Timecode style
 		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 
 		var str="<div id='transDiv' style='position:absolute;padding:16px;border-radius:8px;";						// Div
-		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
+		str+="background-color:#f8f8f8;border:1px solid #ccc;";														// Set coloring
 		str+="top:33%;left:33%;width:500px;height:300px'>";															// Set size/position
-		str+="<div style='text-align:center;font-size:16px;'>Clickable transcript";									// Title
+		str+="<div style='text-align:center;;color:#009900;font-size:16px;'><b>Clickable transcript</b>";				// Title
 		str+="<div style='float:right'>";									
 		str+="<input style='width:100px;border-radius:16px;text-align:center;height:14px' id='transSearch' placeholder='Search'>";
-		str+="&nbsp;<img src='img/closedot.gif' id='nCloser' title='Close transcript'></div></div><hr>";					
+		str+="&nbsp;<img src='img/closedot.gif' id='trCloser' title='Close transcript'></div></div><hr>";					
 		str+="<div style='width:100%;height:270px;overflow-y:auto;overflow-x:hidden' id='transTxt'></div>";			// Holds transcript
 		$('body').append(str+"</div>");																				// Add to body								
 		v=app.doc.FindLobById(id,app.doc.trans).text.split("|");													// Get body
@@ -231,7 +222,7 @@ class Content  {
 			}
 		$("#transTxt").html(str);																					// Add to div
 		$("#transDiv").draggable();																					// Make draggable
-		$("#nCloser").on("click", ()=> {																			// Handle close
+		$("#trCloser").on("click", ()=> {																			// Handle close
 			clearInterval(this.playerTimer);																		// Clear timer
 			$("#transDiv").remove(); 																				// Remove dialog
 			});												
@@ -273,10 +264,10 @@ class Content  {
 		var ts="color:#009900;cursor:pointer";																		// Timecode style
 		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 		// Note style	
 		str="<div id='notesDiv' style='position:absolute;padding:16px;overflow-y:auto;overflow-x:hidden;border-radius:8px;";	// Div
-		str+="background-color:#f8f8f8;border:1px solid #ccc;box-shadow:4px 4px 8px #ccc;";							// Set coloring
-		str+="top:33%;left:33%;width:500px;height:300px'>";															// Set size/position
+		str+="background-color:#f8f8f8;border:1px solid #ccc;";														// Set coloring
+		str+="top:33%;left:20%;width:500px;height:300px'>";															// Set size/position
 		str+="<table id='notesTbl' width='100%'>";																	// Table
-		str+="<div style='text-align:center;font-size:16px;'>Personal notes";
+		str+="<div style='text-align:center;color:#009900;font-size:16px;'><b>Personal notes</b>";							// Title
 		str+="<img src='img/closedot.gif' id='nCloser' title='Close notes' style='float:right;'></div><hr></div>";
 		str+="<tr><td width='38' id='ntc-0' style='"+ts+"'>Type:</td><td><input id='ntx-0' type='input' style='"+ns+"'/></td></tr>";
 		str+="</table>";																							// End table
@@ -308,7 +299,7 @@ class Content  {
 			_this.notesText="";
 			for (var i=0;i<$("#notesTbl tr").length;++i) 															// For each row
 				if ($("#ntx-"+i).val())																				// If something there
-					_this.notesText+=$("#ntc-"+i).text()+$("#ntx-"+i).val()+"|"; 									// Add row
+					_this.notesText+=$("#ntc-"+i).text()+"-1 "+$("#ntx-"+i).val()+"|"; 								// Add row
 			app.msg.SaveToForm("Notes"+app.doc.curLobId+"="+_this.notesText.substring(0,_this.notesText.length-1));	// Save to student data
 			});			
 
@@ -323,7 +314,7 @@ class Content  {
 		$("#notesTbl").on("keydown", function(e) {																	// Handle key down
 			var cap=false;																							// Don't cap
 			var rowNum=e.target.id.split("-")[1];																	// Get rownum
-			if ($("#"+e.target.id).val().length > 80)																// If past limit
+			if ($("#"+e.target.id).val().length > 70)																// If past limit
 				cap=true;																							// Let's cap line
 			if ((e.keyCode == 13) || (cap)) {																		// Enter on capping a line
 				var id=$("#notesTbl tr").length;																	// If on next row
