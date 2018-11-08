@@ -1,82 +1,65 @@
 <?php
 
-	function hmacsha1($key, $data) //snippet written by Kellan Elliott-McCrea; http://laughingmeme.org/
-	{
-		$blocksize = 64;
-		$hashfunc = 'sha1';
-		if (strlen($key) > $blocksize)
-			$key = pack('H*', $hashfunc($key));
-		$key = str_pad($key, $blocksize, chr(0x00));
-		$ipad = str_repeat(chr(0x36), $blocksize);
-		$opad = str_repeat(chr(0x5c), $blocksize);
-		$hmac = pack('H*', $hashfunc(($key ^ $opad) . pack('H*', $hashfunc(($key ^ $ipad) . $data))));
-		return $hmac;
-	}
+// TOOD: Are we using http or https here?
+define('REDIRECT_URI', 'http://'.$_SERVER['HTTP_HOST'].'/index.html');
+define('OAUTH_KEY', '34dcJfG2DZRwFj9');
+define('OAUTH_SECRET', 'rvk7M5vAyACw3Dz');
 
-	class User {
-		public $attrs = array('firstName'=>'lis_person_name_given','lastName'=>'lis_person_name_family','username'=>'lis_person_contact_email_primary', 'role'=>'roles', 'uID'=>NULL);
-		}
+function array_to_querystring($data) {
+  $query = array();
+  foreach($data as $key => $value) {
+    array_push($query, "$key=".rawurlencode($value));
+  }
+  return rawurlencode(implode("&", $query));
+}
 
-	class LTILaunch {
-		public $params = array('discID'=>'resource_link_id','courseName'=>'context_title','courseHash'=>'context_id');	
-		public $user;
-		}
+//snippet written by Kellan Elliott-McCrea; http://laughingmeme.org/
+function hmacsha1($key, $data) {
+  $blocksize = 64;
+  $hashfunc = 'sha1';
+  if (strlen($key) > $blocksize)
+    $key = pack('H*', $hashfunc($key));
+  $key = str_pad($key, $blocksize, chr(0x00));
+  $ipad = str_repeat(chr(0x36), $blocksize);
+  $opad = str_repeat(chr(0x5c), $blocksize);
+  $hmac = pack('H*', $hashfunc(($key ^ $opad) . pack('H*', $hashfunc(($key ^ $ipad) . $data))));
+  return $hmac;
+}
 
-	function parseLTIrequest($postData)
-	{
-		$logfile = "LTIlog.txt";
-		$fh = fopen($logfile, 'a') or die("can't open file");
-		fwrite($fh, "\n\n---------------------------------------------------------------\n");
-		foreach ($_SERVER as $h => $v)
-			if (preg_match('/HTTP_(.+)/', $h, $hp))
-				fwrite($fh, "$h = $v\n");
-		fwrite($fh, "\r\n");
-		fwrite($fh, file_get_contents('php://input'));
-
-		$secret = "secret&";
-		$sentSig = "";
-		//BUILDING THE OAUTH BASE STRING -assume POST, get base URL
-		$baseString = "POST&" . rawurlencode("http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']) . "&";
-		//grab POST args
-		$postArgs = explode("&", preg_replace("/[+]/m", "%20", $postData));
-		
-		sort($postArgs);	//sort and normalize
-		//remove signature
-		for ($i = 0; $i < count($postArgs); $i++) {
-			$arg = explode("=", $postArgs[$i]);
-			if ($arg[0] == "oauth_signature") {
-				$sentSig = urldecode($arg[1]);
-				unset($postArgs[$i]);
-				}
-			}
-		$baseString = $baseString . rawurlencode(join("&", $postArgs));
-		$sig = base64_encode(hmacsha1($secret, $baseString));
-		$msg = "";
-		if (strcmp($sentSig, $sig) == 0) {
-			$msg .= "Validation success";
-			$launch = new LTILaunch();
-			$opts = array_keys($launch->params);
-			for($i=0;$i<count($opts);$i++){
-				$arg = $launch->params[$opts[$i]]; 
-				$launch->params[$opts[$i]] = $_POST[$arg];
-			}
-			$user = new User();
-			$opts = array_keys($user->attrs);
-			for($i=0;$i<count($opts);$i++){
-				if($user->attrs[$opts[$i]] == NULL){
-					break;
-				}
-				$arg = $user->attrs[$opts[$i]]; 
-				$user->attrs[$opts[$i]] = $_POST[$arg];
-			}
-			$launch->user=$user;
-			return $launch;
-			} 
-		else{
-			$msg .= "Validation fail <br /> Expected signature base string: ".$baseString . "<br /> Sent signature: $sentSig<br />Computed sig: $sig";
-			exit($msg);
-			return FALSE;
-			}
-		fclose($fh);
-		}
+$oauth = array_intersect_key($_POST, array(
+  'oauth_consumer_key' => 0,
+  'oauth_signature_method'=> 0,
+  'oauth_timestamp' => 0,
+  'oauth_nonce' => 0,
+  'oauth_version' => 0,
+  'oauth_signature' => 0,
+  'oauth_callback' => 0,
+));
+ksort($_POST);
+unset($_POST['oauth_signature']);
+$post_data = array_to_querystring($_POST);
+$base_string = "POST&".
+             rawurlencode("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']).
+             "&".$post_data;
+$sig = base64_encode(hmacsha1(urlencode(OAUTH_SECRET) . '&', $base_string));
+$querystring = '';
+if (strcmp($oauth['oauth_signature'], $sig) == 0) {
+  $querystring = array_to_querystring(array(
+    'userID' => $_POST['user_id'],
+    'roles' => $_POST['roles'],
+    'fullName' => $_POST['lis_person_name_full'],
+    'familyName' => $_POST['lis_person_name_family'],
+    'givenName' => $_POST['lis_person_name_given'],
+    'email' => $_POST['lis_person_contact_email_primary'],
+    'userImage' => $_POST['user_image'],
+    'contextID' => $_POST['context_id'],
+    'contextType' => $_POST['context_type'],
+    'contextTitle' => $_POST['context_title'],
+    'contextLabel' => $_POST['context_label']
+  ));
+}
+header('Location: '.REDIRECT_URI."?".$querystring);
+exit();
 ?>
+
+

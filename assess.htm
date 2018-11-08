@@ -2,13 +2,12 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
-	<link REL="SHORTCUT ICON" HREF="qlogo.ico">
 	<title>Scale assessment</title>
  	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>	
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
-	<script type="text/javascript" src="http://latex.codecogs.com/js/eq_editor-lite-15.js" ></script>
+	<script type="text/javascript" src="//latex.codecogs.com/js/eq_editor-lite-15.js" ></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif; font-size:xx-small}
@@ -396,9 +395,9 @@
 			EDIT_ENGINE     = http+'www.codecogs.com/eqnedit.php';
 			EDITOR_SW_FLASH = http+'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0';
 			EDITOR_SW_PLAYER= http+'www.macromedia.com/go/getflashplayer';
-		    var css=$("<link rel='stylesheet' type='text/css' href='http://latex.codecogs.com/css/equation-embed.css'>");
+		    var css=$("<link rel='stylesheet' type='text/css' href='//latex.codecogs.com/css/equation-embed.css'>");
      		$("head").append(css); 												// Add css
-			$.ajax({ url: "http://latex.codecogs.com/js/eq_editor-lite-15.js",	// Load js
+			$.ajax({ url: "//latex.codecogs.com/js/eq_editor-lite-15.js",	// Load js
      				 dataType: "script", cache: true							// Cached JS 
 					}).done(function() {										// When loaded	
 			 			EqEditor.embed('qneditor','things','mini','en-us');		// Embed editor
