@@ -1,7 +1,7 @@
 <?php
 
 // TOOD: Are we using http or https here?
-define('REDIRECT_URI', 'http://'.$_SERVER['HTTP_HOST'].'/index.html');
+define('REDIRECT_URI', 'https://'.$_SERVER['HTTP_HOST'].'/scale/index.html');
 define('OAUTH_KEY', '34dcJfG2DZRwFj9');
 define('OAUTH_SECRET', 'rvk7M5vAyACw3Dz');
 
@@ -39,7 +39,7 @@ ksort($_POST);
 unset($_POST['oauth_signature']);
 $post_data = array_to_querystring($_POST);
 $base_string = "POST&".
-             rawurlencode("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']).
+             rawurlencode("https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']).
              "&".$post_data;
 $sig = base64_encode(hmacsha1(urlencode(OAUTH_SECRET) . '&', $base_string));
 $querystring = '';
@@ -60,6 +60,10 @@ if (strcmp($oauth['oauth_signature'], $sig) == 0) {
 }
 header('Location: '.REDIRECT_URI."?".$querystring);
 exit();
+/*
+https://viseyes.org/scale/lti.php
+34dcJfG2DZRwFj9
+rvk7M5vAyACw3Dz
+https://viseyes.org/scale?1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M
+*/
 ?>
-
-

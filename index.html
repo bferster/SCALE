@@ -160,6 +160,10 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	var url=window.location.search.substring(1);						   	// Get query string
 	if (!url || url.match(/elearningindustry.com/i))						// No id set
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
+	if (url.match(/\&/)) {													// If params
+		trace(url)
+		url=url.split("&")[0];												// First is id
+		}
 	app=new App(url);                                                      	// Alloc app
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
 	if ((window.location.host != "localhost") && (url != "preview")) {		// Not in debug or preview
