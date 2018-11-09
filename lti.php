@@ -45,6 +45,7 @@ $sig = base64_encode(hmacsha1(urlencode(OAUTH_SECRET) . '&', $base_string));
 $querystring = '';
 if (strcmp($oauth['oauth_signature'], $sig) == 0) {
   $querystring = array_to_querystring(array(
+	'gid' => $_POST['custom_gid'],
     'userID' => $_POST['user_id'],
     'roles' => $_POST['roles'],
     'fullName' => $_POST['lis_person_name_full'],
@@ -55,7 +56,7 @@ if (strcmp($oauth['oauth_signature'], $sig) == 0) {
     'contextID' => $_POST['context_id'],
     'contextType' => $_POST['context_type'],
     'contextTitle' => $_POST['context_title'],
-    'contextLabel' => $_POST['context_label']
+	'contextLabel' => $_POST['context_label']
   ));
 }
 header('Location: '.REDIRECT_URI."?".$querystring);
