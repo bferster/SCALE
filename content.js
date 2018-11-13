@@ -17,6 +17,7 @@ class Content  {
 	Draw(id) 																									// REDRAW
 	{	
 		app.ams.Clear();																							// Clear any overlay skins
+		$("#transDiv").remove();																					// Clear transcript
 		var h=$("#mainDiv").height()-24;																			// Get height
 		if (!app.hideHeader && !app.fullScreen)																		// If not hiding header and not full
 			h-=Math.max($("#headerDiv").height(),32)+10;															// Accommodate for it
@@ -149,7 +150,7 @@ class Content  {
 				}
 
 			$("#contentDiv").append(str+"</div>");																	// Set content
-			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "1000px" )						// Reset width
+			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "900px" )						// Reset width
 	
 			if (margin && (margin != "0"))	{																		// If a margin set
 				var pct=100-margin-margin;																			// Width
@@ -167,11 +168,14 @@ class Content  {
 		var ns="font-size:13px;border:none;background:none;width:100%;padding:0px;margin:0px;margin-left:3px;border-radius:8px;"; 
 		var str="<div id='tocDiv' style='position:absolute;padding:16px;border-radius:8px;";						// Div
 		str+="background-color:#f8f8f8;border:1px solid #ccc;";														// Set coloring
-		str+="top:33%;left:50%;min-width:200px;max-width:400px;height:300px'>";										// Set size/position
+		str+="min-width:200px;max-width:400px;height:300px'>";														// Set size
 		str+="<img src='img/closedot.gif' style='float:right;margin:-12px' id='tocCloser' title='Close contents'>";	// Closer				
 		str+="<div style='text-align:center;font-size:18px;color:#009900;'><b>Contents</b></div><hr>"; // Title
 		str+="<div style='width:100%;height:270px;margin-top:12px;overflow-y:auto;overflow-x:hidden' id='tocTxt'></div>"; // Holds toc
 		$('body').append(str+"</div>");																				// Add to body								
+		$("#tocDiv").css("left",$("#contentBodyDiv").offset().left+$("#contentBodyDiv").width()-$("#tocDiv").width()-32+"px");	// Position X
+		
+		$("#tocDiv").css("top",$("#contentBodyDiv").offset().top+($("#contentBodyDiv").width()*.5625-300)/2+"px");	// Center Y
 		v=app.doc.FindLobById(id,app.doc.trans).text.split("|");													// Get body
 		str="";																										// Start fresh
 		for (i=0;i<v.length;++i) {																					// For each line
@@ -189,7 +193,8 @@ class Content  {
 		$("[id^=tttc-]").click(function(e){																			// Add click handler
 			var time=e.currentTarget.id.substr(5);																	// Get time from id
 			SendToIframe("ScaleAct=play|"+time);																	// Send to iFrame
-			});
+			$("#tocDiv").remove();																					// Remove it
+		});
 	
 	}
 

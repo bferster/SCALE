@@ -83,7 +83,7 @@ class Navigation {
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
-				if (w < 800)					 str+="top:60px;"
+				if (w < 800)					 str+="top:60px;";													// Shift down
 				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
 				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
@@ -96,7 +96,9 @@ class Navigation {
 			}
 	
 		if (app.doc.curConcept != -1) {																				// If a step active
-			str+="<div id='stepBarDiv' class='wm-stepBar'>";														// Stepbar div
+			str+="<div id='stepBarDiv' class='wm-stepBar'";															// Stepbar div
+			if (w < 800)	str+=" style='top:84px'";																// Shift down if too narrow													
+			str+=">";
 			children=app.doc.lobs[app.doc.curConcept].children;														// Get topics
 			for (i=0;i<children.length;++i) {																		// For each topic 
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
