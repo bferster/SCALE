@@ -150,7 +150,7 @@ class Content  {
 				}
 
 			$("#contentDiv").append(str+"</div>");																	// Set content
-			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "900px" )						// Reset width
+			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
 	
 			if (margin && (margin != "0"))	{																		// If a margin set
 				var pct=100-margin-margin;																			// Width
