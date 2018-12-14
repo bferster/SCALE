@@ -793,12 +793,14 @@ class App  {
 				s+="&nbsp;&nbsp;Top:&nbsp; <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'></td></tr>";
 				s+="<tr><td>Label</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsLabel' value='"+(o.label ? o.label :'')+"'></td></tr>";	
 				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
+				s+="<tr><td>Start&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStart' value='"+(o.start ? o.start :'')+"'></td></tr>";	
 				s+="<tr><td>Yes&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
 			else if ((o.type == "click") || (o.type == "hover")) {
 				s+="<tr><td>Left&nbsp;target&nbsp;&nbsp;</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX' value='"+(o.x ? o.x :'')+"'>";	
 				s+="&nbsp;&nbsp;Top target: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
 				s+="&nbsp;&nbsp;Proximity: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
+				s+="<tr><td>Start&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStart' value='"+(o.start ? o.start :'')+"'></td></tr>";	
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
 				}
@@ -813,6 +815,7 @@ class App  {
 				s+="<tr><td>Left&nbsp;target&nbsp;</td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsX2' value='"+(o.x2 ? o.x2 :'')+"'>";	
 				s+="&nbsp;&nbsp;Top target: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY2' value='"+(o.y2 ? o.y2 :'')+"'>";
 				s+="&nbsp;&nbsp;Proximity: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsAcc' value='"+(o.d ? o.d :'')+"'></td></tr>";
+				s+="<tr><td>Start&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStart' value='"+(o.start ? o.start :'')+"'></td></tr>";	
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
 				}
@@ -832,6 +835,7 @@ class App  {
 				s+="<tr><td>Opacity </td><td><input class='wm-is' style='width:30px;height:16px' type='text' id='amsAlpha' value='"+(o.alpha ? o.alpha :'')+"'>";	
 				s+="&nbsp;&nbsp;Effect: "+MakeSelect("amsMotion",false,["","Fade In", "Center zoom", "Top zoom", "Bottom zoom"],o.motion)+"</td></tr>";
 				s+="<tr><td>Image </td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPic' value='"+(o.pic ? o.pic :'')+"'></td></tr>";	
+				s+="<tr><td>Start&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStart' value='"+(o.start ? o.start :'')+"'></td></tr>";	
 				s+="<tr><td>Yes&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
 			else if (o.type == "text") {
@@ -839,6 +843,7 @@ class App  {
 				s+="&nbsp;&nbsp;Top: <input class='wm-is' style='width:30px;height:16px' type='text' id='amsY' value='"+(o.y ? o.y :'')+"'>";
 				s+="<tr><td>Text&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsText' value='"+(o.value ? o.value :'')+"'></td></tr>";	
 				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
+				s+="<tr><td>Start&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStart' value='"+(o.start ? o.start :'')+"'></td></tr>";	
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				}
 			else if (o.type == "type") {
@@ -848,12 +853,14 @@ class App  {
 				s+="<tr><td>Target value&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsValue' value='"+(o.value ? o.value :'')+"'></td></tr>";	
 				s+="<tr><td>Placeholder</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsPlace' value='"+(o.place ? o.place :'')+"'></td></tr>";	
 				s+="<tr><td>CSS</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStyle' value='"+(o.style ? o.style :'')+"'></td></tr>";	
+				s+="<tr><td>Start&nbsp;&nbsp;action&nbsp;&nbsp;</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsStart' value='"+(o.start ? o.start :'')+"'></td></tr>";	
 				s+="<tr><td>Yes action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsYes' value='"+(o.yes ? o.yes :'')+"'></td></tr>";	
 				s+="<tr><td>No action</td><td><input class='wm-is' style='width:400px;height:16px' type='text' id='amsNo' value='"+(o.no ? o.no :'')+"'></td></tr>";	
 				}
 			$("#amsParamDiv").html(s+"</table");
 			
-			var ids=["banner:","clear:","goto:","if:","play:","report:","sound:","var:"];
+			var ids=["banner:","clear:","goto:","if:","play:","report:","seek:","sound:","var:"];
+			$("#amsStart").autocomplete({ source: ids, minLength: 0});						// Auto complete Start
 			$("#amsYes").autocomplete({ source: ids, minLength: 0});						// Auto complete Yes
 			$("#amsNo").autocomplete({ source: ids, minLength: 0});							// Auto complete No
 			$("#amsSound").autocomplete({ source: ["click","delete","ding"], minLength: 0}); // Auto complete Sound
@@ -864,6 +871,7 @@ class App  {
 			$("#amsAcc").on("change", function() 	{ o.d=$(this).val(); });				// Set d on change
 			$("#amsLabel").on("change", function() 	{ o.label=$(this).val(); });			// Set label on change
 			$("#amsStyle").on("change", function() 	{ o.style=$(this).val(); });			// Set style on change
+			$("#amsStart").on("change", function() 	{ o.start=$(this).val(); });			// Set start on change
 			$("#amsYes").on("change", function() 	{ o.yes=$(this).val(); });				// Set yes on change
 			$("#amsNo").on("change", function() 	{ o.no=$(this).val(); });				// Set no on change
 			$("#amsSound").on("change", function() 	{ o.sound=$(this).val(); });			// Set sound on change

@@ -54,6 +54,7 @@ class MediaSkin {
 	
 		for (i=0;i<skin.items.length;++i) {																			// For each item
 			o=skin.items[i];																						// Point at item
+			if (o.start) this.SendActions(o.start);																	// Startup actions
 			y=o.y*w/100;																							// Y is based on % of width
 			if (o.type == "hover") {																				// A hover event
 				x=o.x-(o.d/2);		y=o.y-(o.d/2); 		d=Math.round(w*o.d/100);									// Define area
@@ -229,6 +230,8 @@ class MediaSkin {
 				this.Clear();																						// Clear skin
 				SendToIframe("ScaleAct=play"+(o[1] ? "|"+o[1] : ""));												// Send play to iFrame
 				}
+			else if (s == "seek")																				// SEEK
+				SendToIframe("ScaleAct=seek"+(o[1] ? "|"+o[1] : ""));												// Send seek to iFrame
 			else if (s == "var") 																				// VAR
 				app.doc.vars[o[1].split('=')[0]]=o[1].split('=')[1];												// Set var
 			else if (s == "if") {																				// IF
