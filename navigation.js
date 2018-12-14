@@ -84,13 +84,13 @@ class Navigation {
 				j=app.doc.FindLobIndexById(children[i]);															// Get concept index
 				str+=`<div id='conceptBar-${i}' class='wm-conceptBar' style='`;
 				if (w < 800)					 str+="top:60px;";													// Shift down
-				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px";	// Round left side
-				else if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px";	// Round right
+				if (i == 0)						 str+="border-top-left-radius:16px;border-bottom-left-radius:16px;"; // Round left side
+				if (i == children.length-1) str+="border-top-right-radius:16px;border-bottom-right-radius:16px;";	// Round right
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curConcept))									// If current Topic
-				 	str+=";color:#c57117;font-weight:bold";															// Show current place
+				 	str+="color:#c57117;font-weight:bold;";															// Show current place
 				if (app.doc.FindLobById(id).status == DONE)															// If done
-					str+=";color:#007700";																			// Show done color
+					str+="color:#007700";																			// Show done color
 				str+=`'>${name}</div>`;
 				}
 			}

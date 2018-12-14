@@ -147,6 +147,7 @@ class MediaSkin {
 			if (o.type == "button") {																				// A button event
 				$("#amsBut-"+i).on("click", (e)=> {																	// On click
 					o=skin.items[e.target.id.substr(7)];															// Point at item
+					if (!o) 	o=skin.items[e.currentTarget.id.substr(7)];			
 					this.SendActions(o.yes);																		// Send action
 					o.right=1;																						// Correct
 					});
@@ -232,8 +233,14 @@ class MediaSkin {
 				}
 			else if (s == "seek")																				// SEEK
 				SendToIframe("ScaleAct=seek"+(o[1] ? "|"+o[1] : ""));												// Send seek to iFrame
-			else if (s == "var") 																				// VAR
-				app.doc.vars[o[1].split('=')[0]]=o[1].split('=')[1];												// Set var
+			else if (s == "var") {																				// VAR
+				var cv=app.doc.vars[o[1].split(' ')[0]];															// Current value of var																	
+				var val=o[1].split(' ')[1];																			// Value to set
+				if (!cv)	cv=0;																					// Force 0 if null
+				if (val == "++")		val=cv++;																	// Inc
+				else  if (val == "--")	val=cv--;																	// Dec
+				app.doc.vars[o[1].split(' ')[0]]=val;																// Set var
+				}
 			else if (s == "if") {																				// IF
 				var act=false;																						// Assume nothing
 				o[1]=o[1].replace(/ +/g," ");																		// Single space
