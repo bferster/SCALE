@@ -256,6 +256,8 @@ class MediaSkin {
 					case "LT": if (s <  v[2])		act=true;	break;												// LT							
 					case "LE": if (s <= v[2])		act=true;	break;												// LE							
 					}
+				v[3]=v[3].replace(/&+/g,"+");																		// Put + back in
+				v[4]=v[4].replace(/&+/g,"+");																		// Put + back in
 				if (act) 	this.SendActions(v[3]);																	// Yes action
 				else 		this.SendActions(v[4])																	// No action
 				}
