@@ -57,6 +57,7 @@
 	var showNotes=false;														// Show notes button?
 	var showTrans=0;															// Show transcript button?
 	var showTOC=0;																// Show TOC button?
+	var myVid;
 
 	var v=window.location.search.substring(1).split("|");						// Get query string
 	for (i=0;i<v.length;++i) {													// For each param
@@ -72,10 +73,13 @@
 		if (v[i].match(/trans=/i))		showTrans=v[i].substr(6);				// Show transcripts button
 		if (v[i].match(/toc=/i))		showTOC=v[i].substr(4);					// Show TOC button
 		}
+
+		playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
+		playerStart=10;
+		playerEnd=20
+	
 	for (var i=0;i<triggers.length;++i) 										// For each trigger
 		triggers[i]=triggers[i].split("-");										// Split time-action
-
-playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 
 	$(document).ready(function() {												// When loaded
  		if (window.addEventListener) 											// If supported this way
@@ -97,7 +101,6 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 		$("body").append("<span id='notesBut' onclick='SendScaleMessage(\"notes\")' class='vp-notes'>Take notes</span>");					// Add notes button
 		$("body").append("<div id='transBut' onclick='SendScaleMessage(\"trans\",\""+showTrans+"\")' class='vp-notes'>Transcript</div>");	// Add transcript button
 		$("body").append("<div id='tocBut' onclick='SendScaleMessage(\"toc\",\""+showTOC+"\")' class='vp-notes'>Contents</div>");			// Add contents button
-
 		});
 
 
@@ -193,6 +196,8 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 	
 	function OnPlayerTimer()												// TIMER HANHDLER
 	{
+		GetIOSEvents();
+		
 		if ((!player) || (playerMode != "play"))								// Not playing
 			return;																// Quit
 		playerCurTime=GetPlayerTime();											// Get time
@@ -230,28 +235,21 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 
 	function Init()
 	{
-		$("body").append(1)
 		ResizePanes();															// Resize panes
 		if (playerSource.match(/\/\//i)) {										// If HTML5
-			$("body").append(2)
 			if (player && (playerType == "html5")) {							// Player not active loaded
-				$("body").append(3)
 				if (player.currentSrc.indexOf(playerSource) == -1)	{			// Different clip
 					var base=playerSource.match(/(.*)\.[^.]+$/i)[1];			// Extract base
 					if (playerSource.match(/\.mp3/i)) 							// If audio
 						player.src=base+".mp3";									// MP3 Source
 					else														// VIDEO
 						player.src=base+".mp4";									// MP4 Source
-						$("body").append(4)
 					player.load();												// Load it
-					$("body").append(5)
 					}
 				}
 			else{
-				$("body").append(6)
 				playerType="html5";												// Set type
 				RunPlayer("init");												// Init player
-				$("body").append(7)
 				}
 			}
 		else if (!isNaN(playerSource)) {										// If Vimeo
@@ -294,9 +292,7 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 	function RunPlayer(what, param, param2)									// PLAYER ACTIONS
 	{
 		var i,str;
-		$("body").append(8)
-		$("body").append(what)
-
+		trace2(what)
 		if ((what == "play") || (what == "jump")) {								// Play/jump
 			if ((playerMode == "empty") && isMobile)							// Mobiles need user to initiate touch before controlled play
 				return;															// Quit
@@ -324,6 +320,7 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 					player.contentWindow.postMessage("{\"method\":\"pause\"}","*");	// Send
  				}
 			else if (playerType == "html5") {									// If HTML5
+				trace2(playerNow+"->"+player.readyState)
 				if (player.readyState)											// If ready
 					player.currentTime=playerNow;								// Cue
 				if (playerMode == "play")  	player.play(); 						// Play
@@ -439,15 +436,13 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 					str+="<source src='"+base+".mp4'  type='video/mp4'>";		// MP4 Source
 				str+="</video>"
 				$("#playerDiv").html(str);										// Add video tag
-  				var myVid=document.getElementById("vplayer");					// Point at player	
-				  RunPlayer("ready");										// Set up player		
-					player.readySent=true;										// Ready sent
-				  
- 				myVid.onloadstart=function() {									// When loaded
- 					player=$("#vplayer")[0];									// Point to player
-					player.readySent=false;										// Ready not sent
-					};
-								
+  				myVid=document.getElementById("vplayer");						// Point at player	
+				player=$("#vplayer")[0];										// Point to player
+				player.readySent=false;											// Ready not sent
+				if (isMobile) {													// Moble doesn't sent an 'oncanplay' message  
+					RunPlayer("ready");											// Set up player manually		
+					}
+		
 				myVid.oncanplay=function() {									// When ready
 					if (!playerSource.match(/\.mp3/i)) 							// If video
 	     				playerAspect=player.videoHeight/player.videoWidth;		// Set aspect 				
@@ -457,26 +452,38 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 					};
 
  				myVid.onended=function() {										// When done
+					trace2(player.readyState+"c")
   					RunPlayer("pause");											// Pause
 					};
 
 				myVid.onplay=function() {										// When playing
+					trace2(player.readyState+"d")
 					playerMode="play";											// Set mode
 					playerStarted=playerNow;									// Save start point
 					};
 
 				myVid.onpause=function() {										// When paused
+					trace2(player.readyState+"e")
 					playerMode="pause";											// Set mode
    					};
   		 		
- 			  	myVid.addEventListener("loadstart",myVid.onloadstart);	 		// Add listener for safari
- 		 		myVid.addEventListener("canplay",myVid.oncanplay);	 			// Add listener for safari
-			  	myVid.addEventListener("ended",myVid.onended);	 				// Add listener for safari
- 			  	myVid.addEventListener("play",myVid.onplay);	 				// Add listener for safari
- 			  	myVid.addEventListener("pause",myVid.onpause);	 				// Add listener for safari
+ 
+ 		 		myVid.addEventListener("canplay",myVid.oncanplay,false);	 	// Add listener for safari
+			  	myVid.addEventListener("ended",myVid.onended,false);	 		// Add listener for safari
+ 			  	myVid.addEventListener("play",myVid.onplay,false);	 			// Add listener for safari
+ 			  	myVid.addEventListener("pause",myVid.onpause,false);	 		// Add listener for safari
+	
+
+
  	    		}
 			}																	// End init
  	}																			// End closure
+
+	
+				
+		}
+
+
 
    function onYouTubeIframeAPIReady() 										// YOUTUBE PLAYER READY
     {   
@@ -600,10 +607,9 @@ playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
 			console.log(msg);
 	}
 
- 	function trace2(msg, p1, p2, p3, p4)									// IOS CONSOLE 
+ 	function trace2(msg)									// IOS CONSOLE 
 	{
-		msg+=" "+p1 ? p1 : ""; msg+=" "+p2 ? p2 : ""; msg+=" "+p3 ? p3 : "";
-		$("#contentBodyDiv").append(msg+" ")
+		$("body").append((""+msg)+" | ")
 		console.log(msg)
 	}
   

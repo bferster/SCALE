@@ -190,6 +190,9 @@
 	
 	function OnPlayerTimer()												// TIMER HANHDLER
 	{
+		if (isMobile && (playerType == "html5")) {								// IOS HTML5
+			if ($("#vplayer")[0].readyState == 1)  $("#vplayer")[0].canplay();	// Init by hand
+			}
 		if ((!player) || (playerMode != "play"))								// Not playing
 			return;																// Quit
 		playerCurTime=GetPlayerTime();											// Get time
@@ -207,10 +210,10 @@
 						}
 					else{														// Straight video
 						if (triggers[i][1].charAt(0) == '*')					// If not pausing video
-							SendScaleMessage("trigger",triggers[i][1].substr(1)+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+							SendScaleMessage("trigger",triggers[i][1].substr(1)+"|"+(triggers[i][0]-0+.25));	// Send trigger back					
 						else{
 							RunPlayer("pause");									// Pause
-							SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.16));	// Send trigger back					
+							SendScaleMessage("trigger",triggers[i][1]+"|"+(triggers[i][0]-0+.25));	// Send trigger back					
 							}
 						triggers[i][0]=-10;										// Disable trigger from firing again
 						}
@@ -427,10 +430,9 @@
 				str+="</video>"
 				$("#playerDiv").html(str);										// Add video tag
   				var myVid=document.getElementById("vplayer");					// Point at player	
-				if (isMobile) {													// Moble doesn't sent an 'oncanplay' message  
-					RunPlayer("ready");											// Set up player manually		
-					player.readySent=true;										// Ready sent
-					}
+				player=$("#vplayer")[0];										// Point to player
+				player.readySent=false;											// Ready not sent
+				if (isMobile) RunPlayer("ready");								// Moble doesn't sent an 'oncanplay' message  
 
  				myVid.onloadstart=function() {									// When loaded
  					player=$("#vplayer")[0];									// Point to player
@@ -458,11 +460,10 @@
 					playerMode="pause";											// Set mode
    					};
   		 		
- 			  	myVid.addEventListener("loadstart",myVid.onloadstart);	 		// Add listener for safari
- 		 		myVid.addEventListener("canplay",myVid.oncanplay);	 			// Add listener for safari
-			  	myVid.addEventListener("ended",myVid.onended);	 				// Add listener for safari
- 			  	myVid.addEventListener("play",myVid.onplay);	 				// Add listener for safari
- 			  	myVid.addEventListener("pause",myVid.onpause);	 				// Add listener for safari
+ 		 		myVid.addEventListener("canplay",myVid.oncanplay,false);	 	// Add listener for safari
+			  	myVid.addEventListener("ended",myVid.onende,false);	 			// Add listener for safari
+ 			  	myVid.addEventListener("play",myVid.onplay,false);	 			// Add listener for safari
+ 			  	myVid.addEventListener("pause",myVid.onpause,false);	 		// Add listener for safari
  	    		}
 			}																	// End init
  	}																			// End closure
