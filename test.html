@@ -75,6 +75,8 @@
 	for (var i=0;i<triggers.length;++i) 										// For each trigger
 		triggers[i]=triggers[i].split("-");										// Split time-action
 
+playerSource=GetDirectLink("http://stagetools.com/PTdemo.mp4")
+
 	$(document).ready(function() {												// When loaded
  		if (window.addEventListener) 											// If supported this way
 			window.addEventListener("message",shivaEventHandler,false);			// Add event handler
@@ -95,6 +97,7 @@
 		$("body").append("<span id='notesBut' onclick='SendScaleMessage(\"notes\")' class='vp-notes'>Take notes</span>");					// Add notes button
 		$("body").append("<div id='transBut' onclick='SendScaleMessage(\"trans\",\""+showTrans+"\")' class='vp-notes'>Transcript</div>");	// Add transcript button
 		$("body").append("<div id='tocBut' onclick='SendScaleMessage(\"toc\",\""+showTOC+"\")' class='vp-notes'>Contents</div>");			// Add contents button
+
 		});
 
 
@@ -227,21 +230,28 @@
 
 	function Init()
 	{
+		$("body").append(1)
 		ResizePanes();															// Resize panes
 		if (playerSource.match(/\/\//i)) {										// If HTML5
+			$("body").append(2)
 			if (player && (playerType == "html5")) {							// Player not active loaded
+				$("body").append(3)
 				if (player.currentSrc.indexOf(playerSource) == -1)	{			// Different clip
 					var base=playerSource.match(/(.*)\.[^.]+$/i)[1];			// Extract base
 					if (playerSource.match(/\.mp3/i)) 							// If audio
 						player.src=base+".mp3";									// MP3 Source
 					else														// VIDEO
 						player.src=base+".mp4";									// MP4 Source
+						$("body").append(4)
 					player.load();												// Load it
+					$("body").append(5)
 					}
 				}
 			else{
+				$("body").append(6)
 				playerType="html5";												// Set type
 				RunPlayer("init");												// Init player
+				$("body").append(7)
 				}
 			}
 		else if (!isNaN(playerSource)) {										// If Vimeo
@@ -284,6 +294,9 @@
 	function RunPlayer(what, param, param2)									// PLAYER ACTIONS
 	{
 		var i,str;
+		$("body").append(8)
+		$("body").append(what)
+
 		if ((what == "play") || (what == "jump")) {								// Play/jump
 			if ((playerMode == "empty") && isMobile)							// Mobiles need user to initiate touch before controlled play
 				return;															// Quit
@@ -427,11 +440,9 @@
 				str+="</video>"
 				$("#playerDiv").html(str);										// Add video tag
   				var myVid=document.getElementById("vplayer");					// Point at player	
-				if (isMobile) {													// Moble doesn't sent an 'oncanplay' message  
-					RunPlayer("ready");											// Set up player manually		
+				  RunPlayer("ready");										// Set up player		
 					player.readySent=true;										// Ready sent
-					}
-
+				  
  				myVid.onloadstart=function() {									// When loaded
  					player=$("#vplayer")[0];									// Point to player
 					player.readySent=false;										// Ready not sent
