@@ -227,6 +227,10 @@ class MediaSkin {
 				app.msg.OnMessage({ data:"ActiveMediaSkin=report|"+o[1]+"|"+this.curSkin.id});						// Send report message
 			else if (s == "clear") 																				// CLEAR
 				this.Clear();																						// Clear skin
+			else if (s == "ams") {																				// AMS 
+				this.Draw(999,app.doc.FindLobById(o[1],this.skins),"#contentIF");									// Draw new AMS object skin
+				return;																								// Quit
+				}	
 			else if (s == "play") {																				// PLAY
 				this.Clear();																						// Clear skin
 				SendToIframe("ScaleAct=play"+(o[1] ? "|"+o[1] : ""));												// Send play to iFrame
@@ -267,6 +271,7 @@ class MediaSkin {
 
 		CheckGroups()																							// CHECK GROUPS TO TEST TRIGGER
 		{
+
 			var i,j,o,n,mem;
 			for (i=0;i<this.curSkin.items.length;++i) {																// For each item
 				o=this.curSkin.items[i];																			// Point at item
