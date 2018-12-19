@@ -982,7 +982,8 @@ class App  {
 		str+="<table>";
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
 		str+="<tr><td>Skip if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
-		str+="<tr><td>Hide header</td><td><input  type='checkbox' "+(app.hideHeader ? "checked" : "")+" id='setHeader'></td></tr>";	
+		str+="<tr><td>Hide header?</td><td><input type='checkbox' "+(app.hideHeader ? "checked" : "")+" id='setHeader'>&nbsp;&nbsp;&nbsp;";	
+		str+="Start&nbsp;fullscreen?&nbsp;<input type='checkbox' "+(app.fullScreen ? "checked" : "")+" id='setFull'></td></tr>";	
 		str+="<tr><td>Default margin %</td><td><input class='wm-is' type='text' id='setMargin' value='"+(app.defMargin ? app.defMargin : 0)+"'></td></tr>";	
 		str+="<tr><td>Discussion name|id</td><td><input class='wm-is' type='text' id='setDiscuss' value='"+(app.discussion ? app.discussion : '')+"'></td></tr>";	
 		str+="<tr><td colspan='2'><hr></td></tr>";	
@@ -1017,6 +1018,7 @@ class App  {
 			app.namePrefix=$("#setName").val();	
 			app.reportLink=$("#setLink").val();	
 			app.hideHeader=$("#setHeader").prop("checked");								
+			app.fullScreen=$("#setFull").prop("checked");								
 			app.defMargin=$("#setMargin").val();	
 			app.discussion=$("#setDiscuss").val();	
 			this.Draw("splash");															// Show splash																								
