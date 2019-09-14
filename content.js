@@ -75,7 +75,7 @@ class Content  {
 	{	
 		var v,ifr,ifs,str="";
 		var margin=app.defMargin ? app.defMargin : 0;																// Default margin
-		var widgetSrc,widgetTop;
+		var widgetSrc,widgetTop,widgetWid;
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
 		if (id == undefined)	id=app.doc.curLobId;																// Use curent
@@ -152,7 +152,8 @@ class Content  {
 			if (ifr=str.match(/scalewidget\((.*?)\)/i)) {															// If a widget tag
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				widgetSrc=ifr[0].substr(4);																			// Set src
-				widgetTop=ifr[1] ? ifr[1]-0 : 80;																	// Set top
+				widgetWid=ifr[1] ? ifr[1]/100 : 0.6667;																// Set width
+				widgetTop=ifr[2] ? ifr[2]-0 : 80;																	// Set top
 				str=str.replace(/scalewidget\(.*?\)/i,"");															// Kill tag
 				}
 		
@@ -165,13 +166,18 @@ class Content  {
 					str+="style='border:none;position:absolute;top:0;display:none'></iframe>";						// Style it
 					$("#mainDiv").append(str);																		// Add iFrame
 					}
+				if (widgetSrc.charAt(widgetSrc.length-1) != "/") widgetSrc+="/";
+				trace(widgetSrc)
+
+				if (widgetSrc != $("#contentIFWidget").prop("src")) $("#contentIFWidget").prop("src",widgetSrc);	// Set new src
 				margin=0;																							// Force no margins
-				var w=$("#contentDiv").width()/2-32;																// Widget width
+				var w=$("#contentDiv").width()*(1-widgetWid)-32;													// Widget width
 				var h=$("#contentDiv").height()-widgetTop-80+"px";													// Height
 				$("#contentBodyDiv").css("max-width",w);															// Reset content width
-				$("#contentIFWidget").css({ width:w+"px",height:h, display:"block",									// Position widget
+				$("#paneTitle").css("max-width",w);
+				$("#contentIFWidget").css({ width:$("#contentDiv").width()*widgetWid-64+"px",height:h, display:"block",	// Position widget
 					top:$("#contentDiv").offset().top+widgetTop+"px",	
-					left:$("#contentDiv").offset().left+w+32+"px"	
+					left:$("#contentDiv").offset().left+w+56+"px"	
 					});	
 				}
 			else 	$("#contentIFWidget").css({  display:"none" });													// Hide widget

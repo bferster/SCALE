@@ -540,7 +540,8 @@ class App  {
 		
 		else if (which == "Widget") {														// Add/edit media
 			str+="<table><tr><td>URL</td><td><input class='wm-is' style='width:350px;height:16px' type='text' id='param-0' value='"+(params[0] ? params[0] :'')+"'></td></tr>";	
-			str+="<tr><td>Top margin </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'></td></tr>";
+			str+="<tr><td>Width % (1-100) </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'></td></tr>";
+			str+="<tr><td>Top margin </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'></td></tr>";
 			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
 			} 																				// MEDIA CLOSURE
