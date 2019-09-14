@@ -11,7 +11,7 @@ class Messaging {
 		var v;
 		var source=msg.source;																						// Get source
 		msg=msg.data;																								// Extract just message
-		if (!msg)																									// Nothing there
+		if (!msg || (typeof msg != "string"))																		// Nothing there
 			return;																									// Quit			
 		v=msg.split("|");																							// Chop into params
 		if (msg.match(/ShivaGraph=click/)) 																			// On graph click

@@ -75,6 +75,7 @@ class Content  {
 	{	
 		var v,ifr,ifs,str="";
 		var margin=app.defMargin ? app.defMargin : 0;																// Default margin
+		var widgetSrc,widgetTop;
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
 		app.allowResize=true;																						// Allow resizing
 		if (id == undefined)	id=app.doc.curLobId;																// Use curent
@@ -148,9 +149,32 @@ class Content  {
 					this.actionQueue.push(v[2]+" "+v[3]);															// Add action to queue
 					}
 				}
-
+			if (ifr=str.match(/scalewidget\((.*?)\)/i)) {															// If a widget tag
+				ifr=(""+ifr[1]).split(",");																			// Get params
+				widgetSrc=ifr[0].substr(4);																			// Set src
+				widgetTop=ifr[1] ? ifr[1]-0 : 80;																	// Set top
+				str=str.replace(/scalewidget\(.*?\)/i,"");															// Kill tag
+				}
+		
 			$("#contentDiv").append(str+"</div>");																	// Set content
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
+		
+			if (widgetSrc) {																						// If a widget
+				if (!$("#contentIFWidget").length) {																// If not made yet
+					var str="<iframe src='"+widgetSrc+"' id='contentIFWidget' allow='microphone' ";					// Add iframe to hold  widget
+					str+="style='border:none;position:absolute;top:0;display:none'></iframe>";						// Style it
+					$("#mainDiv").append(str);																		// Add iFrame
+					}
+				margin=0;																							// Force no margins
+				var w=$("#contentDiv").width()/2-32;																// Widget width
+				var h=$("#contentDiv").height()-widgetTop-80+"px";													// Height
+				$("#contentBodyDiv").css("max-width",w);															// Reset content width
+				$("#contentIFWidget").css({ width:w+"px",height:h, display:"block",									// Position widget
+					top:$("#contentDiv").offset().top+widgetTop+"px",	
+					left:$("#contentDiv").offset().left+w+32+"px"	
+					});	
+				}
+			else 	$("#contentIFWidget").css({  display:"none" });													// Hide widget
 	
 			if (margin && (margin != "0"))	{																		// If a margin set
 				var pct=100-margin-margin;																			// Width
