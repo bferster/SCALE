@@ -99,13 +99,13 @@ class Content  {
 				str=str.replace(/scalemedia\(.*?\)/i,ifs);															// Get tag and replace it with iframe
 				}
 			if (ifr=str.match(/scalevideo\((.*?)\)/i)) {															// If a video tag
-				var w=99.5,b=0,asp=.5625;																			// Assume full width, no border, .5625 aspect
+				var w=99.5,b=0,asp=0.5625;																			// Assume full width, no border, .5625 aspect
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				ifr[0]="video.htm?"+ifr[0];																			// Add video url
-				if (ifr[1])		asp=ifr[1];																			// Get aspect
+				if (ifr[1])		asp=ifr[1]/ifr[2];																	// Get aspect
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
-				var h=$("#contentDiv").width()*asp;																	// Set height based on aspect												
+				var h=$("#contentDiv").width()*asp*(w/100);															// Set height based on aspect												
 				if (this.resumeTime && this.resumeId)																// A resume time/id set
 					ifr[0]+="|start="+this.resumeTime;																// Set new start
 				ifs="<div style='text-align:center'>";																// For centering

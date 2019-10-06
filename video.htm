@@ -130,7 +130,7 @@
 	function ResizePanes()													// RESIZE PANES
 	{ 
 		var wid=$("body").width();												// Cap at screen size
-		var w=wid*playerSlideRatio+4;											// Player width
+		var w=(wid*playerSlideRatio)+4;											// Player width
 		var w2=wid-w-8;															// Slide width
 		if (w <= 0)				w=0,w2=wid;										// Full slide											
 		else if (w2 <= 0)		w2=0,w=wid;										// Full video											
@@ -352,7 +352,7 @@
 			else if (playerType == "vimeo") 									// If Vimeo
 				player.contentWindow.postMessage("{\"method\":\"setVolume\",\"value\":\""+playerVolume/100+"\"}","*"); // Send
 			else if (playerType == "html5") 									// If HTML5
-				player.volume=playerVolume/100;								// Set
+				player.volume=playerVolume/100;									// Set
 			}
 		else if (what == "speed") {												// Speed
 			if (!player)	return;												// If no player yet, quit
@@ -423,8 +423,10 @@
 				if ((playerControls == "true") || isMobile)						// If has controls or mobile
 					str+= " controls";											// Add native controls to player
 				str+=">";														// Close tag
-				if (playerSource.match(/\.mp3/i)) 								// If audio
+				if (playerSource.match(/\.mp3/i)) {								// If audio
 					str+="<source src='"+base+".mp3'  type='audio/mp3'>";		// MP3 Source
+					playerAspect=60/$("body").width();							// Just show controls
+					}
 				else															// VIDEO
 					str+="<source src='"+base+".mp4'  type='video/mp4'>";		// MP4 Source
 				str+="</video>"
