@@ -26,7 +26,8 @@ class Content  {
 		h=Math.min(h,1000);																							// Cap at 1000
 		$("#contentDiv").height(h);																					// Size content
 		var str="<img id='nextBut' src='img/next.png' class='wm-nextBut'>"; 										// Add next button
-		str+="<img id='mobileMenu' src='img/mobilemenu.png' class='wm-mobileBut' onclick='app.nav.MobileNavigator()'>"; // Add mobile button
+		str+="<img id='mobileMenu' src='img/mobilemenu.png' class='wm-mobileBut' onclick='app.nav.MobileNavigator()'>";  // Add mobile button
+		str+="<div id='backBut' class='wm-backBut' title='Go back a step' onclick='app.nav.Back()'>BACK</div>"; 	// Add back button
 		str+="<img id='fullBut' src='img/fullbut.png' class='wm-fullBut'>"; 										// Add full button
 		$("#contentDiv").html(str);																					// Set content
 		

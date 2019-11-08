@@ -40,13 +40,15 @@ class Navigation {
 		$("#menuSlotDiv").css( {left:x,top:y, "min-width":w} );														// Position
 		}
 	
-	Forward() 
+	Forward() 																									// FORWARD ONE STEP
 	{	
 		app.Draw();																									// Redraw
 	}
 
-	Back() 
+	Back() 																										// BACK ONE STEP
 	{	
+		app.doc.NextLob(-1);																						// Back one
+		app.Draw();																									// Redraw
 	}
 
 	Draw() 																										// REDRAW
