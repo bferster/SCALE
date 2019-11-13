@@ -162,13 +162,13 @@ class Content  {
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
 		
 			if (widgetSrc) {																						// If a widget
-				if (!$("#contentIFWidget").length) {																// If not made yet
+					widgetSrc=widgetSrc.replace(/&amp;/g,"&");														// Change &amp; -> &
+					if (!$("#contentIFWidget").length) {															// If not made yet
 					var str="<iframe src='"+widgetSrc+"' id='contentIFWidget' allow='microphone' ";					// Add iframe to hold  widget
 					str+="style='border:none;position:absolute;top:0;display:none'></iframe>";						// Style it
 					$("#mainDiv").append(str);																		// Add iFrame
 					}
-				if (widgetSrc.charAt(widgetSrc.length-1) != "/") widgetSrc+="/";
-				trace(widgetSrc)
+//				if (widgetSrc.charAt(widgetSrc.length-1) != "/") widgetSrc+="/";
 
 				if (widgetSrc != $("#contentIFWidget").prop("src")) $("#contentIFWidget").prop("src",widgetSrc);	// Set new src
 				margin=0;																							// Force no margins
