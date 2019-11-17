@@ -162,15 +162,19 @@ class Content  {
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
 		
 			if (widgetSrc) {																						// If a widget
-					widgetSrc=widgetSrc.replace(/&amp;/g,"&");														// Change &amp; -> &
-					if (!$("#contentIFWidget").length) {															// If not made yet
-					var str="<iframe src='"+widgetSrc+"' id='contentIFWidget' allow='microphone' ";					// Add iframe to hold  widget
+				widgetSrc=widgetSrc.replace(/&amp;/g,"&");															// Change &amp; -> &
+				if (!$("#contentIFWidget").length) {																// If not made yet
+					str="<iframe src='"+widgetSrc+"' id='contentIFWidget' allow='microphone' ";						// Add iframe to hold  widget
 					str+="style='border:none;position:absolute;top:0;display:none'></iframe>";						// Style it
 					$("#mainDiv").append(str);																		// Add iFrame
 					}
 //				if (widgetSrc.charAt(widgetSrc.length-1) != "/") widgetSrc+="/";
-
-				if (widgetSrc != $("#contentIFWidget").prop("src")) $("#contentIFWidget").prop("src",widgetSrc);	// Set new src
+				if (widgetSrc != $("#contentIFWidget").prop("src")) {												// If a new URL
+					$("#contentIFWidget").remove();																	// Kill old one
+					str="<iframe src='"+widgetSrc+"' id='contentIFWidget' allow='microphone' ";						// Add iframe to hold  widget
+					str+="style='border:none;position:absolute;top:0;display:none'></iframe>";						// Style it
+					$("#mainDiv").append(str);																		// Add iFrame
+					}
 				margin=0;																							// Force no margins
 				var w=$("#contentDiv").width()*(1-widgetWid)-32;													// Widget width
 				var h=$("#contentDiv").height()-widgetTop-80+"px";													// Height
