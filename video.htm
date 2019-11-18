@@ -425,8 +425,8 @@
 				str+=">";														// Close tag
 				if (playerSource.match(/\.mp3/i)) {								// If audio
 					str+="<source src='"+base+".mp3'  type='audio/mp3'>";		// MP3 Source
-					playerAspect=60/$("body").width();							// Just show controls
-					}
+				if (!slideSource) playerAspect=60/$("body").width();			// Just show controls, unless showing slides
+				}
 				else															// VIDEO
 					str+="<source src='"+base+".mp4'  type='video/mp4'>";		// MP4 Source
 				str+="</video>"
@@ -488,9 +488,9 @@
 // //youtu.be/2doZROwdte4
 // //www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471.mp4
 // //vimeo.com/274326838
+// //www.dropbox.com/s/8ng9w16ram24vaa/JapaneseInternment.mp3?dl=0
 
-
-	function GetDirectLink(url) 										// GET DRECT LINK TO  MEDIA
+	function GetDirectLink(url) 											// GET DRECT LINK TO  MEDIA
 	{
 		if (!url)																// If no url
 			return "";															// Return null
@@ -500,6 +500,10 @@
 			return url.match(/be\/(.+)/i)[1];									// Extract id
 		if (url.match(/vimeo\.com\//i))											// A Vimeo url or embed code
 			return url.match(/vimeo.+\/(\d+)/i)[1];								// Extract id
+		if (url && url.match(/dropbox\.com/i)) {								// A dropbox link
+			var id=url.match(/\/s\/(.*)\?dl=0/i)[1];							// Extract id
+			url="https://dl.dropboxusercontent.com/s/"+id;						// Construct direct link
+			}
 		if (!url.match(/kaltura/))												// Not Kaltura
 			return url;															// Return original
 		var mid=0;																// Media id
