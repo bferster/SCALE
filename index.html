@@ -495,6 +495,23 @@ class App  {																								 // APP
 		return str;																// Return timecode			
 }
 
+	function ConvertFromGoogleDrive(url)										// CONVERT GOOGLE DRIVE/DROPBOX LINK TO DIRECT LINK
+	{
+		if (url && url.match(/drive\.google/i)) {									// A google drive image
+			var id=url.match(/\?id=(.+)/i);											// Extract id
+			if (!id)																// Nothing there
+				id=url.match(/\/d\/(.*?)\//);										// Try this way
+			if (id)																	// An id found
+				url="//drive.google.com/uc?export=download&id="+id[1];				// Construct 'direct' link
+			}
+		else if (url && url.match(/dropbox\.com/i)) {								// A dropbox link
+			var id=url.match(/\/s\/(.*)\?dl=0/i)[1];								// Extract id
+			url="https://dl.dropboxusercontent.com/s/"+id;							// Construct direct link
+			}
+		return url;																	// Return link
+	}
+
+
 </script>
 
 
