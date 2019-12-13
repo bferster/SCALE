@@ -110,6 +110,18 @@ class Messaging {
 			else if (msg.match(/report/)) 																			// REPORT
 				app.msg.SaveToForm("Skin"+v[2]+"="+v[1]);															// Save value to form, if set		
 			}
+		else if (msg.match(/ScaleSnap/)) {																			// SCALE
+			if (msg.match(/show/)) 																					// Show pane
+				app.con.Draw(v[1]-0);																				// Go	
+			else if (msg.match(/goto/)) {																			// Goto pane
+				if (v[1].toLowerCase() == "next")																	// Advance to next pos
+					app.doc.NextLob(),app.Draw();																	// Go 																				
+				else																								// To a specific pane
+					app.Draw(app.doc.FindLobIndexById(v[1]-0))														// Go	
+				}
+			else if (msg.match(/report/)) 																			// REPORT
+				app.msg.SaveToForm("Skin"+v[2]+"="+v[1]);															// Save value to form, if set		
+			}
 		else
 			trace(msg)
 		}
