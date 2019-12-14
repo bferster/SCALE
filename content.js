@@ -157,7 +157,12 @@ class Content  {
 				widgetTop=ifr[2] ? ifr[2]-0 : 80;																	// Set top
 				str=str.replace(/scalewidget\(.*?\)/i,"");															// Kill tag
 				}
-		
+			if (ifr=str.match(/scalebutton\((.*?)\)/i)) {															// If a button tag
+				ifr=(""+ifr[1]).split(",");																			// Get params
+				var s="<button onclick='SendToIframe(\""+ifr[1]+"\",\"#contentIFWidget\")'>"+ifr[0]+"</button>";	// Make button											
+				str=str.replace(/scalebutton\(.*?\)/i,s);															// Add button
+				}
+			
 			$("#contentDiv").append(str+"</div>");																	// Set content
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
 		
