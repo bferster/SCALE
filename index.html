@@ -464,7 +464,6 @@ class App  {																								 // APP
 
 	function SendToIframe(msg, id) 											// SENT MESSAGE TO CURRENT CONTENT OR WIDGET IFRAME
 	{
-		trace(1111111,msg, id)
 		if (!id) id="#contentIF";												// Assume iframe
 		if (!$(id).length)		return;											// Quit if no iframe	
 		$(id)[0].contentWindow.postMessage(msg,"*");	 						// Send message 
