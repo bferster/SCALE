@@ -74,7 +74,7 @@ class Content  {
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
-		var v,ifr,ifs,str="";
+		var i,v,s,ifr,ifs,str="";
 		var margin=app.defMargin ? app.defMargin : 0;																// Default margin
 		var widgetSrc,widgetTop,widgetWid;
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
@@ -159,10 +159,23 @@ class Content  {
 				}
 			if (ifr=str.match(/scalebutton\((.*?)\)/i)) {															// If a button tag
 				ifr=(""+ifr[1]).split(",");																			// Get params
-				var s="<button onclick='SendToIframe(\""+ifr[1]+"\",\"#contentIFWidget\")'>"+ifr[0]+"</button>";	// Make button											
+				s="<button class='wm-is' style='width:auto' onclick='app.rul.RunRule(\""+ifr[1]+"\",\""+ifr[2]+"\")'>"+ifr[0]+"</button>";			// Make button											
 				str=str.replace(/scalebutton\(.*?\)/i,s);															// Add button
 				}
-			
+			if (ifr=str.match(/scalelink\((.*?)\)/i)) {																// If a link tag
+				ifr=(""+ifr[1]).split(",");																			// Get params
+				s="<a style='color:#000099;text-decoration:underline' onclick='app.rul.RunRule(\""+ifr[1]+"\",\""+ifr[2]+"\")'>"+ifr[0]+"</a>";	// Make link											
+				str=str.replace(/scalelink\(.*?\)/i,s);																// Add link
+				}
+/*			if (ifr=str.match(/scaleselect\((.*?)\)/i)) {															// If a select tag
+				ifr=(""+ifr[1]).split(",");																			// Get params
+				s="<select class='wm-is' style='width:auto' onchange='(function (){ trace(this.value);app.rul.RunRule(this.value)})()'>";
+				for (i=0;i<ifr.length;i+=3)																			// For each option triplet (name, op, action)
+					s+="<option value='"+ifr[i+1]+"|"+ifr[i+2]+"'>"+ifr[i+0]+"</option>";							// Add option
+				s+="</select>";																						// Close select
+				str=str.replace(/scaleselect\(.*?\)/i,s);															// Add select
+				} 
+*/
 			$("#contentDiv").append(str+"</div>");																	// Set content
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
 		
