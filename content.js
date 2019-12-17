@@ -12,6 +12,7 @@ class Content  {
 		this.actionQueue=[];																						// Delayed actions on next button
 		this.playerNow=0;																							// Current player time
 		this.playerTimer=null;																						// Transcript timer
+		this.toneJS=null;																							// ToneJS instance
 	}
 
 	Draw(id) 																									// REDRAW
@@ -44,6 +45,7 @@ class Content  {
 			this.GetContentBody(id);																				// Add content
 		$("#nextBut").on("click",()=> { 																			// On button click, navigate forward   
 			var i,v,t
+			this.ToneJS();																							// Init ToneJS library if enabled
 			var b=app.doc.lobs[app.doc.curPos].body;																// Point at body
 			if (b.match(/assess\(/i)) {																				// If in an assessment
 				Sound("delete");																					// Sound
@@ -409,8 +411,20 @@ class Content  {
 			function RunPlayer(op, param) {																			// VIDEO PLAYER ACTION
 				SendToIframe("ScaleAct="+op+(param ? "|"+param: ""));												// Send to iFrame
 				}
+		}
 
-		};
+		ToneJS(a1, a2, a3, a4) 																					// RUN A TONE JS COMMAND
+		{
+			if (!app.toneJS)	return;																				// Not enabled
+			if (!this.toneJS) { 																					// If not loaded yet
+				$.getScript("lib/Tone.js").done(()=> { 																// Load library
+					this.toneJS=new Tone.Synth().toMaster(); 														// Alloc module
+					if (a1) this.toneJS.triggerAttackRelease(a1,a2,a3,a4);										// Do action
+					});
+				}
+			else if (a1) this.toneJS.triggerAttackRelease(a1,a2,a3,a4);											// Do action if loaded
+		}
+		
 
 } // Content class closure
 
