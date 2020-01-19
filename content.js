@@ -77,6 +77,7 @@ class Content  {
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
 		var i,v,s,ifr,ifs,str="";
+		var w,h,b;
 		var margin=app.defMargin ? app.defMargin : 0;																// Default margin
 		var widgetSrc,widgetTop,widgetWid;
 		$("#zoomerOuterDiv").remove();																				// Kill any left-over zoomers
@@ -88,9 +89,9 @@ class Content  {
 		str+="<div id='contentBodyDiv' class='wm-contentBody'>";													// Container div
 		if (l) {																									// Valid lob
 			str+=l.body ? l.body : "";																				// Add body
-			if (ifr=str.match(/scalemedia\((.*?)\)/i)) {															// If a media tag
-				var w=99.5,b=0;																						// Assume full width
-				var h=$("#contentDiv").height()-200;																// Set default height												
+			if ((ifr=str.match(/scalemedia\((.*?)\)/i))) {															// If a media tag
+				w=99.5; b=0;																						// Assume full width
+				h=$("#contentDiv").height()-200;																	// Set default height												
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				if (ifr[1])		h=h*ifr[1]/100;																		// Calc height based on height percentage
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
@@ -101,14 +102,15 @@ class Content  {
 				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='"+b+"' src='"+ifr[0]+"' style='height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe
 				str=str.replace(/scalemedia\(.*?\)/i,ifs);															// Get tag and replace it with iframe
 				}
-			if (ifr=str.match(/scalevideo\((.*?)\)/i)) {															// If a video tag
-				var w=99.5,b=0,asp=0.5625;																			// Assume full width, no border, .5625 aspect
+			if ((ifr=str.match(/scalevideo\((.*?)\)/i))) {															// If a video tag
+				w=99.5;	b=0;																						// Assume full width, no border
+				var asp=0.5625;																						// Assume .5625 aspect
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				ifr[0]="video.htm?"+ifr[0];																			// Add video url
 				if (ifr[1])		asp=ifr[1]/ifr[2];																	// Get aspect
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
-				var h=$("#contentDiv").width()*asp*(w/100);															// Set height based on aspect												
+				h=$("#contentDiv").width()*asp*(w/100);																// Set height based on aspect												
 				if (this.resumeTime && this.resumeId)																// A resume time/id set
 					ifr[0]+="|start="+this.resumeTime;																// Set new start
 				ifs="<div style='text-align:center'>";																// For centering
@@ -116,7 +118,7 @@ class Content  {
 				str=str.replace(/scalevideo\(.*?\)/i,ifs);															// Get tag and replace it with iframe
 				}
 			if (ifr=str.match(/assess\((.*?)\)/i)) {																// If an assess tag
-				var w=99.5,b=0;																						// Assume full width
+				w=99.5; b=0;																						// Assume full width
 				var h=$("#contentDiv").height()-250;																// Set default height												
 				ifs="<div style='text-align:center'>";																// For centering
 				var url="assess.htm?"+ifr[1];																		// Get answers
@@ -137,7 +139,7 @@ class Content  {
 					str=str.replace(/do\(.+?\)/i,d);																// Replace tag
 					}
 				}
-			if (ifr=str.match(/textbox\(.+?\)/ig)) {																// If a textbox() tag
+			if ((ifr=str.match(/textbox\(.+?\)/ig))) {																// If a textbox() tag
 				var i,t;	
 				for (i=0;i<ifr.length;++i) {																		// For each do() macro
 					v=(""+ifr[i]).split(",");																		// Get params
@@ -152,14 +154,27 @@ class Content  {
 					this.actionQueue.push(v[2]+" "+v[3]);															// Add action to queue
 					}
 				}
-			if (ifr=str.match(/scalewidget\((.*?)\)/i)) {															// If a widget tag
+			if ((ifr=str.match(/scalewidget\((.*?)\)/i))) {															// If a widget tag
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				widgetSrc=ifr[0].substr(4);																			// Set src
 				widgetWid=ifr[1] ? ifr[1]/100 : 0.6667;																// Set width
 				widgetTop=ifr[2] ? ifr[2]-0 : 80;																	// Set top
 				str=str.replace(/scalewidget\(.*?\)/i,"");															// Kill tag
 				}
-			if (ifr=str.match(/scalebutton\((.*?)\)/i)) {															// If a button tag
+			if ((ifr=str.match(/scalePDF\((.*?)\)/i))) {															// If a PDF tag
+				w=$("#contentDiv").width();																			// Assume 100%
+				if (widgetSrc) w=w*widgetWid;																		// Widget takes up space
+				ifr=(""+ifr[1]).split(",");																			// Get params
+				if (!ifr[2]) ifr[2]=77.2;																			// Default to 8.5 * 11	
+//				scaleWidget(src=http://www.stagetools.com,50) scalePDF(http://www.stagetools.com/resume.pdf,2) margin(0) 
+				h=(w-48)/(ifr[2]/100);																				// Set height via aspect
+				h=Math.min(h,$("#contentDiv").height()-200);														// Cap to screen													
+				ifs="<iframe id='contentIF' class='wm-media' frameborder='0' src='"+ConvertFromGoogleDrive(ifr[0])+"#page="+ifr[1]+"&toolbar=0&navpanes=0&scrollbar=0&statusbar=0&messages=0&scrollbar=0' style='height:"+h+"px;width:100%;overflow:hidden;'></iframe>";	// Load in iframe
+				
+				str=str.replace(/scalePDF\(.*?\)/i,ifs);															// Get tag and replace it with iframe
+				}
+		
+				if (ifr=str.match(/scalebutton\((.*?)\)/i)) {															// If a button tag
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				s="<button class='wm-is' style='width:auto' onclick='app.rul.RunRule(\""+ifr[1]+"\",\""+ifr[2]+"\")'>"+ifr[0]+"</button>";			// Make button											
 				str=str.replace(/scalebutton\(.*?\)/i,s);															// Add button
@@ -188,7 +203,6 @@ class Content  {
 					str+="style='border:none;position:absolute;top:0;display:none'></iframe>";						// Style it
 					$("#mainDiv").append(str);																		// Add iFrame
 					}
-//				if (widgetSrc.charAt(widgetSrc.length-1) != "/") widgetSrc+="/";
 				if (widgetSrc != $("#contentIFWidget").prop("src")) {												// If a new URL
 					$("#contentIFWidget").remove();																	// Kill old one
 					str="<iframe src='"+widgetSrc+"' id='contentIFWidget' allow='microphone' ";						// Add iframe to hold  widget
@@ -199,7 +213,7 @@ class Content  {
 				var w=$("#contentDiv").width()*(1-widgetWid)-32;													// Widget width
 				var h=$("#contentDiv").height()-widgetTop-80+"px";													// Height
 				$("#contentBodyDiv").css("max-width",w);															// Reset content width
-				$("#paneTitle").css("max-width",w);
+//				$("#paneTitle").css("max-width",w);
 				$("#contentIFWidget").css({ width:$("#contentDiv").width()*widgetWid-64+"px",height:h, display:"block",	// Position widget
 					top:$("#contentDiv").offset().top+widgetTop+"px",	
 					left:$("#contentDiv").offset().left+w+56+"px"	

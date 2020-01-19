@@ -96,6 +96,7 @@
 						<option>Media</option>
 						<option>Assessment</option>
 						<option>Widget</option>
+						<option>PDF</option>
 						<option>Button</option>
 						<option>Link</option>
 					</select>&nbsp;&nbsp;
@@ -539,8 +540,7 @@ class App  {
 			str+="&nbsp;&nbsp;Border? <input type='checkbox' "+(params[3] ? "checked" : "")+" id='param-3'></td></tr>";
 			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
-			} 																				// MEDIA CLOSURE
-		
+			} 																				
 		else if (which == "Widget") {														// Add/edit widget
 			if (tag=body.match(/scalewidget\((.*?)\)/i)) 									// If a scalewidget() tag
 				params=tag[1].split(",");													// Get frame items
@@ -549,14 +549,23 @@ class App  {
 			str+="<tr><td>Top margin </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'></td></tr>";
 			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
-			} 																				// MEDIA CLOSURE
+			} 																				
+		else if (which == "PDF") {															// Add/edit PDF
+			if (tag=body.match(/scalePDF\((.*?)\)/i)) 										// If a scalepdf() tag
+				params=tag[1].split(",");													// Get frame items
+			str+="<table><tr><td>PDF URL</td><td><input class='wm-is' style='width:350px;height:16px' type='text' id='param-0' value='"+(params[0] ? params[0] :'')+"'></td></tr>";	
+			str+="<tr><td>Page #</td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-1' value='"+(params[1] ? params[1] :'')+"'></td></tr>";
+			str+="<tr><td>Aspect (77) </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'></td></tr>";
+			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
+			$("#contentDiv").append(str+"</div>");											// Add to content div
+			} 																				
 		else if ((which == "Button") || (which == "Link")) {								// Add/edit button/link
 			str+="<table><tr><td>Action</td><td>"+MakeSelect("param-1",false,["","SHOW","GOTO","VAR","SEND","STATUS","REPORT"],params[1])+"</td></tr>";
 			str+="<tr><td>Label </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-0' value='"+(params[0] ? params[1] :'')+"'></td></tr>";
 			str+="<tr><td>Content </td><td><input class='wm-is' style='width:50px;height:16px' type='text' id='param-2' value='"+(params[2] ? params[2] :'')+"'></td></tr>";
 			str+="</table><br><div id='saveMacroBut' class='wm-bs'>Save changes</div>";		// Save button				
 			$("#contentDiv").append(str+"</div>");											// Add to content div
-			} 																				// MEDIA CLOSURE
+			} 																				
 		else if (which == "Video") {														// Add/edit video
 			var curTriggerItem="";
 			params[0]="";
@@ -670,7 +679,7 @@ class App  {
 				if (tag)	body=body.replace(/assess\(.*?\)/i,str);						// Get tag and replace it with new macro
 				else		body+=str;														// Simply append
 				}
-			else if ((which == "Media") || (which == "Video") || (which == "Widget") || (which == "Button") || (which == "Link")) {		// Add/edit
+			else if ((which == "Media") || (which == "Video") || (which == "Widget") || (which == "Button") || (which == "Link") || (which == "PDF")) {		// Add/edit
 				str="scale"+which+"(";														// Add head
 				if (which == "Media") 														// If media
 					str+=$("#param-0").val() ? $("#param-0").val() : "";					// Add url
@@ -678,6 +687,8 @@ class App  {
 					str+=$("#param-0").val() ? $("#param-0").val() : "";					// Add url
 					str+=$("#param-1").val() ? $("#param-1").val() : "";					// Add top
 					}
+				else if (which == "PDF") 													// If PDF
+					str+=$("#param-0").val() ? $("#param-0").val() : "";					// Add url
 				else if ((which == "Button") || (which == "Link")) 							// If button or link
 					str+=$("#param-0").val() ? $("#param-0").val() : "";					// Add label
 				else{																		// Video
