@@ -514,6 +514,7 @@ class App  {																								 // APP
 
 	function importHTML()
 	{
+
 	let str=`<body class="c12"><p class="c7"><span class="c0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Starting text</span></p><h1 class="c11" id="h.enva564742b"><span class="c10">Chapter 1</span></h1><p class="c2"><span>This is text for </span><span class="c13">chapter </span><span class="c0">1, par 1</span></p><p class="c2"><span class="c0">This is text par 2</span></p><h2 class="c4" id="h.fde1w0t69593"><span class="c1">Topic 1</span></h2><p class="c7 c9"><span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 197.50px; height: 266.30px;"><img alt="" src="https://lh3.googleusercontent.com/EORDtqxSpIIQo2-FBg9q7OUj0Qqkl-mYbJ4yR-iJT4J6zjktIgNByjBa2SBU45kFdzHPqSq0WhTsoajtUwGVXjGclEjVi5Xd_E8z2PSHoZo0k3VdQ2PEnPnJ1PltcDIlRA" style="width: 197.50px; height: 266.30px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span></p><h2 class="c4" id="h.8tb9lrfabkwq"><span class="c1">Topic 2</span></h2><p class="c3"><span class="c0">Text for topic 2</span></p><h3 class="c4" id="h.3d3yt8yr2y2q"><span>SubTopic</span><span class="c8">&nbsp;1</span></h3><p class="c3"><span>Text for subtopic 1</span></p><h3 class="c4" id="h.r8hj3rgus3re"><span class="c8">SubTopic 2</span></h3><p class="c3"><span class="c0">Text for subtopic 1</span></p><h4 class="c4" id="h.van6ybuabogz"><span class="c6">Step</span></h4><p class="c3"><span class="c0">Text for step</span></p><h2 class="c4" id="h.ful11n6wjntj"><span class="c1">Chapter 2</span></h2><p class="c3"><span class="c0">Text for chapter 2</span></p><h2 class="c4" id="h.9spgg6er0qbz"><span class="c1">Chapter 3</span></h2><p class="c3"><span class="c0">Text for chapter 3</span></p><p class="c5"><span class="c0"></span></p><p class="c5"><span class="c0"></span></p></body></html>`;
 			GDriveLoad();
 			function GDriveLoad() 																								// LOAD DOC FROM GOOGLE DRIVE
@@ -524,19 +525,25 @@ class App  {																								 // APP
 			var xhr=new XMLHttpRequest();																				// Ajax
 			xhr.open("GET",str);																						// Set open url
 			xhr.onload=function() { 											// On successful load, init app from TSV file
-				let i,m;
-				let r=new RegExp("(<p|<h1|<h2|<h3|<h4)(.+?)(</p>|</h1>|</h2>|</h3>|</h4>)","g")
-				let s=xhr.responseText.split("</head>")
-				let a=s[0]+"</head>";
-				let p=s[1].match(r);
-				for (i=0;i<p.length;++i) {
-					m=p[i].match(/<h1|<h2|<h3|h4/g);
-					if (!m) a+=p[i];
-				}
+				let lobs=[]
+				let i,m,o,curLob=0,curPar=0,content="";
+				let s=xhr.responseText.split("</head>");																// Slip style from content
+				let style=s[0]+"</head>";																				// Style portion
+				let r=new RegExp("(<p|<h1|<h2|<h3|<h4)(.+?)(</p>|</h1>|</h2>|</h3>|</h4>)","g");						// Filter all elements
+				let p=s[1].match(r);																					// Put inro array of tags and content
+				lobs.push({id:0,parent:"",status:0});																	// Add root lob
 
-				
-		trace(p)
-				$("#contentBodyDiv").html(a);
+				for (i=0;i<p.length;++i) {																				// For each paragraph
+					if ((m=p[i].match(/<h1|<h2|<h3|h4/g))) {															// If a header
+						if (content) 	lobs[lobs.length-1].body=content;												// If content, add to previous lob
+						lobs.push({id:curLob++,title:m[0],parent:curPar,status:0});		// Add new lob
+						content="";																						// Clear content
+						}
+					else content+=p[i];																					// Add paragraph to content
+					}
+				if (content) 	lobs[lobs.length-1].body=content;														// If content, add to previous lob
+				trace(lobs)
+				$("#contentBodyDiv").html(style+lobs[2].body);
 					};	
 xhr.send();																									// Do it
 		
