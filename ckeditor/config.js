@@ -7,13 +7,13 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.toolbar =[
 		{ name: 'clipboard', items : ['Undo','Redo' ] },
-		{ name: 'editing', items : [ 'SpellChecker', 'Scayt' ] },
 		{ name: 'insert', items : ['Table','SpecialChar','HorizontalRule','CreateDiv','Image','Link'] },
-		{ name: 'basicstyles', items : [ 'Bold','Italic','Subscript','Underline','Superscript','RemoveFormat',
+		{ name: 'basicstyles', items : [ 'Bold','Italic','Underline','Superscript','Subscript','RemoveFormat',
 			'-','NumberedList','BulletedList','-','Outdent','Indent',
 			'JustifyLeft','JustifyCenter','JustifyRight', ] },
 		{ name: 'styles', items : ['TextColor','Font','FontSize'] },
 		{ name: 'scale', items : [ 'scale' ] }
 		]
+		config.extraPlugins = 'pastefromword';	
 //	config.extraPlugins = 'scale';	
 	};

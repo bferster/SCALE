@@ -18,14 +18,14 @@
 		 body { 			font-family: Verdana,Geneva,sans-serif; font-size:14px; padding:0; margin:0; 
 		 					box-sizing: border-box; background-color: #f8f8f8;	
 							}
-		.wm-main { 			width:100%;  overflow:auto;  display:none; min-width:1450px;
+		.wm-main { 			width:100%;  overflow:auto;  display:none; 
 							}
-		.wm-nav {	 		float:left; overflow:hidden; padding:24px; width: calc(100vw - 1100px); min-width:360px; 
+		.wm-nav {	 		display:inline-block; overflow:hidden; padding:24px; width:360px; vertical-align:top;
 							}
 		.wm-confirm {		position: absolute;  width: 350px; padding: 16px; left: calc(50% - 150px); top: calc(50% - 50px); user-select: none;	
 							border-radius: 8px; background-color: #fff; border: 1px solid #999; box-shadow: 4px 2px 12px 2px #aaa; 
 							}
-		.wm-content {		width:1000px; overflow:hidden; float:right; margin-right:24px; 
+		.wm-content {		display:inline-block; margin-right:12px; width:calc(100% - 440px); max-width:900px
 							}
 		.wm-splash { 		width:100%; color:#999; text-align:center; margin-top:10%; display:none;
 							}
@@ -87,9 +87,10 @@
 		<div id='navDiv' class='wm-nav'></div>
 		<div class='wm-content'>
 			<div id='contentDiv'></div>
-			<div id='editorDiv'>
+			<div id='editorDiv' style='max-width:900px'>
 				<textarea class='ckeditor' id='editor1' name='editor1'></textarea>
-				<br><div style='float:right'>
+				<br>
+				<div style='float:right'>
 					<select id="addMacroBut" class='wm-is' style="width:auto">
 						<option>Macro</option>
 						<option>Video</option>
@@ -102,7 +103,7 @@
 					</select>&nbsp;&nbsp;
 					id: <input class='wm-is' type='text' style='width:60px;height:15px;text-align:center' id='paneId'>
 				</div>
-				<div style='margin-left:470px'>
+				<div style=''>
 					<div id='savePaneBut' class='wm-bs'>Save changes</div>&nbsp;&nbsp;
 					<img id='removePaneBut' alt="" style='vertical-align:-5px' src='img/trashbut.gif'>	
 				</div>
