@@ -107,14 +107,14 @@ class Content  {
 				var asp=0.5625;																						// Assume .5625 aspect
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				ifr[0]="video.htm?"+ifr[0];																			// Add video url
-				if (ifr[1])		asp=ifr[1]/ifr[2];																	// Get aspect
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
-				h=$("#contentDiv").width()*asp*(w/100);																// Set height based on aspect												
+				h=$("#contentDiv").width()*margin/50;																// Margin size
+				h=($("#contentDiv").width()-h)*asp*(w/100);															// Set height based on aspect												
 				if (this.resumeTime && this.resumeId)																// A resume time/id set
 					ifr[0]+="|start="+this.resumeTime;																// Set new start
 				ifs="<div style='text-align:center'>";																// For centering
-				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='"+b+"' src='"+ifr[0]+"' style='height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe
+				ifs+="<iframe id='contentIF' class='wm-media' align='middle' scrolling='no' frameborder='"+b+"' src='"+ifr[0]+"' style='overflow:hidden;height:"+h+"px;width:"+w+"%'></iframe></div>";	// Load in iframe
 				str=str.replace(/scalevideo\(.*?\)/i,ifs);															// Get tag and replace it with iframe
 				}
 			if (ifr=str.match(/assess\((.*?)\)/i)) {																// If an assess tag
