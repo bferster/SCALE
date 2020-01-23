@@ -1,11 +1,20 @@
 {
    "8/RrMmQlCD2Gsp14wUCE1P8r7B2C5+yE0+g79IPyRsc=": {
-      "dynamic_spki_hashes_expiry": 0.0,
-      "expiry": 1498606344.272749,
+      "expiry": 1611346531.798443,
       "mode": "force-https",
-      "pkp_include_subdomains": false,
-      "pkp_observed": 0.0,
+      "sts_include_subdomains": false,
+      "sts_observed": 1579810531.798445
+   },
+   "Q+FCtpiGM4NLKIfE4hEPfLkVmtda48FEGW4SDDtrSq0=": {
+      "expiry": 1611346551.835778,
+      "mode": "force-https",
       "sts_include_subdomains": true,
-      "sts_observed": 1487712990.272749
+      "sts_observed": 1579810551.835783
+   },
+   "fJjUrPqhktMfiTHJX3Q0pJi/P12Q72DBgzzJqjlNC4o=": {
+      "expiry": 1590696944.521314,
+      "mode": "force-https",
+      "sts_include_subdomains": true,
+      "sts_observed": 1579810544.521317
    }
 }
