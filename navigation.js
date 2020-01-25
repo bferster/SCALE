@@ -20,9 +20,9 @@ class Navigation {
 		for (i=0;i<o.length;++i) {																					// For each lesson
 			id=app.doc.lobs[0].kids[i];																				// Point at id of start
 			str+="<div class='wm-pullDownItem' id='lessonId-"+id+"'><span";											// Add header
-			if (app.doc.FindLobById(o[i]).status > 9)	str+=" style='color:#08aa08'";								// Green if done
+			if (app.doc.FindLobById(o[i]).status >= app.doc.statusThreshold)	str+=" style='color:#08aa08'";		// Green if done
 			str+=">"+app.doc.FindLobById(o[i]).name;																// Add name
-			if (app.doc.FindLobById(o[i]).status > 9)	str+=" &#10003;";											// Add check if done
+			if (app.doc.FindLobById(o[i]).status >= app.doc.statusThreshold)	str+=" &#10003;";					// Add check if done
 			str+="</span></div>";															
 			}		
 		$("body").append(str);																						// Add menu to body
@@ -91,7 +91,7 @@ class Navigation {
 				id=app.doc.lobs[app.doc.curTopic].children[i];														// Get topic id
 				if ((app.doc.curLobId == children[i]) || (j == app.doc.curConcept))									// If current Topic
 				 	str+="color:#c57117;font-weight:bold;";															// Show current place
-				if (app.doc.FindLobById(id).status == DONE)															// If done
+				if (app.doc.FindLobById(id).status >= app.doc.statusThreshold)										// If done
 					str+="color:#007700";																			// Show done color
 				str+=`'>${name}</div>`;
 				}
@@ -106,7 +106,7 @@ class Navigation {
 				name=app.doc.FindLobById(children[i]).name;															// Get concept name
 				str+=`<span id='stepBar-${i}' class='wm-stepBarItem' style='`;										// Use ES6 templates!
 				id=app.doc.lobs[app.doc.curConcept].children[i];													// Get concept id
-				if (app.doc.FindLobById(id).status == DONE)															// If done
+				if (app.doc.FindLobById(id).status >= app.doc.statusThreshold)										// If done
 					str+="color:#007700;";																			// Show done color
 				if (app.doc.curLobId == children[i]) 																// If current Topic
 				 	str+="color:#c57117;font-weight:bold";															// Show current place
@@ -132,7 +132,7 @@ class Navigation {
 						$("#topicDotLab-"+i).css({ left:l+"px"} );													// Position label
 						$("#topicDotDot-"+i).css({ left:(l+100)+"px"} );											// Position dot
 						var id=app.doc.lobs[app.doc.curLesson].children[i];											// Get topic is
-					if (app.doc.FindLobById(id).status == DONE)	{													// If done
+					if (app.doc.FindLobById(id).status >= app.doc.statusThreshold)	{								// If done
 						$("#topicDotLab-"+i).css({color:"#066600"});												// Done status
 						}
 					l+=ww;																							// Next pos

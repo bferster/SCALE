@@ -17,7 +17,8 @@ class Doc {
 		this.curPos=0;																								// Start at lesson
 		this.courseId=id;																							// Default course id
 		this.curLevel=this.curLesson=this.curTopic=this.curConcept=this.curStep=-1;									// Nowhere yet
-		
+		this.statusThreshold=10;																					// Threshold for mastery
+
 		if (id == "preview") {																						// Preview instructions
 			var str="<br><br><p style='text-align:center'><img src='img/scalelogo.png'>";
 			str+="<br>This tab will show previews of your course.";
@@ -139,7 +140,7 @@ class Doc {
 		var o=this.lobs[index];																						// Point at lob
 		while (o) {																									// Look at kids
 			for (i=0;i<o.children.length;++i) {																		// For each child
-				if (this.lobs[o.kids[i]].status != 10)																// Not complete yet
+				if (this.lobs[o.kids[i]].status < this.statusThreshold)												// Not complete yet
 					return;																							// Quit
 				}
 			o.status=amount;																						// This mob complete
@@ -232,9 +233,9 @@ class Doc {
 			if (!o)	continue;																						// Skip invalid mob			
 			if (this.map[i] == here) {																				// A match
 				o=this.FindLobById(this.map[i+1]);																	// Point at nextlob	in map														
-				if (!app.skipDone)		break;																		// If skipping done [anes
-				if (o.status == 10) 	here=this.map[i+1];															// This one's already done, keep looking
-				else					break;																		// Stop looking
+				if (!app.skipDone)						break;														// If skipping done panes
+				if (o.status >= this.statusThreshold) 	here=this.map[i+1];											// This one's already done, keep looking
+				else									break;														// Stop looking
 				}
 			}
 		this.curPos=i+dir;																							// Advance to next

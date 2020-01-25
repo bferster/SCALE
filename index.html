@@ -185,9 +185,6 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	else																	// Use other method
 		window.attachEvent("message",html5MessageHandler);					// Add handler
 
-	$("#showgdoc").on("click",function() {									// Show google doc
-		});
-
 	$("#showDiscuss").on("click",function() {								// Show discussion
 		app.con.Draw("discuss");											// Show it	
 		});
@@ -279,7 +276,7 @@ class App  {																								 // APP
 		app.doc.Draw();																								// Reset various params
 		this.con.Draw();																							// Draw container
 		this.nav.Draw();																							// Draw navigator and header
-		if (this.setDone)		app.doc.SetStatus(this.doc.curPos,10);												// Set lob's status
+		if (this.setDone)		app.doc.SetStatus(this.doc.curPos, app.doc.statusThreshold);						// Set lob's status
 		}
 }
 

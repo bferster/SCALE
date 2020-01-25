@@ -44,7 +44,7 @@ class Messaging {
 				}
 			var j=app.doc.FindLobIndexById(v[1]);																	// Get assessment lob index
 			if (app.setDone && (j >= 0))																			// If setting																	
-				app.doc.SetStatus(j,(v[2]-0 >= app.assessLevel-0) ? 10 : 0);										// If after pass level, set status
+				app.doc.SetStatus(j,(v[2]-0 >= app.assessLevel-0) ? app.doc.statusThreshold : 0);					// If after pass level, set status
 			app.con.resumeId=app.con.resumeTime=0;																	// Clear resume
 			app.rul.CheckRules("assess",id,Math.floor(v[2]*100));													// Send to rules
 			app.msg.SaveToForm("Assess"+v[1]+"="+Math.floor(v[2]*100));												// Save final score to form, if set		
@@ -88,7 +88,7 @@ class Messaging {
 					app.con.resumeId=app.doc.curLobId;																// Store resume id
 					app.con.resumeTime=v[2];																		// Store resume time
 					}
-				if (app.skipDone && o && (o.status > 9)) 															// If seen and skipping
+				if (app.skipDone && o && (o.status >= app.doc.statusThreshold)) 									// If seen and skipping
 					app.con.Draw(app.doc.curLobId);																	// Resume playing
 				else																								// Run trigger mob
 					app.con.Draw(v[1]);																				// Draw content
