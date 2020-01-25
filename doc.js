@@ -134,7 +134,7 @@ class Doc {
 		return str;																									// Return tab-delimited version
 		}
 
-	SetStatus(index, amount) 																							// SET LOB'S STATUS
+	SetStatus(index, amount) 																					// SET LOB'S STATUS
 	{
 		var i;
 		var o=this.lobs[index];																						// Point at lob
@@ -147,6 +147,22 @@ class Doc {
 			o=this.FindLobById(o.parent);																			// Point at parent
 			}
 		}
+
+	GetStatusArray()																							// GET LOB STATUS AS ARRAY
+	{
+		let i,a=[];
+		for (i=0;i<this.lobs.length;++i)	a.push(this.lobs[i].status);											// Add status to array
+		return a;
+	}
+
+	SetStatusArray(a)																							// SET LOB STATUS FROM ARRAY
+	{
+		let i;
+		for (i=0;i<a.length;++i) {																					// For each element
+			if (i >= this.lobs.length) 	break;																		// Quit if too many
+			this.lobs[i].status=a[i];																				// Set status
+			}
+	}
 
 	AddNewLob(parent, id, name)																					// ADD NEW LOB
 	{

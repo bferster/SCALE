@@ -196,6 +196,11 @@ class Navigation {
 	{
 		var str="<p class='wm-pageTitle'>Choose pane</p>";															// Title
 		str+="<div id='treeDiv' class='wm-tree' style='margin-left:10%'></div>";									// Add tree
+		str+="<div style='margin-left:72px'>LEGEND: ";																// Add legend 
+		str+="<span style='color:#000088'>Not done yet</span> | "; 
+		str+="<span style='color:#c57117'>Partial</span> | ";
+		str+="<span style='color:#009900'>Done</span> | "
+		str+="(#) is value from 0 to "+app.doc.statusThreshold+"</div>";											// Number
 		$("#contentDiv").html(str);																					// Set tree menu
 		new Tree(app.doc.curLobId);																					// Populate tree
 	}
@@ -235,9 +240,9 @@ class Tree {
 		var row=$("#tr-"+id);																						// Row
 		var par=row.parent();																						// Point at previous line
 		$('.wm-tree li a').each( function() {                          												// For each line
-			$(this).css({"color":"#000","font-weight":"normal"});      												// Normal
+			$(this).css({"font-weight":"normal"});      															// Normal
 			}); 
-		row.css({"color":"#009900","font-weight":"bold"});          												// Bold and green   
+		row.css({"font-weight":"bold"});          																	// Bold 
 		for (i=0;i<20;++i) {																						// Iterate upwards
 			if ($(par).attr("class") == "wm-tree")	break;															// Quit at top of tree
 			if ($(par).attr("class") == "parent") {																	// Has children
@@ -270,11 +275,13 @@ class Tree {
 		if (!o.children)	return;																					// Quit if no children
 		var str="<ul style='display:none'>";																		// Wrapper
 		for (i=0;i<o.children.length;++i) {																			// For each child
-			str+="<li";																								// Start row
 			oo=app.doc.lobs[o.kids[i]];																				// Point at child lob via index
+			str+="<li style='color:";																				// Start row
+			if (oo.status >= app.doc.statusThreshold)			str+="#009900'";									// Completed
+			else if (oo.status >= app.doc.statusThreshold/2)	str+="#c57117'";									// Half
+			else 												str+="#000088'";									// None
 			if (oo.children.length)	str+=" class='parent'"															// Add parent if it has children
-			str+="><a id='tr-"+oo.id+"'>"+oo.name;																	// Add index and name
-			str+"</a></li>";																						// Add label
+			str+=`><a id='tr-${oo.id}'>${oo.name} (${oo.status})</a></li>`;											// Add index, name, and status
 			}
 		row.after(str+"</ul>");																						// Add to tree
 		for (i=0;i<o.children.length;++i) {																			// For each child
