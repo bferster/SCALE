@@ -289,7 +289,7 @@ class Doc {
 			}
 	}
 
-	FindLobById(id, objArray) {																					// FIND PTR TO OBJECT FROM ID
+	FindLobById(id, objArray) {																					// FIND POINTER TO OBJECT FROM ID
 		var i;
 		var o=objArray ? objArray : this.lobs;																		// Point at array of object array
 		var n=o.length;																								// Set length

@@ -40,10 +40,11 @@ class MediaSkin {
 
 	Draw(paneId, skin, div)																						// DRAW SKIN ON PANE
 	{
+		var i,o,d,y;
 		this.Clear();																								// Clear old overlays
 		if (!skin) return;																							// Quit if nothing
-		var i,o,d,y;
 		this.curSkin=skin;																							// Set curent skin
+		if (!div)	div="#contentDiv";																				// Point a content div if not spec'd
 		var x=$(div).offset().left, y=$(div).offset().top;															// Position of base
 		var w=$(div).width(), 		h=$(div).height();																// Size
 		var str="<div id='amsDiv' style='position:absolute;";														// Add overlay

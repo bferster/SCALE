@@ -52,6 +52,10 @@ class Rules {
 			case "REPORT": 																							// REPORT
 				app.msg.SaveToForm("Report="+what);																	// Save value to form, if set		
 				break;		
+			case "AMS": 																							// ACTIVE MEDIA SKIN
+				let o=app.doc.FindLobById(what,app.ams.skins);														// Get skin												
+				app.ams.Draw(app.doc.curLobId,o)
+				break;		
 			}
 	}
 

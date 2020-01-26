@@ -114,7 +114,6 @@ class Content  {
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
 				h=$("#contentDiv").width()*margin/50;																// Margin size
-				trace(h,margin)
 				h=($("#contentDiv").width()-h)*asp*(w/100);															// Set height based on aspect												
 				if (this.resumeTime && this.resumeId)																// A resume time/id set
 					ifr[0]+="|start="+this.resumeTime;																// Set new start
@@ -167,15 +166,17 @@ class Content  {
 				if (widgetSrc) w=w*widgetWid;																		// Widget takes up space
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				if (!ifr[2]) ifr[2]=77.2;																			// Default to 8.5 * 11	
-//				scaleWidget(src=http://www.stagetools.com,50) scalePDF(http://www.stagetools.com/resume.pdf,2) margin(0) 
 				h=(w-48)/(ifr[2]/100);																				// Set height via aspect
 				h=Math.min(h,$("#contentDiv").height()-200);														// Cap to screen													
 				ifs="<iframe id='contentIF' class='wm-media' frameborder='0' src='"+ConvertFromGoogleDrive(ifr[0])+"#page="+ifr[1]+"&toolbar=0&navpanes=0&scrollbar=0&statusbar=0&messages=0&scrollbar=0' style='height:"+h+"px;width:100%;overflow:hidden;'></iframe>";	// Load in iframe
-				
 				str=str.replace(/scalePDF\(.*?\)/i,ifs);															// Get tag and replace it with iframe
 				}
-		
-				if (ifr=str.match(/scalebutton\((.*?)\)/i)) {															// If a button tag
+			if (ifr=str.match(/scaleAMS\((.*?)\)/i)) {																// If an AMS tag
+				let o=app.doc.FindLobById(ifr[1],app.ams.skins);													// Get skin												
+				app.ams.Draw(app.doc.curLobId,o)																	// Draw it
+				str=str.replace(/scaleAMS\(.*?\)/i,"");																// Remove tag
+				}
+			if (ifr=str.match(/scalebutton\((.*?)\)/i)) {															// If a button tag
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				s="<button class='wm-is' style='width:auto' onclick='app.rul.RunRule(\""+ifr[1]+"\",\""+ifr[2]+"\")'>"+ifr[0]+"</button>";			// Make button											
 				str=str.replace(/scalebutton\(.*?\)/i,s);															// Add button
