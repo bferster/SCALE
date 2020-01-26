@@ -196,11 +196,11 @@ class Navigation {
 	{
 		var str="<p class='wm-pageTitle'>Choose pane</p>";															// Title
 		str+="<div id='treeDiv' class='wm-tree' style='margin-left:10%'></div>";									// Add tree
-		str+="<div style='margin-left:72px'>LEGEND: ";																// Add legend 
-		str+="<span style='color:#000088'>Not done yet</span> | "; 
+		str+="<div style='margin-left:72px'>LEGEND: &nbsp; ";														// Add legend 
+		str+="<span style='color:#666'> Not done yet</span> | "; 
 		str+="<span style='color:#c57117'>Partial</span> | ";
 		str+="<span style='color:#009900'>Done</span> | "
-		str+="(#) is value from 0 to "+app.doc.statusThreshold+"</div>";											// Number
+		str+=" # is value</div>";																					// Number
 		$("#contentDiv").html(str);																					// Set tree menu
 		new Tree(app.doc.curLobId);																					// Populate tree
 	}
@@ -279,9 +279,9 @@ class Tree {
 			str+="<li style='color:";																				// Start row
 			if (oo.status >= app.doc.statusThreshold)			str+="#009900'";									// Completed
 			else if (oo.status >= app.doc.statusThreshold/2)	str+="#c57117'";									// Half
-			else 												str+="#000088'";									// None
+			else 												str+="#666'";										// None
 			if (oo.children.length)	str+=" class='parent'"															// Add parent if it has children
-			str+=`><a id='tr-${oo.id}'>${oo.name} (${oo.status})</a></li>`;											// Add index, name, and status
+			str+=`><a id='tr-${oo.id}'>${oo.name} - ${oo.status}</a></li>`;											// Add index, name, and status
 			}
 		row.after(str+"</ul>");																						// Add to tree
 		for (i=0;i<o.children.length;++i) {																			// For each child
