@@ -130,13 +130,15 @@ class Messaging {
 
 		SaveToForm(data)																						// SAVE DATA TO FORM
 		{
-			var d={};
+			let d={};
 			if (!app.reportLink)	return;																			// Invalid link
-			var url=app.reportLink.split("/viewform?")[0]+"/formResponse";											// Extract post url
-			var nam=app.reportLink.match(/entry.[0-9]*=name/i)[0].split("=");										// Extract name
-			var dat=app.reportLink.match(/entry.[0-9]*=data/i)[0].split("=");										// Extract data
+			let url=app.reportLink.split("/viewform?")[0]+"/formResponse";											// Extract post url
+			let nam=app.reportLink.match(/entry.[0-9]*=name/i)[0].split("=");										// Extract name
+			let dat=app.reportLink.match(/entry.[0-9]*=data/i)[0].split("=");										// Extract data
+			let sta=app.reportLink.match(/entry.[0-9]*=status/i)[0].split("=");										// Extract status
 			d[nam[0]]=(app.namePrefix ? app.namePrefix+':' : "") + app.userName;									// Use username from login																	
 			d[dat[0]]=data;																							// Set data
+			d[sta[0]]=app.doc.GetStatusArray().join(",");															// Set status
 			$.ajax({ url: url, data: d,  type: "POST",  dataType: "xml" });											// Will generate CORS error, but posts anyway
 			}
 }
