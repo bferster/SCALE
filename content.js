@@ -57,7 +57,7 @@ class Content  {
 				v=this.actionQueue[i]=this.actionQueue[i].substr(0,this.actionQueue[i].length-1).split(" ");		// Trim paren and split
 				if ((v[0] == "REPORT") && $("#txb-"+i).val()) {														// If a REPORT value
 					t=v[1].substr(0,v[1].length-1)+":"+$("#txb-"+i).val();						 					// Get val
-					app.rul.RunRule({ id: app.doc.curLobId, do: v[0], object: t });									// Run action
+					app.rul.RunRule(v[0],t);																		// Run action
 					}
 				}
 			app.con.actionQueue=[];																					// Clear queue
