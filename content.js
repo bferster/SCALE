@@ -89,6 +89,10 @@ class Content  {
 		str+="<div id='contentBodyDiv' class='wm-contentBody'>";													// Container div
 		if (l) {																									// Valid lob
 			str+=l.body ? l.body : "";																				// Add body
+			if (ifr=str.match(/margin\((.*?)\)/i)) {																// If a margin tag
+				margin=ifr[1];																						// Set margin
+				str=str.replace(/margin\(.*?\)/i,"");																// Kill tag
+				}
 			if ((ifr=str.match(/scalemedia\((.*?)\)/i))) {															// If a media tag
 				w=99.5; b=0;																						// Assume full width
 				h=$("#contentDiv").height()-200;																	// Set default height												
@@ -110,6 +114,7 @@ class Content  {
 				if (ifr[2])		w=w*ifr[2]/100;																		// Width too
 				if (ifr[3])		b=1;																				// Border
 				h=$("#contentDiv").width()*margin/50;																// Margin size
+				trace(h,margin)
 				h=($("#contentDiv").width()-h)*asp*(w/100);															// Set height based on aspect												
 				if (this.resumeTime && this.resumeId)																// A resume time/id set
 					ifr[0]+="|start="+this.resumeTime;																// Set new start
@@ -125,10 +130,6 @@ class Content  {
 				url+="|"+l.id;																						// Add overall assessment id
 				ifs+="<iframe id='contentIF' class='wm-media' align='middle' frameborder='0' src='"+url+"' style='height:"+h+"px;width:100%'></iframe></div>";	// Load in iframe
 				str=str.replace(/assess\(.*?\)/i,ifs);																// Get tag and replace it with iframe
-				}
-			if (ifr=str.match(/margin\((.*?)\)/i)) {																// If a margin tag
-				margin=ifr[1];																						// Set margin
-				str=str.replace(/margin\(.*?\)/i,"");																// Kill tag
 				}
 			if (ifr=str.match(/do\(.+?\)"/ig)) {																	// If a do() tag
 				var i,d;	
