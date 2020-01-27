@@ -434,10 +434,10 @@ class Doc {
 
 		if (app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
 							app.userName=s;																			// Set name
-							let status="";																			// Get last status from report spreadsheet
-							app.doc.SetStatusArray(status);															// Set status	
-							let i=GetCookie(app.doc.courseId)														// Get last stop cookie
+							let i=GetCookie(app.doc.courseId+"_Last")												// Get last stop cookie
 							if ((i > 0) && (i < app.doc.lobs.length))	app.doc.curPos=i;							// If valid start start there
+							i=GetCookie(app.doc.courseId+"_Status")													// Get status cookie
+							app.doc.SetStatusArray(i.split(","));													// Set status	
 							app.Draw();																				// Redraw																		
 							}); 		
 	}

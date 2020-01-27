@@ -73,10 +73,12 @@ class Content  {
 			$("#mainDiv").height($(window).height());																// Set main
 			});
 
-		let d=new Date();	d.setTime(d.getTime()+365*24*60*60*1000);												// Cookie expires after a year
-		if (app.doc.curPos)																							// If at startup
-			document.cookie=`${app.doc.courseId}=${app.doc.curPos}; expires=${d.toUTCString()};`;					// Set cookie to this id		
-	}
+		let d=new Date();	d.setTime(d.getTime()+365*24*60*60*1000);	d=d.toUTCString()							// Cookie expires after a year
+		if (app.doc.curPos) {																						// If at startup
+			document.cookie=`${app.doc.courseId}_Last=${app.doc.curPos}; expires=${d};`;							// Set cookie to this id with last stop		
+			document.cookie=`${app.doc.courseId}_Status=${app.doc.GetStatusArray().join(",")}; expires=${d};`;		// Set status	
+			}
+		}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	
