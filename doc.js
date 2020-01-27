@@ -432,7 +432,7 @@ class Doc {
 		this.AddChildList();																						// Add children	
 		app.Draw();																									// Redraw
 
-		if (!app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
+		if (app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
 							app.userName=s;																			// Set name
 							let status="";																			// Get last status from report spreadsheet
 							app.doc.SetStatusArray(status);															// Set status	
