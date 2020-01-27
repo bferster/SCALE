@@ -31,7 +31,7 @@ class Content  {
 		str+="<div id='backBut' class='wm-backBut' title='Go back a step' onclick='app.nav.Back()'>BACK</div>"; 	// Add back button
 		str+="<img id='fullBut' src='img/fullbut.png' class='wm-fullBut'>"; 										// Add full button
 		$("#contentDiv").html(str);																					// Set content
-		
+	
 		if (id == "discuss") {																						// If a discussion
 			var str="<img onclick='javascript:app.con.Draw()' src='img/next.png' class='wm-nextBut'>"; 				// Add exit button
 			var h=$("#contentDiv").height()-200;																	// Set default height												
@@ -71,7 +71,11 @@ class Content  {
 			app.fullScreen=!app.fullScreen;																			// Toggle mode
 			app.Draw(); 																							// Draw it
 			$("#mainDiv").height($(window).height());																// Set main
-		});
+			});
+
+		let d=new Date();	d.setTime(d.getTime()+365*24*60*60*1000);												// Cookie expires after a year
+		if (app.doc.curPos)																							// If at startup
+			document.cookie=`${app.doc.courseId}=${app.doc.curPos}; expires=${d.toUTCString()};`;					// Set cookie to this id		
 	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT

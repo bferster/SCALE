@@ -158,6 +158,7 @@ class Doc {
 	SetStatusArray(a)																							// SET LOB STATUS FROM ARRAY
 	{
 		let i;
+		if (!a || !a.length)	return;																				// Quit if nothing there
 		for (i=0;i<a.length;++i) {																					// For each element
 			if (i >= this.lobs.length) 	break;																		// Quit if too many
 			this.lobs[i].status=a[i];																				// Set status
@@ -429,8 +430,16 @@ class Doc {
 		if (!this.lobs.length)																						// No lobs defined
 			this.lobs=[ { name:"Course name", id:1, status:0, body:"", children:[], kids:[]}];						// Add start Lob
 		this.AddChildList();																						// Add children	
-		app.Draw();																									// Reset data positions
-		if (app.login)	GetTextBox("Please log in","Type your user name","",function(s) { app.userName=s} ); 		// Login
+		app.Draw();																									// Redraw
+
+		if (!app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
+							app.userName=s;																			// Set name
+							let status="";																			// Get last status from report spreadsheet
+							app.doc.SetStatusArray(status);															// Set status	
+							let i=GetCookie(app.doc.courseId)														// Get last stop cookie
+							if ((i > 0) && (i < app.doc.lobs.length))	app.doc.curPos=i;							// If valid start start there
+							app.Draw();																				// Redraw																		
+							}); 		
 	}
 
 	GDriveLoad(id) 																								// LOAD DOC FROM GOOGLE DRIVE

@@ -4,8 +4,9 @@
 
 class Messaging {
 	
-	constructor() {																								// CONSTRUCTOR
-		}
+	constructor() 																								// CONSTRUCTOR
+	{	
+	}
 	
 	OnMessage(msg) {																							// ON MESSAGE
 		var v;
@@ -140,5 +141,6 @@ class Messaging {
 			d[dat[0]]=data;																							// Set data
 			d[sta[0]]=app.doc.GetStatusArray().join(",");															// Set status
 			$.ajax({ url: url, data: d,  type: "POST",  dataType: "xml" });											// Will generate CORS error, but posts anyway
-			}
-}
+		}
+
+}	// Messaging CLASS CLOSURE

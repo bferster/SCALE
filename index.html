@@ -491,7 +491,19 @@ class App  {																								 // APP
 		str+=n;																	// Add to tc
 		str+="."+Math.round((secs-Math.floor(secs))*10);						// Add fractional
 		return str;																// Return timecode			
-}
+	}
+
+	function GetCookie(cname) 												// GET COOKIE
+	{
+		let i,c,name=cname+"=";
+		let ca=decodeURIComponent(document.cookie).split(';');					// Get cookie array
+		for (i=0;i<ca.length;i++) {												// For each cookie
+			c=ca[i];
+			while (c.charAt(0) == ' ')	c=c.substring(1);
+			if (c.indexOf(name) == 0) 	return c.substring(name.length, c.length);
+			}
+		return "";
+	}
 
 	function ConvertFromGoogleDrive(url)										// CONVERT GOOGLE DRIVE/DROPBOX LINK TO DIRECT LINK
 	{
