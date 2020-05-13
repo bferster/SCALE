@@ -224,8 +224,8 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 		else if ((e.which == 71) && e.altKey) {								// Show spreadsheet (Alt+G)
 			window.open("https://docs.google.com/spreadsheets/d/"+app.doc.courseId,"_blank");	// Show it	
 			}
-		else if ((e.which == 84) && e.altKey && e.ctrlKey) {					// Test key (Ctrl+Alt+T)
-			app.doc.SetStatusArray()
+		else if ((e.which == 84) && e.altKey && e.ctrlKey) {				// Test key (Ctrl+Alt+T)
+			app.msg.OnMessage({data:"ScaleCheck=Set|1|Off"});
 		}
 	});
  

@@ -432,7 +432,7 @@ class Doc {
 		this.AddChildList();																						// Add children	
 		app.Draw();																									// Redraw
 
-		if (!app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
+		if (app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
 							app.userName=s;																			// Set name
 							let i=GetCookie(app.doc.courseId+"_Last_"+s)											// Get last stop cookie
 							if ((i > 0) && (i < app.doc.lobs.length))	app.doc.curPos=i;							// If valid start start there

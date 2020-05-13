@@ -187,6 +187,16 @@ class Content  {
 				s="<button class='wm-is' style='width:auto' onclick='app.rul.RunRule(\""+ifr[1]+"\",\""+ifr[2]+"\")'>"+ifr[0]+"</button>";			// Make button											
 				str=str.replace(/scalebutton\(.*?\)/i,s);															// Add button
 				}
+			if (ifr=str.match(/scalecheck\((.*?)\)/ig)) {															// If a checkbox tag
+				for (i=0;i<ifr.length;++i) {																		// For each do() macro
+					v=ifr[i].match(/scalecheck\((.*?)\)/i)[1].split(",")
+					s="<div style='margin-bottom:-16px'><div id='scaleCheckBox-"+i+"'"; 
+					s+="style='display:inline-block;width:16px;height:21px;border:1px solid #000;";
+					s+="color:"+((v[1].toLowerCase() == "on") ? "#009900" : "#ddd")+";text-align:center'>";
+					s+="<b>✔</b></div>&nbsp;&nbsp;"+v[0]+"</div>";													
+					str=str.replace(/scalecheck\(.*?\)/i,s);
+					}															
+				}
 			if (ifr=str.match(/scalelink\((.*?)\)/i)) {																// If a link tag
 				ifr=(""+ifr[1]).split(",");																			// Get params
 				s="<a style='color:#000099;text-decoration:underline' onclick='app.rul.RunRule(\""+ifr[1]+"\",\""+ifr[2]+"\")'>"+ifr[0]+"</a>";	// Make link											
@@ -221,7 +231,6 @@ class Content  {
 				var w=$("#contentDiv").width()*(1-widgetWid)-32;													// Widget width
 				var h=$("#contentDiv").height()-widgetTop-80+"px";													// Height
 				$("#contentBodyDiv").css("max-width",w);															// Reset content width
-//				$("#paneTitle").css("max-width",w);
 				$("#contentIFWidget").css({ width:$("#contentDiv").width()*widgetWid-64+"px",height:h, display:"block",	// Position widget
 					top:$("#contentDiv").offset().top+widgetTop+"px",	
 					left:$("#contentDiv").offset().left+w+56+"px"	

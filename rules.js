@@ -57,7 +57,8 @@ class Rules {
 				app.ams.Draw(app.doc.curLobId,o)
 				break;		
 			}
-	}
+
+		}
 
 
 
