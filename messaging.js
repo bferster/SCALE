@@ -123,7 +123,7 @@ class Messaging {
 			else if (msg.match(/report/)) 																			// REPORT
 				app.msg.SaveToForm("Skin"+v[2]+"="+v[1]);															// Save value to form, if set		
 			}
-		else if (msg.match(/ScaleCheck/)) {																			// CHECK
+		else if (msg.match(/ScaleMedia/)) {																			// CHECK
 			v=msg.split("|");																						// Chop into params
 			$("#scaleCheckBox-"+(v[1]-1)).css("color",(v[2].toLowerCase() == "on") ? "#009900" : "#ddd");			// Set check color
 			}
