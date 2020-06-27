@@ -8,6 +8,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<script type="text/javascript" src="//latex.codecogs.com/js/eq_editor-lite-15.js" ></script>
+	<script src="//unpkg.com/mathjs@7.0.2/dist/math.min.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif; font-size:xx-small}
@@ -74,7 +75,7 @@
 	var qe=new ScaleEvents("ScaleAssess");										// Alloc events library
 	var numAnswers=0, numCorrect=0;												// Correct answer count
 	var fontSize=12;
-	
+
 	$(document).ready(function() {											// WHEN PAGE LOADED
 		
 		var v=window.location.search.substring(1).split("|");					// Split into parts													
@@ -268,6 +269,7 @@
 			++numTries;															// Increment tries
 			if (d.optionType == "write") {										// Draw style
 				ans=$("#opt").val();											// Get answer
+				ans=CheckWrittenAnswer(ans,d.options);
 				}	
 			else if (d.optionType == "slider") {								// Slider style
 				qe.SendMessage("answer",curAssess+"|"+curPage+"|"+sliAns);		// Send answer message
@@ -279,10 +281,9 @@
 			if (d.optionType != "write")										// Anything but write
 				ans="*"+$("input[name='opt']:checked").val();					// Chosen answer
 
-			if (d.options)														// If options
+			if (d.options && (d.optionType != "write"))							// If options
 				for (i=0;i<d.options.length;++i) {								// For each option
 					if (d.options[i].match(/^\*/))	requiredCorrect++			// Add to required count
-					
 					if (ans == d.options[i])									// If correct
 						correct++;												// Add to count
 						}
@@ -404,6 +405,17 @@
 						EqEditor.add(new EqTextArea('equation1','opt'),false);	// Display final equation
 				 		});
 			});	
+	}
+
+	function CheckWrittenAnswer(ans, options)								// CHECK WRITTEN ANSWER
+	{
+		if (!options || !ans)	return "wrong";									// No answer
+		let right=options[0];													// Decouple from array
+		right=right.replace(/\$sa/i,ans);										// Replace with student answer
+		if (ans) ans=ans.replace(/\r|\n| /g,"");								// Remove white space
+		if (math.evaluate("("+ans+")") == math.evaluate(right)) return "right"; // Right if a calculated match
+		if (options[0].match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
+		return "wrong";
 	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
