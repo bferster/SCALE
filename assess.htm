@@ -7,7 +7,6 @@
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
-	<script type="text/javascript" src="//latex.codecogs.com/js/eq_editor-lite-15.js" ></script>
 	<script src="//unpkg.com/mathjs@7.0.2/dist/math.min.js"></script>
 
 	<style type="text/css">
@@ -67,18 +66,19 @@
 // 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	var aData=null;																// Holds assessment data
-	var curPage=0;																// Current page of assessment
-	var curAssess=0;															// Current assessment id
-	var numTries=0;																// Number of tries at page
-	var curTime;																// Current player time
-	var qe=new ScaleEvents("ScaleAssess");										// Alloc events library
-	var numAnswers=0, numCorrect=0;												// Correct answer count
-	var fontSize=12;
+	let aData=null;																// Holds assessment data
+	let promptVars=[];															// Holds prompt variables
+	let curPage=0;																// Current page of assessment
+	let curAssess=0;															// Current assessment id
+	let numTries=0;																// Number of tries at page
+	let curTime;																// Current player time
+	let qe=new ScaleEvents("ScaleAssess");										// Alloc events library
+	let numAnswers=0, numCorrect=0;												// Correct answer count
+	let fontSize=12;
 
 	$(document).ready(function() {											// WHEN PAGE LOADED
 		
-		var v=window.location.search.substring(1).split("|");					// Split into parts													
+		let v=window.location.search.substring(1).split("|");					// Split into parts													
 		curAssess=v[v.length-1];												// Get last id as session id
 		qe.SendMessage("ready",window.location.search.substring(1));			// Send ready message
 		$("body").on("keydown", function(e) {									// Handle key down
@@ -86,58 +86,100 @@
 					Draw(aData.pages.length);									// Move on
 				});
 	
-		/////////////////////////////////////////////////////////////////	
+// TEST FIXTURE ////////////////////////////////////////////////////////////////	
 
-		var e={}
-		e.data='ScaleAct=data|{';
-		e.data+='"pages":[';
-		e.data+='{"title":"Radio choice images","skip":"true"';
-		e.data+=',"text":"Choose the one that will get PacMan home"';
-		e.data+=',"whyRight":" "';
-		e.data+=',"whyWrong":"No does not mean yes or maybe"';
-		e.data+=',"pic":"//viseyes.org/scale/res/pacman.JPG"';
-		e.data+=',"optionType":"radio","options":["A pic(//viseyes.org/scale/res/01_A.png)","*B pic(//viseyes.org/scale/res/01_B.png)","C pic(//viseyes.org/scale/res/01_C.png)"]},';
+		if (window.location.search.substring(1) == "test") {
+			var e={}
 
-		e.data+='{"title":"Multiple choice","skip":"true"';
-		e.data+=',"text":"Choose the one that says &quot;Yes&quot; You\'ll get 2 tries..."';
-		e.data+=',"numTries":"2"';
-		e.data+=',"whyRight":"Yes means yes"';
-		e.data+=',"whyWrong":"Yes does not mean no or maybe"';
-		e.data+=',"optionType":"checkbox","options":["*Yes","No","Maybe"]},';
+			e.data='ScaleAct=data|{';
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
+			e.data+=',"prompt":"Type a number greater than 4, but less than 40';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"write","options":[$sa > 4 & $sa < 40]},'
 
-		e.data+='{"title":"Radio choice","skip":"true"';
-		e.data+=',"text":"Choose the one that says &quot;No&quot"';
-		e.data+=',"whyRight":" "';
-		e.data+=',"whyWrong":"No does not mean yes or maybe"';
-		e.data+=',"optionType":"radio","options":["Yes","*No","Maybe"]},';
-
-		e.data+='{"title":"Fill in the blank (Cloze)","skip":"true"';
-		e.data+=',"text":"Humpty Dumpty sat on a ______, Humpty Dumpty had a great ______.<br>There are  ______ hours in a day"';
-		e.data+=',"numTries":"2"';
-		e.data+=',"whyWrong":"Try 24 or twenty-four"';
-		e.data+=',"optionType":"cloze","options":["wall","fall","24;twenty-four;twenty four"]},'
-
-		e.data+='{"title":"Match","skip":"true"';
-		e.data+=',"text":"Match the number and text up"';
-		e.data+=',"numTries":"2"';
-		e.data+=',"whyWrong":" "';
-		e.data+=',"optionType":"match","options":["5:Fingers","50:States","7:Seas"]},'
-
-		e.data+='{"title":"Sort","skip":"true"';
-		e.data+=',"text":"Sort this list alphabetically"';
-		e.data+=',"numTries":"2"';
-		e.data+=',"whyWrong":" "';
-		e.data+=',"optionType":"sort","options":["Albatross","Bicycle","Climate"]},'
-
-		e.data+='{"title":"Slider","skip":"true"';
-		e.data+=',"text":"Choose a rating on the scale"';
-		e.data+=',"optionType":"slider","options":["Very Low:Very High"]}'
-
-		e.data+="]}"
-		
-//		ScaleEventHandler(e);													
+			e.data+='"pages":[';
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
+			e.data+=',"prompt":"What 2+2"';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"write","options":["$sa > 4 & $sa < 100"]},'
 	
-		/////////////////////////////////////////////////////////////////	
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
+			e.data+=',"prompt":"What 2+2"';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"write","options":[4]},'
+
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
+			e.data+=',"prompt":"What is RAND(1,2,10)x * RAND(2,1,10)x"';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"radio","options":["RAND(0,1,10)x","*$v1x", "$v1$v2x","RAND(0,1,10)x"]},'
+	
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
+			e.data+=',"prompt":"What does RAND(1,3,10,1) + RAND(2) equal to?"';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"write","options":["$v1 +$v2"]},'
+
+			e.data+='{"title":"Radio choice images","skip":"true"';
+			e.data+=',"text":"Choose the one that will get PacMan home"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":"No does not mean yes or maybe"';
+			e.data+=',"pic":"//viseyes.org/scale/res/pacman.JPG"';
+			e.data+=',"optionType":"radio","options":["A pic(//viseyes.org/scale/res/01_A.png)","*B pic(//viseyes.org/scale/res/01_B.png)","C pic(//viseyes.org/scale/res/01_C.png)"]},';
+
+			e.data+='{"title":"Multiple choice","skip":"true"';
+			e.data+=',"text":"Choose the one that says &quot;Yes&quot; You\'ll get 2 tries..."';
+			e.data+=',"numTries":"2"';
+			e.data+=',"whyRight":"Yes means yes"';
+			e.data+=',"whyWrong":"Yes does not mean no or maybe"';
+			e.data+=',"optionType":"checkbox","options":["*Yes","No","Maybe"]},';
+
+			e.data+='{"title":"Radio choice","skip":"true"';
+			e.data+=',"text":"Choose the one that says &quot;No&quot"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":"No does not mean yes or maybe"';
+			e.data+=',"optionType":"radio","options":["Yes","*No","Maybe"]},';
+
+			e.data+='{"title":"Fill in the blank (Cloze)","skip":"true"';
+			e.data+=',"text":"Humpty Dumpty sat on a ______, Humpty Dumpty had a great ______.<br>There are  ______ hours in a day"';
+			e.data+=',"numTries":"2"';
+			e.data+=',"whyWrong":"Try 24 or twenty-four"';
+			e.data+=',"optionType":"cloze","options":["wall","fall","24;twenty-four;twenty four"]},'
+
+			e.data+='{"title":"Match","skip":"true"';
+			e.data+=',"text":"Match the number and text up"';
+			e.data+=',"numTries":"2"';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"match","options":["5:Fingers","50:States","7:Seas"]},'
+
+			e.data+='{"title":"Sort","skip":"true"';
+			e.data+=',"text":"Sort this list alphabetically"';
+			e.data+=',"numTries":"2"';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"sort","options":["Albatross","Bicycle","Climate"]},'
+
+			e.data+='{"title":"Slider","skip":"true"';
+			e.data+=',"text":"Choose a rating on the scale"';
+			e.data+=',"optionType":"slider","options":["Very Low:Very High"]}'
+
+			e.data+="]}"
+			ScaleEventHandler(e);													
+		}
+	
+/////////////////////////////////////////////////////////////////	
 
 
 		});
@@ -153,7 +195,7 @@
 
 	function Draw(num, showRight, answer)									// DRAW NODE
 	{
-		var i,pic,lab,str="",col="#000",sliAns=-1;												
+		var i,ifr,pic,lab,str="",col="#000",sliAns=-1;												
 		if (num >= aData.pages.length) {										// Past last page
 			qe.SendMessage("done",curAssess+"|"+numCorrect/numAnswers);			// Send done message
 			return;																// Quit
@@ -162,18 +204,29 @@
 			numTries=0;															// Reset tries counter
 		curPage=num;															// Set curpage
 		var d=aData.pages[num];													// Point at page
+			
+		promptVars=[];															// Clear prompt vars
 		if (d.fontSize)	fontSize=d.fontSize-0;									// Set fontsize
-		if (d.title) 	$("#titleDiv").html(d.title);							// Add title
-		if (d.text) 	$("#textDiv").html(d.text);								// Text body
-		if (d.prompt) 	$("#promptDiv").html(d.prompt);							// Prompt
+		if (d.title) 	$("#titleDiv").html(SetPromptMacro(d.title));			// Add title
+		if (d.text) 	$("#textDiv").html(SetPromptMacro(d.text));				// Text body
+		if (d.prompt) 	$("#promptDiv").html(SetPromptMacro(d.prompt));			// Prompt
+		
 		$("#containerDiv").css("font-size",fontSize+"px");						// Set fontsize
-		if ((d.options) &&  (d.optionType == "radio" || d.optionType == "checkbox")) {	// Checkbox or radio, add options
+		if ((d.options) &&  (d.optionType == "radio" || d.optionType == "checkbox")) {	// CHECK/RADIO OPTIONS
 			for (i=0;i<d.options.length;++i) {									// For each option
 				if (showRight) {												// If showing correct answers
 					if (d.options[i].match(/^\*/)) 	col="#00aa00";				// If a correct one
 					else							col="#aa0000";				// A wrong one
 					}
 				lab=d.options[i].replace(/^\*/,"");								// Remove "correct" dot
+				lab=SetPromptMacro(lab);										// Set macros
+				if (ifr=lab.match(/\$v(\d*)/ig)) {								// If a $v variable tag
+					for (j=0;j<ifr.length;++j) {								// For each one
+						r=ifr[j].substr(2);										// Extract index
+						r=promptVars[r];										// Get var at index
+						lab=lab.replace(/\$v(\d*)/i,r);							// Replace tag with calulated number
+						}
+					}				
 				str+="<span style='color:"+col+"'>";							// Add color span
 				if ((pic=lab.match(/pic\(.*?\)/i))) {							// If pic() macro set
 					lab=lab.replace(/pic\(.*?\)/i,"");							// Delete text
@@ -186,7 +239,7 @@
 				else	str+="<br>";											// Add break
 				}
 			}
-		if ((d.options) && (d.optionType == "cloze")) {							// Cloze
+		if ((d.options) && (d.optionType == "cloze")) {							// CLOZE OPTION
 			var s=d.text;
 			i=0;																// Reset counter
 			$("#textDiv").html("");												// No text
@@ -204,15 +257,12 @@
 				str+="<li id='"+i+"'>"+d.options[v[i]].split(":")[0]+"</li>";	// Add item
 			str+="</ol>";														// End tag
 			}
-		else if (d.optionType == "write") {										// Write option
-			if (d.options && d.options[0] && d.options[0].match(/eq/i))			// If including equations
-				str+="<button id='loadeqneditor' style='vertical-align:top' class='nextbutSty'>Fx</button>";	// Add button		
-			str+="&nbsp;&nbsp;<textarea id='opt' rows=3 placeholder='Write your answer here...' ";		// Text 
-			str+="style='font-size:1em;width:"+$("#optionsLDiv").parent().width()*.8+"px'></textarea><br></span>";	// area
-			if (d.options && d.options[0] && d.options[0].match(/eq/i))			// If including equations
-				str+="<img id='equation1'/><div id='qneditor'></div>";			// Add image/div for Codecogs editor	
+		else if (d.optionType == "write") {										// WRITE OPTION
+			str+="&nbsp;&nbsp;<textarea id='opt' rows=3 ";
+			str+="placeholder='\n Write your answer here ...'";					// Placeholder
+			str+="style='border-radius:8px;font-size:1em;width:"+$("#optionsLDiv").parent().width()*.8+"px'></textarea><br></span>";	// area
 			}	
-		else if (d.optionType == "slider") {									// Slider option
+		else if (d.optionType == "slider") {									// SLIDER OPTION
 			var prevPos=0;
 			var w=Math.min($("#containerDiv").width()*.75,600);					// Get width
 			str+="<div id='slibase' style='border-bottom:2px solid #aaa;width:"+w+"px;height:30px'>";
@@ -265,18 +315,18 @@
 	/////////////////////////////////////////////////////////////////////////////////////////
 	
 		$("#nextBut").on("click",function() {									// NEXT BUTTON HANDLER
-			var ans;
+			let ans,i,j;
 			++numTries;															// Increment tries
 			if (d.optionType == "write") {										// Draw style
 				ans=$("#opt").val();											// Get answer
-				ans=CheckWrittenAnswer(ans,d.options);
+				ans=CheckWrittenAnswer(ans,d);
 				}	
 			else if (d.optionType == "slider") {								// Slider style
 				qe.SendMessage("answer",curAssess+"|"+curPage+"|"+sliAns);		// Send answer message
 				Draw(curPage+1);												// Move on
 				return;															// Quit
 				}
-			var i,correct=0,wrong=0,requiredCorrect=0;
+			let correct=0,wrong=0,requiredCorrect=0;
 			
 			if (d.optionType != "write")										// Anything but write
 				ans="*"+$("input[name='opt']:checked").val();					// Chosen answer
@@ -292,7 +342,7 @@
 				for (i=0;i<d.options.length;++i) {								// For each option
 					v=d.options[i].split(";");									// Get parts
 					ans=$("#opt"+i).val();										// Get answer
-					for (var j=0;j<v.length;++j) 								// For each possibility
+					for (j=0;j<v.length;++j) 									// For each possibility
 						if (ans.toLowerCase() == v[j].toLowerCase()) {			// If a match		
 							correct++;											// Add to corrects
 							break;												// Stop looking
@@ -386,36 +436,6 @@
 			Draw(curPage+1);													// Move on
 			});
 		
-		$('#loadeqneditor').click(function() {									// EQUATION BUTTON CLICKED
-			var http = ('https:' == document.location.protocol ? 'https://' : 'http://');
-		  	var host='latex.codecogs.com';
-			EQUATION_ENGINE = http+host;
-			FAVORITE_ENGINE = http+host+'/json';
-			EDITOR_SRC      = http+host;
-			EMBED_ENGINE    = http+host+'/editor_embedded_json.php';
-			EDIT_ENGINE     = http+'www.codecogs.com/eqnedit.php';
-			EDITOR_SW_FLASH = http+'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0';
-			EDITOR_SW_PLAYER= http+'www.macromedia.com/go/getflashplayer';
-		    var css=$("<link rel='stylesheet' type='text/css' href='//latex.codecogs.com/css/equation-embed.css'>");
-     		$("head").append(css); 												// Add css
-			$.ajax({ url: "//latex.codecogs.com/js/eq_editor-lite-15.js",	// Load js
-     				 dataType: "script", cache: true							// Cached JS 
-					}).done(function() {										// When loaded	
-			 			EqEditor.embed('qneditor','things','mini','en-us');		// Embed editor
-						EqEditor.add(new EqTextArea('equation1','opt'),false);	// Display final equation
-				 		});
-			});	
-	}
-
-	function CheckWrittenAnswer(ans, options)								// CHECK WRITTEN ANSWER
-	{
-		if (!options || !ans)	return "wrong";									// No answer
-		let right=options[0];													// Decouple from array
-		right=right.replace(/\$sa/i,ans);										// Replace with student answer
-		if (ans) ans=ans.replace(/\r|\n| /g,"");								// Remove white space
-		if (math.evaluate("("+ans+")") == math.evaluate(right)) return "right"; // Right if a calculated match
-		if (options[0].match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
-		return "wrong";
 	}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -474,6 +494,50 @@
 		else																	// Local	
 			window.postMessage(str,"*");										// Send message to wind
 	}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// NEW
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	function CheckWrittenAnswer(ans, ques)										// CHECK WRITTEN ANSWER
+	{
+		let i,ifr;
+		if (!ques || !ans)	return "wrong";											// Quit if question or answer
+		let right=ques.options[0];													// Decouple from array
+		right=(right+"").replace(/\$sa/ig,ans);										// Replace with student answer
+		if (ifr=right.match(/\$v(\d*)/ig)) {										// If a $v variable tag
+			for (i=0;i<ifr.length;++i) {											// For each one
+				r=ifr[i].substr(2);													// Extract index
+				r=promptVars[r];													// Get var at index
+				right=right.replace(/\$v(\d*)/i,r);									// Replace tag with calulated number
+				}
+			}
+		if (ans) ans=ans.replace(/\r|\n| /g,"");									// Remove white space
+		if (ans == math.evaluate(right)) return "right"; 							// Right if a calculated match
+		if ((ques.options[0]+"").match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
+		return "wrong";
+	}
+
+	function SetPromptMacro(txt)												// SET MACROS IN PROMPTS
+	{
+		let ifr,i,v,r;
+		if (ifr=txt.match(/rand\((.*?)\)/ig)) {										// If a RAND() tag
+			for (i=0;i<ifr.length;++i) {											// For each one
+				v=ifr[i].substr(5,ifr[i].length-6).split(",");						// Isolate parameters
+				if (!v[1]) v[1]=0;													// Default min to 0
+				if (!v[2]) v[2]=100;												// Default max to 100
+				if (!v[3]) v[3]=0;													// Default places to 0
+				r=Math.random()*v[2]+(v[1]-0);										// Make number
+				r=r.toFixed(v[3]-0);												// Set places
+				promptVars[v[0]]=r;													// Set in variable array
+				txt=txt.replace(/rand\(.+?\)/i,r);									// Replace tag with calulated number
+				}
+			}
+		return txt;
+	}
+
+
 	
 </script>
 </body></html>
