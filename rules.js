@@ -41,7 +41,8 @@ class Rules {
 			case "VAR": 	app.doc.vars[v[0]]=v[1];					break;										// SET VAR						
 			case "SEND":	SendToIframe(what,"#contentIFWidget");		break;										// SEND TO IFRAME
 			case "STATUS": 																							// STATUS
-				var l=app.doc.FindLobById(v[0]);																	// Point at lob
+			trace(op,what,v)	
+			var l=app.doc.FindLobById(v[0]);																	// Point at lob
 				if (l) {
 					if (v[1].charAt(0) == "+")		l.status+=(v[1]-0);												// Set status incremental up
 					else if (v[1].charAt(0) == "-")	l.status=Math.max(0,l,status+(v[1]-0));							// Down

@@ -97,8 +97,8 @@
 			e.data+=',"text":"Add numbers, You have 4 tries"';
 			e.data+=',"prompt":"What 2+2"';
 			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":" "';
-			e.data+=',"whyWrong":" "';
+			e.data+=',"whyRight":"Good! VAL(p1-1-5,10) "';
+			e.data+=',"whyWrong":"Not good... VAL(p1-1-5,-10) "';
 			e.data+=',"optionType":"write","options":[4]},'
 
 			e.data+='{"title":"Test","skip":"true"';
@@ -383,29 +383,30 @@
 			if ($("#otherOpt").val())											// If *other written in
 				ans=$("#otherOpt").val();										// Use its value
 			if (d.whyRight || d.whyWrong || d.whyPartial) {						// If feedback spec'd
+				let ss;
 				str="<div style='margin-left:1.33em;margin-right:1.33em'><div style='font-size:1.5em;text-align:center;font-weight:bold;color:#";	// Title
 				if (ans == "right") {											// Right
-					str+="009900'>That's right!</div><p>";						// Heading
-					if (d.whyRight)												// If right
-						str+="<div style='text-align:center'>"+d.whyRight+"</div>"; // Show explanation
+					ss=DoneMacro(d.whyRight);									// Run macros
+					if (!ss) "That's right";									// Default message
+					str+="009900'>"+ss+"</div><br><p>";							// Draw it
 					}				
 				else if (ans == "partial") { 									// Partial
 					str+="ff9900'>Sorry, you only got some right..</div><p>";	// Heading		
-					if (d.whyPartial)		str+=d.whyPartial;					// Show partial explanation
-					else if (d.whyWrong)	str+=d.whyWrong;					// Show wrong explanation
+					if (d.whyPartial)		str+=DoneMacro(d.whyPartial);		// Show partial explanation
+					else if (d.whyWrong)	str+=DoneMacro(d.whyWrong);			// Show wrong explanation
 				 	if (numTries < d.numTries)									// If more tries ahead
 				 		str+="<div style='text-align:center'><b>Please try again</b> ("+numTries+"/"+d.numTries+")</div>";	// Show progress
 					}
 				else if (ans == "wrong") { 										// Wrong
-					str+="000099'>Sorry, that's not the right answer</div><p>";	// Heading	
-					if (d.whyWrong)												// If wrong 
-						str+="<p style='text-align:center'>"+d.whyWrong+"</p>"; // Show explanation
+					ss=DoneMacro(d.whyWrong);									// Run macros
+					if (!ss) "Sorry, that's not the right answer";				// Default message
+					str+="000099'>"+ss+"</div><p>";								// Draw it	
 				 	if (numTries < d.numTries)									// If more tries ahead
 				 		str+="<div style='text-align:center'><b>Please try again</b> ("+numTries+"/"+d.numTries+")</div>";	// Show progress
 					}
 				else{															// Anything else
 					str+="009900'>Answer</div><p>";								// Heading
-					if (d.whyRight)	str+=d.whyRight;							// Show explanation
+					if (d.whyRight)	str+=DoneMacro(d.whyRight);					// Show explanation
 					}				
 				str+="</p><div style='text-align:center'>";						// Center
 				str+="<input id='contBut' type='button' value='Continue' class='nextbutSty'></div></div>"; 	// Add button
@@ -432,6 +433,7 @@
 			});
 		
 	}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -477,7 +479,7 @@
 	}
 	
 	ScaleEvents.prototype.SendMessage=function(cmd, msg)					// SEND MESSAGE TO CONTAINER
-		{
+	{
 		if (cmd == "answer") {													// An answer
 			numAnswers++;														// Add to count
 			if (msg.split("|")[2] == "right")	numCorrect++;					// Add to correct
@@ -547,6 +549,16 @@
 		return txt;																	// Return prompt
 	}
 
+	function DoneMacro(txt)														// HANDLE QUESTION WHEN DONE
+	{
+		let i,v,ifr;
+		if (ifr=txt.match(/val\((.*?)\)/i)) {										// If a VAL() tag
+			v=ifr[1].split(",");													// Isolate parameters
+			txt=txt.replace(/val\((.*?)\)/i,"");									// Erase tag
+			qe.SendMessage("rule","STATUS|"+v[0]+":"+v[1]);							// Send rule message
+			}
+		return(txt)
+	}
 
 	
 </script>

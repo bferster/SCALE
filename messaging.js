@@ -58,6 +58,9 @@ class Messaging {
 			if (app.reportLevel == 1)																				// If reporting answers
 				app.msg.SaveToForm("Answer"+app.doc.curLobId+":"+v[2]+"="+v[3]);									// Save answer to form, if set		
 			}
+		else if (msg.match(/Assess=rule/)) {																		// Run a rule
+			app.rul.RunRule(v[1],v[2])
+			}
 		else if (msg.match(/ScaleVideo/)) {																			// Video event
 			if (msg.toLowerCase() == "scalevideo=next") {															// Advance to next pos
 				app.doc.NextLob();																					// Advance
