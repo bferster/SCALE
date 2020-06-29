@@ -90,32 +90,7 @@
 
 		if (window.location.search.substring(1) == "test") {
 			var e={}
-
-			e.data='ScaleAct=data|{';
-			e.data+='{"title":"Test","skip":"true"';
-			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
-			e.data+=',"prompt":"Type a number greater than 4, but less than 40';
-			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":" "';
-			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"write","options":[$sa > 4 & $sa < 40]},'
-
-			e.data+='"pages":[';
-			e.data+='{"title":"Test","skip":"true"';
-			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
-			e.data+=',"prompt":"What 2+2"';
-			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":" "';
-			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"write","options":["$sa > 4 & $sa < 100"]},'
-	
-			e.data+='{"title":"Test","skip":"true"';
-			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
-			e.data+=',"prompt":"What 2+2"';
-			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":" "';
-			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"write","options":[4]},'
+			e.data='ScaleAct=data|{"pages":[';
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
@@ -123,7 +98,16 @@
 			e.data+=',"numTries":"8"';
 			e.data+=',"whyRight":" "';
 			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"radio","options":["RAND(0,1,10)x","*$v1x", "$v1$v2x","RAND(0,1,10)x"]},'
+			e.data+=',"optionType":"radio","options":["RAND(0,1,10)x","*$($v1*$v2)x", "$v1$v2x","RAND(0,1,10)x"]},'
+
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Add numbers, You have 4 tries"';
+			e.data+=',"prompt":"What 2+2"';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"write","options":[4]},'
+
 	
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
@@ -233,7 +217,7 @@
 					pic=pic[0].substr(4,pic[0].length-5);						// Get payload
 			 		str+="<br>&nbsp; &nbsp;<img style='vertical-align:top' src='"+pic+"'><br>";	 // Add pic
 					}	
-				str+="&nbsp;&nbsp; <input type='"+d.optionType+"' name='opt' id='opt"+i+"' value='"+d.options[i].replace(/^\*/,"")+"'>"+lab+"</span>";	// Add line
+				str+="&nbsp;&nbsp; <input type='"+d.optionType+"' name='opt' id='opt"+i+"'value='"+d.options[i].replace(/^\*/,"")+"'>&nbsp;"+lab+"</span>";	// Add line
 				if (d.options[i].toLowerCase() == "*other")						// If an other option
 		 			str+="&nbsp <input class='is' style='width:6em;' type='text' id='otherOpt'><br></span>";	// Add line
 				else	str+="<br>";											// Add break
@@ -513,7 +497,9 @@
 				right=right.replace(/\$v(\d*)/i,r);									// Replace tag with calulated number
 				}
 			}
-		if (ans) ans=ans.replace(/\r|\n| /g,"");									// Remove white space
+		ans=ans.replace(/\r|\n| /g,"");												// Remove white space from student answer
+		right=right.replace(/\r|\n| /g,"");											// Remove white space from correct answer
+		if (ans == right)				 return "right";							// Right if a direct textual match
 		if (ans == math.evaluate(right)) return "right"; 							// Right if a calculated match
 		if ((ques.options[0]+"").match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
 		return "wrong";
@@ -534,7 +520,20 @@
 				txt=txt.replace(/rand\(.+?\)/i,r);									// Replace tag with calulated number
 				}
 			}
-		return txt;
+		if (ifr=txt.match(/\$v(\d*)/ig)) {											// If a $v variable tag
+			for (i=0;i<ifr.length;++i) {											// For each one
+				r=ifr[i].substr(2);													// Extract index
+				r=promptVars[r];													// Get var at index
+				txt=txt.replace(/\$v(\d*)/i,r);										// Replace tag with variable number
+				}
+			}
+		if (ifr=txt.match(/\$\(.*\)/g)) {											// If in need evaluation
+			for (i=0;i<ifr.length;++i) {											// For each one
+				r=math.evaluate(ifr[i].substr(2,ifr[i].length-3));					// Evaluate expression
+				txt=txt.replace(/\$\(.*\)/,r);										// Replace tag with calulated number
+				}
+			}
+		return txt;																	// Return prompt
 	}
 
 
