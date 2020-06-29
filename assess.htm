@@ -8,6 +8,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
 	<script src="//unpkg.com/mathjs@7.0.2/dist/math.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=AM_CHTML"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif; font-size:xx-small}
@@ -93,14 +94,6 @@
 			e.data='ScaleAct=data|{"pages":[';
 
 			e.data+='{"title":"Test","skip":"true"';
-			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
-			e.data+=',"prompt":"What is RAND(1,2,10)x * RAND(2,1,10)x"';
-			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":" "';
-			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"radio","options":["RAND(0,1,10)x","*$($v1*$v2)x", "$v1$v2x","RAND(0,1,10)x"]},'
-
-			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add numbers, You have 4 tries"';
 			e.data+=',"prompt":"What 2+2"';
 			e.data+=',"numTries":"8"';
@@ -108,7 +101,14 @@
 			e.data+=',"whyWrong":" "';
 			e.data+=',"optionType":"write","options":[4]},'
 
-	
+			e.data+='{"title":"Test","skip":"true"';
+			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
+			e.data+=',"prompt":"What is RAND(1,2,10)x * RAND(2,1,10)x"';
+			e.data+=',"numTries":"8"';
+			e.data+=',"whyRight":" "';
+			e.data+=',"whyWrong":" "';
+			e.data+=',"optionType":"radio","options":["RAND(0,1,10)x","*$($v1*$v2)x", "$v1$v2x","RAND(0,1,10)x"]},'
+
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
 			e.data+=',"prompt":"What does RAND(1,3,10,1) + RAND(2) equal to?"';
@@ -164,7 +164,6 @@
 		}
 	
 /////////////////////////////////////////////////////////////////	
-
 
 		});
 		
@@ -245,6 +244,7 @@
 			str+="&nbsp;&nbsp;<textarea id='opt' rows=3 ";
 			str+="placeholder='\n Write your answer here ...'";					// Placeholder
 			str+="style='border-radius:8px;font-size:1em;width:"+$("#optionsLDiv").parent().width()*.8+"px'></textarea><br></span>";	// area
+			str+="<br><div id='formulaBox' style='text-align:center;width:"+$("#optionsLDiv").parent().width()*.8+"px'>`a != 0`</div>";
 			}	
 		else if (d.optionType == "slider") {									// SLIDER OPTION
 			var prevPos=0;
@@ -267,6 +267,16 @@
 			str+="&nbsp;&nbsp;<input id='skipBut' type='button' value='Skip' class='nextbutSty'>"; 	// Add button
 		str+="</p>";															// End tag
 		$("#optionsLDiv").html(str);											// Set div
+		
+		if (d.optionType == "write") {											// ON WRITE
+			$("#opt").on("keydown",(e)=> {										// On keydown
+				let form=$("#opt").val();										// Get formula
+				if ((e.keyCode > 31) && (e.keyCode < 127))	form+=e.key;		// Add last key
+				$("#formulaBox").text("\`"+form+"\`");							// Add ticks								
+				MathJax.Hub.Queue(["Typeset",MathJax.Hub]);						// Refresh
+				});
+			}
+
 		if (d.optionType == "slider") {											// Slider option
 			var x=$("#slibase").position().left;								// Left
 			var y=$("#slibase").position().top+$("#slibase").height();			// Bottom
