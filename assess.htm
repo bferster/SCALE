@@ -244,7 +244,7 @@
 			str+="&nbsp;&nbsp;<textarea id='opt' rows=3 ";
 			str+="placeholder='\n Write your answer here ...'";					// Placeholder
 			str+="style='border-radius:8px;font-size:1em;width:"+$("#optionsLDiv").parent().width()*.8+"px'></textarea><br></span>";	// area
-			str+="<br><div id='formulaBox' style='text-align:center;width:"+$("#optionsLDiv").parent().width()*.8+"px'>`a != 0`</div>";
+			str+="<br><div id='formulaBox' style='text-align:center;width:"+$("#optionsLDiv").parent().width()*.8+"px'></div>";
 			}	
 		else if (d.optionType == "slider") {									// SLIDER OPTION
 			var prevPos=0;
@@ -269,6 +269,7 @@
 		$("#optionsLDiv").html(str);											// Set div
 		
 		if (d.optionType == "write") {											// ON WRITE
+			$("#opt").focus();													// Set focus on input
 			$("#opt").on("keydown",(e)=> {										// On keydown
 				let form=$("#opt").val();										// Get formula
 				if ((e.keyCode > 31) && (e.keyCode < 127))	form+=e.key;		// Add last key
