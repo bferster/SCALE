@@ -107,7 +107,7 @@
 			e.data+=',"numTries":"8"';
 			e.data+=',"whyRight":" "';
 			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"radio","options":["RAND(0,1,10)x","*$($v1*$v2)x", "$v1$v2x","RAND(0,1,10)x"]},'
+			e.data+=',"optionType":"radio","options":["RAND(3,1,10)x","*$($v1*$v2)x", "$v1$v2x","RAND(4,1,10)x"]},'
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add two random numbers, The first is 3 to 9.9, the second is 0-50. You have 4 tries"';
@@ -178,7 +178,8 @@
 
 	function Draw(num, showRight, answer)									// DRAW NODE
 	{
-		var i,ifr,pic,lab,str="",col="#000",sliAns=-1;												
+		let i,ifr,pic,lab,str="",col="#000",sliAns=-1;												
+		let studentRes="";														// Hold's student response
 		if (num >= aData.pages.length) {										// Past last page
 			qe.SendMessage("done",curAssess+"|"+numCorrect/numAnswers);			// Send done message
 			return;																// Quit
@@ -189,11 +190,12 @@
 		var d=aData.pages[num];													// Point at page
 			
 		promptVars=[];															// Clear prompt vars
+		let curPrompt=d.prompt ? SetPromptMacro(d.prompt) : "";
 		if (d.fontSize)	fontSize=d.fontSize-0;									// Set fontsize
 		if (d.title) 	$("#titleDiv").html(SetPromptMacro(d.title));			// Add title
 		if (d.text) 	$("#textDiv").html(SetPromptMacro(d.text));				// Text body
-		if (d.prompt) 	$("#promptDiv").html(SetPromptMacro(d.prompt));			// Prompt
-		
+		$("#promptDiv").html(curPrompt);										// Prompt
+
 		$("#containerDiv").css("font-size",fontSize+"px");						// Set fontsize
 		if ((d.options) &&  (d.optionType == "radio" || d.optionType == "checkbox")) {	// CHECK/RADIO OPTIONS
 			for (i=0;i<d.options.length;++i) {									// For each option
@@ -314,7 +316,8 @@
 			++numTries;															// Increment tries
 			if (d.optionType == "write") {										// Draw style
 				ans=$("#opt").val();											// Get answer
-				ans=CheckWrittenAnswer(ans,d);
+				studentResponse=ans;											// Save student response
+				ans=CheckWrittenAnswer(ans,d);									// Check answer
 				}	
 			else if (d.optionType == "slider") {								// Slider style
 				qe.SendMessage("answer",curAssess+"|"+curPage+"|"+sliAns);		// Send answer message
@@ -323,9 +326,10 @@
 				}
 			let correct=0,wrong=0,requiredCorrect=0;
 			
-			if (d.optionType != "write")										// Anything but write
-				ans="*"+$("input[name='opt']:checked").val();					// Chosen answer
-
+			if (d.optionType != "write") {										// Anything but write
+				studentResponse=$("input[name='opt']:checked").val();			// Get response
+				ans="*"+studentResponse;										// Chosen answer
+				}
 			if (d.options && (d.optionType != "write"))							// If options
 				for (i=0;i<d.options.length;++i) {								// For each option
 					if (d.options[i].match(/^\*/))	requiredCorrect++			// Add to required count
@@ -363,6 +367,7 @@
 				for (i=0;i<d.options.length;++i) {								// For each option
 					s=d.options[i].split("-")[0];								// Start
 					e=d.options[i].split("-")[1];								// End
+					studentResponse=curTime;									// Srt answer
 					if (!e)	e=s;												// No end
 					if ((curTime >=s) && (curTime <=e))							// In span
 						ans="right";											// Right
@@ -381,7 +386,7 @@
 				}
 			
 			if ($("#otherOpt").val())											// If *other written in
-				ans=$("#otherOpt").val();										// Use its value
+				studentResponse=ans=$("#otherOpt").val();						// Use its value
 			if (d.whyRight || d.whyWrong || d.whyPartial) {						// If feedback spec'd
 				let ss;
 				str="<div style='margin-left:1.33em;margin-right:1.33em'><div style='font-size:1.5em;text-align:center;font-weight:bold;color:#";	// Title
@@ -424,7 +429,7 @@
 				}																// End feedback
 			else
 				Draw(curPage+1);												// Show next
-			qe.SendMessage("answer",curAssess+"|"+curPage+"|"+ans);				// Send answer message
+			qe.SendMessage("answer",curAssess+"|"+curPage+"|"+ans+"|"+ResolveVars(studentResponse)+"|"+curPrompt); // Send answer message
 			});																	// End nextbut
 			
 		$("#skipBut").on("click",function() {									// SKIP BUTTON HANDLER
@@ -499,23 +504,34 @@
 
 	function CheckWrittenAnswer(ans, ques)										// CHECK WRITTEN ANSWER
 	{
-		let i,ifr;
 		if (!ques || !ans)	return "wrong";											// Quit if question or answer
-		let right=ques.options[0];													// Decouple from array
-		right=(right+"").replace(/\$sa/ig,ans);										// Replace with student answer
-		if (ifr=right.match(/\$v(\d*)/ig)) {										// If a $v variable tag
-			for (i=0;i<ifr.length;++i) {											// For each one
-				r=ifr[i].substr(2);													// Extract index
-				r=promptVars[r];													// Get var at index
-				right=right.replace(/\$v(\d*)/i,r);									// Replace tag with calulated number
-				}
-			}
+		let right=ResolveVars(ques.options[0]);										// Resolve any variables
 		ans=ans.replace(/\r|\n| /g,"");												// Remove white space from student answer
 		right=right.replace(/\r|\n| /g,"");											// Remove white space from correct answer
 		if (ans == right)				 return "right";							// Right if a direct textual match
 		if (ans == math.evaluate(right)) return "right"; 							// Right if a calculated match
 		if ((ques.options[0]+"").match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
 		return "wrong";
+	}
+
+	function ResolveVars(exp)													// RESOLVE VARIABLES
+	{
+		let i,r,ifr;
+		if (ifr=(""+exp).match(/\$v(\d*)/ig)) {										// If a $v variable tag
+			for (i=0;i<ifr.length;++i) {											// For each one
+				r=ifr[i].substr(2);													// Extract index
+				r=promptVars[r];													// Get var at index
+				exp=exp.replace(/\$v(\d*)/i,r);										// Replace tag with calulated number
+				}
+			}
+		if (ifr=(""+exp).match(/rand\((.*?)\)/ig)) {								// If a RAND() tag
+			for (i=0;i<ifr.length;++i) {											// For each one
+				v=ifr[i].substr(5,ifr[i].length-6).split(",");						// Isolate parameters
+				r=promptVars[v[0]];													// Get set var
+				exp=exp.replace(/rand\(.+?\)/i,r);									// Replace tag with calulated number
+				}
+			}
+		return ""+exp;																// Return expresion as a string
 	}
 
 	function SetPromptMacro(txt)												// SET MACROS IN PROMPTS
