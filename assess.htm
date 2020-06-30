@@ -506,6 +506,7 @@
 	{
 		if (!ques || !ans)	return "wrong";											// Quit if question or answer
 		let right=ResolveVars(ques.options[0]);										// Resolve any variables
+		right=(right+"").replace(/\$sa/ig,ans);										// Replace with student answer
 		ans=ans.replace(/\r|\n| /g,"");												// Remove white space from student answer
 		right=right.replace(/\r|\n| /g,"");											// Remove white space from correct answer
 		if (ans == right)				 return "right";							// Right if a direct textual match
