@@ -95,11 +95,11 @@
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add numbers, You have 4 tries"';
-			e.data+=',"prompt":"What 2+2"';
+			e.data+=',"prompt":"Add up RAND(1,[red,green,blue]) and RAND(2,[1,2,3])"';
 			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":"Good! VAL(p1-1-5,10) "';
-			e.data+=',"whyWrong":"Not good... VAL(p1-1-5,-10) "';
-			e.data+=',"optionType":"write","options":[4]},'
+			e.data+=',"whyRight":"Good!  "';
+			e.data+=',"whyWrong":"Not good... "';
+			e.data+=',"optionType":"write","options":["$v1"]},'
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
@@ -115,7 +115,7 @@
 			e.data+=',"numTries":"8"';
 			e.data+=',"whyRight":" "';
 			e.data+=',"whyWrong":" "';
-			e.data+=',"optionType":"write","options":["$v1 +$v2"]},'
+			e.data+=',"optionType":"write","options":["$v1"]},'
 
 			e.data+='{"title":"Radio choice images","skip":"true"';
 			e.data+=',"text":"Choose the one that will get PacMan home"';
@@ -509,8 +509,10 @@
 		right=(right+"").replace(/\$sa/ig,ans);										// Replace with student answer
 		ans=ans.replace(/\r|\n| /g,"");												// Remove white space from student answer
 		right=right.replace(/\r|\n| /g,"");											// Remove white space from correct answer
-		if (ans == right)				 return "right";							// Right if a direct textual match
-		if (ans == math.evaluate(right)) return "right"; 							// Right if a calculated match
+		if (ans == right)				 	 return "right";						// Right if a direct textual match
+		try {																		// Inhibit errors
+			if (ans == math.evaluate(right)) return "right"; 						// Right if a calculated match
+			} catch(e) { console.log(e) };											// Show error
 		if ((ques.options[0]+"").match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
 		return "wrong";
 	}
@@ -537,15 +539,22 @@
 
 	function SetPromptMacro(txt)												// SET MACROS IN PROMPTS
 	{
-		let ifr,i,v,r;
+		let ifr,i,v,l,r;
 		if (ifr=txt.match(/rand\((.*?)\)/ig)) {										// If a RAND() tag
 			for (i=0;i<ifr.length;++i) {											// For each one
 				v=ifr[i].substr(5,ifr[i].length-6).split(",");						// Isolate parameters
-				if (!v[1]) v[1]=0;													// Default min to 0
-				if (!v[2]) v[2]=100;												// Default max to 100
-				if (!v[3]) v[3]=0;													// Default places to 0
-				r=Math.random()*v[2]+(v[1]-0);										// Make number
-				r=r.toFixed(v[3]-0);												// Set places
+				if (v[1].match(/\[/)) {												// An explicit list
+					l=v.join().match(/\[(.*?)\]/)[1].split(",");					// Get possibilites
+					r=Math.floor(Math.random()*l.length);							// Pick one at random
+					r=l[r];															// Set it									
+					}
+				else{
+					if (!v[1]) v[1]=0;												// Default min to 0
+					if (!v[2]) v[2]=100;											// Default max to 100
+					if (!v[3]) v[3]=0;												// Default places to 0
+					r=Math.random()*v[2]+(v[1]-0);									// Make number
+					r=r.toFixed(v[3]-0);											// Set places
+					}
 				promptVars[v[0]]=r;													// Set in variable array
 				txt=txt.replace(/rand\(.+?\)/i,r);									// Replace tag with calulated number
 				}
