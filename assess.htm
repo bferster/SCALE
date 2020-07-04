@@ -95,18 +95,18 @@
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add numbers, You have 4 tries"';
-			e.data+=',"prompt":"Add up RAND(1,[red,green,blue]) and RAND(2,[1,2,3])"';
+			e.data+=',"prompt":"Calculate the distance between (RAND(1,-10,10),RAND(2,-10,10)) and RAND(3,-10,10),RAND(4,-10,10)). Leave your answer in exact form."';
 			e.data+=',"numTries":"8"';
 			e.data+=',"whyRight":"Good!  "';
 			e.data+=',"whyWrong":"Not good... "';
-			e.data+=',"optionType":"write","options":["$v1"]},'
+			e.data+=',"optionType":"write","options":["distance([$v1,$v2],[$v3,$v4])"]},'
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
 			e.data+=',"prompt":"What is RAND(1,2,10)x * RAND(2,1,10)x"';
 			e.data+=',"numTries":"8"';
-			e.data+=',"whyRight":" "';
-			e.data+=',"whyWrong":" "';
+			e.data+=',"whyRight":""';
+			e.data+=',"whyWrong":""';
 			e.data+=',"optionType":"radio","options":["RAND(3,1,10)x","*$($v1*$v2)x", "$v1$v2x","RAND(4,1,10)x"]},'
 
 			e.data+='{"title":"Test","skip":"true"';
@@ -192,8 +192,8 @@
 		promptVars=[];															// Clear prompt vars
 		let curPrompt=d.prompt ? SetPromptMacro(d.prompt) : "";
 		if (d.fontSize)	fontSize=d.fontSize-0;									// Set fontsize
-		if (d.title) 	$("#titleDiv").html(SetPromptMacro(d.title));			// Add title
-		if (d.text) 	$("#textDiv").html(SetPromptMacro(d.text));				// Text body
+		d.title ? $("#titleDiv").html(SetPromptMacro(d.title)) : $("#titleDiv").html("");	// Add title
+		d.text ?  $("#textDiv").html(SetPromptMacro(d.text)) : $("#textDiv").html("");		// Text body
 		$("#promptDiv").html(curPrompt);										// Prompt
 
 		$("#containerDiv").css("font-size",fontSize+"px");						// Set fontsize
@@ -269,6 +269,7 @@
 			str+="&nbsp;&nbsp;<input id='skipBut' type='button' value='Skip' class='nextbutSty'>"; 	// Add button
 		str+="</p>";															// End tag
 		$("#optionsLDiv").html(str);											// Set div
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);								// Refresh
 		
 		if (d.optionType == "write") {											// ON WRITE
 			$("#opt").focus();													// Set focus on input
@@ -387,12 +388,11 @@
 			
 			if ($("#otherOpt").val())											// If *other written in
 				studentResponse=ans=$("#otherOpt").val();						// Use its value
-			if (d.whyRight || d.whyWrong || d.whyPartial) {						// If feedback spec'd
 				let ss;
 				str="<div style='margin-left:1.33em;margin-right:1.33em'><div style='font-size:1.5em;text-align:center;font-weight:bold;color:#";	// Title
 				if (ans == "right") {											// Right
 					ss=DoneMacro(d.whyRight);									// Run macros
-					if (!ss) "That's right";									// Default message
+					if (!ss) ss="That's right";									// Default message
 					str+="009900'>"+ss+"</div><br><p>";							// Draw it
 					}				
 				else if (ans == "partial") { 									// Partial
@@ -404,7 +404,8 @@
 					}
 				else if (ans == "wrong") { 										// Wrong
 					ss=DoneMacro(d.whyWrong);									// Run macros
-					if (!ss) "Sorry, that's not the right answer";				// Default message
+					if (!ss) ss="Sorry, that's not the right answer";			// Default message
+
 					str+="000099'>"+ss+"</div><p>";								// Draw it	
 				 	if (numTries < d.numTries)									// If more tries ahead
 				 		str+="<div style='text-align:center'><b>Please try again</b> ("+numTries+"/"+d.numTries+")</div>";	// Show progress
@@ -426,9 +427,6 @@
 						else 						Draw(curPage+1);			// Move on
 						}
 					});
-				}																// End feedback
-			else
-				Draw(curPage+1);												// Show next
 			qe.SendMessage("answer",curAssess+"|"+curPage+"|"+ans+"|"+ResolveVars(studentResponse)+"|"+curPrompt); // Send answer message
 			});																	// End nextbut
 			
@@ -510,6 +508,7 @@
 		ans=ans.replace(/\r|\n| /g,"");												// Remove white space from student answer
 		right=right.replace(/\r|\n| /g,"");											// Remove white space from correct answer
 		if (ans == right)				 	 return "right";						// Right if a direct textual match
+		trace(right, math.evaluate(right))
 		try {																		// Inhibit errors
 			if (ans == math.evaluate(right)) return "right"; 						// Right if a calculated match
 			} catch(e) { console.log(e) };											// Show error
@@ -543,7 +542,7 @@
 		if (ifr=txt.match(/rand\((.*?)\)/ig)) {										// If a RAND() tag
 			for (i=0;i<ifr.length;++i) {											// For each one
 				v=ifr[i].substr(5,ifr[i].length-6).split(",");						// Isolate parameters
-				if (v[1].match(/\[/)) {												// An explicit list
+				if ((""+v[1]).match(/\[/)) {												// An explicit list
 					l=v.join().match(/\[(.*?)\]/)[1].split(",");					// Get possibilites
 					r=Math.floor(Math.random()*l.length);							// Pick one at random
 					r=l[r];															// Set it									
