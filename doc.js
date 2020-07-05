@@ -368,6 +368,7 @@ class Doc {
 	UniqueLobId(id) 																							// MAKE UNIQUE LOB ID BASED ON PARENT
 	{	
 		var nid,add=1;																								// Add number																				
+		id=(""+id).replace(/\./g,"-");																				// Turn dots to dashes
 		nid=id+""+add;																								// Add number to parent
 		while (this.FindLobById(nid))																				// While not unique
 			nid=id+""+(++add);																						// Add to count until it is																					
@@ -377,6 +378,7 @@ class Doc {
 	UniqueAskId(id) 																							// MAKE UNIQUE ASK ID BASED ON PARENT
 	{	
 		var nid,add=1;																								// Add number																				
+		id=(""+id).replace(/\./g,"-");																				// Turn dots to dashes
 		nid=id+""+add;																								// Add number to parent
 		while (this.FindAskById(nid))																				// While not unique
 			nid=id+"."+(++add);																						// Add to count until it is																					

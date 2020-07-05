@@ -76,7 +76,8 @@
 	let qe=new ScaleEvents("ScaleAssess");										// Alloc events library
 	let numAnswers=0, numCorrect=0;												// Correct answer count
 	let fontSize=12;
-
+	let gmath=math;
+	
 	$(document).ready(function() {											// WHEN PAGE LOADED
 		
 		let v=window.location.search.substring(1).split("|");					// Split into parts													
@@ -95,11 +96,11 @@
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Add numbers, You have 4 tries"';
-			e.data+=',"prompt":"Calculate the distance between (RAND(1,-10,10),RAND(2,-10,10)) and RAND(3,-10,10),RAND(4,-10,10)). Leave your answer in exact form."';
+			e.data+=',"prompt":"Sinplify `x * y * -x / (x ^ 2`"';
 			e.data+=',"numTries":"8"';
 			e.data+=',"whyRight":"Good!  "';
 			e.data+=',"whyWrong":"Not good... "';
-			e.data+=',"optionType":"write","options":["distance([$v1,$v2],[$v3,$v4])"]},'
+			e.data+=',"optionType":"write","options":["SIMP(x * y * -x / (x ^ 2))"]},'
 
 			e.data+='{"title":"Test","skip":"true"';
 			e.data+=',"text":"Simply expression with random multipliers . You have 8 tries"';
@@ -198,6 +199,7 @@
 
 		$("#containerDiv").css("font-size",fontSize+"px");						// Set fontsize
 		if ((d.options) &&  (d.optionType == "radio" || d.optionType == "checkbox")) {	// CHECK/RADIO OPTIONS
+			d.options=Shuffle(d.options);										// Shuffle options
 			for (i=0;i<d.options.length;++i) {									// For each option
 				if (showRight) {												// If showing correct answers
 					if (d.options[i].match(/^\*/)) 	col="#00aa00";				// If a correct one
@@ -508,17 +510,23 @@
 		ans=ans.replace(/\r|\n| /g,"");												// Remove white space from student answer
 		right=right.replace(/\r|\n| /g,"");											// Remove white space from correct answer
 		if (ans == right)				 	 return "right";						// Right if a direct textual match
-		trace(right, math.evaluate(right))
+//		trace(right,math,evaluate(right))
 		try {																		// Inhibit errors
+			let ifr;
+			if (ifr=(""+right).match(/simp\((.*)\)/i)) {							// If a SIMP() tag
+				trace(ifr, math.simplify("2 * 3 * x, {x: 4}"))
+//				if (ans == math.simplify(ifr[1])) return "right"; 					// Right if a simplified match
+				return "wrong";														// Wrong
+				}
 			if (ans == math.evaluate(right)) return "right"; 						// Right if a calculated match
 			} catch(e) { console.log(e) };											// Show error
 		if ((ques.options[0]+"").match(/\$sa/i) && math.evaluate(right))  return "right"; // Right if a calculated t/f match
-		return "wrong";
+		return "wrong";																// Return wrong
 	}
 
 	function ResolveVars(exp)													// RESOLVE VARIABLES
 	{
-		let i,r,ifr;
+		let i,r,v,ifr;
 		if (ifr=(""+exp).match(/\$v(\d*)/ig)) {										// If a $v variable tag
 			for (i=0;i<ifr.length;++i) {											// For each one
 				r=ifr[i].substr(2);													// Extract index

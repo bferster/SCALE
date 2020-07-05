@@ -402,6 +402,7 @@ class App  {
 				o.body=CKEDITOR.instances.editor1.getData();								// Get body
 				o.name=$("#pageTitle").text();												// Get name
 				var id=$("#paneId").val();													// Get current id value
+				id=(""+id).replace(/\./g,"-");												// Turn dots to dashes
 				if (id != o.id) {															// Reset
 					app.doc.RenameLobId(o.id,id);											// Rename lob id
 					app.tree.Init(id);														// Remake tree
@@ -1077,8 +1078,9 @@ class App  {
 		var _this=this;																	// Save context		
 		var str="<div class='wm-stepEditor'><table style='font-size:12px'>";
 		str+="<tr><td><img src='img/scalelogo.png' width='32'></td><td><span style='font-size:30px'><b>Question Editor</b></span><br><br><b</td></tr>";	
-		str+="<tr><td><b>Question name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
-		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","write","match","sort"],o.optionType)+"</td></tr>";	// Get setting
+		str+="<tr><td><b>Question&nbsp;name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
+		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","write","match","sort"],o.optionType,"width:100px")
+		str+="&nbsp;&nbsp;<b>Code</b>&nbsp;&nbsp;<input class='wm-is' type='text' style='width:150px' id='askCode' value='"+(o.code ? o.code :'')+"'></td></tr>";
 		str+="<tr><td><b>Title</b></td><td><input class='wm-is' type='text' id='title' value='"+(o.title ? o.title :'')+"'></td></tr>";	// Get setting
 		str+="<tr><td><b>Text</b></td><td><textarea class='wm-is' id='text'>"+(o.text ? o.text :'')+"</textarea></td></tr>";	// Get setting
 		str+="<tr><td><b>Prompt</b></td><td><textarea class='wm-is' id='prompt'>"+(o.prompt ? o.prompt :'')+"</textarea></td></tr>";	// Get setting
@@ -1150,8 +1152,8 @@ class App  {
 				o.pic=$("#pic").val();					o.whyRight=$("#whyRight").val();								
 				o.whyWrong=$("#whyWrong").val();		o.whyPartial=$("#whyPartial").val();	
 				o.fontSize=$("#fontSize").val();		o.numTries=$("#numTries").val();	
-				o.skip=$("#skip").val();				ask.name=$("#askName").val();
-				ask.id=$("#askId").val();
+				o.skip=$("#skip").val();				o.code=$("#askCode").val();		
+				ask.name=$("#askName").val();			ask.id=$("#askId").val();				
 				var v=$("#optionsTable").sortable("toArray");								// Get new order
 				for (i=0;i<v.length;++i) {													// For each option		
 					v[i]="idr"+v[i].substr(3);												// Replace sort id with input id
@@ -1403,11 +1405,12 @@ function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
 
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
-		var	str="<select class='wm-is' style='width:200px' id='"+id+"'";		// Header
-		if (multi)																// Multi select
-			str+="multiple='multiple' size='"+multi+"'";						// Add flag
+		var	str="<select class='wm-is' style='width:200px;"
 		if (extra)																// If extra param
 			str+=extra;															// Add them
+		str+="' id='"+id+"'";													// Header
+		if (multi)																// Multi select
+			str+="multiple='multiple' size='"+multi+"'";						// Add flag
 		str+=">";																// End header
 		for (i=0;i<items.length;++i) {											// For each option
 			str+="<option";														// Add tag
