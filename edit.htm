@@ -294,17 +294,7 @@ class App  {
 			for (var i=0;i<v.length;++i)											// For each row
 				d.push(v[i].split("\t"));											// Add array of fields
 			SaveSpreadsheet(app.doc.courseId,d);			// Save to GDrive
-/*			str=app.doc.MakeTabFile();												// Create TSV file
-			$("#outputDiv").val(str);												// Show it
-			$("#outputDiv")[0].select();											// Select div
-			try {
-				if (document.execCommand('copy')) {									// Copy to clipboard
-					Sound("ding");													// Ding
-					PopUp("Course<br>spreadsheet<br>copied to clipboard");			// Show popup
-					}
-				} catch (err) { console.log("Clipboard copy error")}				// Show error
-*/
-});
+		});
 
 		$("#previewBut").on("click", ()=> {  										// ON PREVIEW COURSE
 			str=app.doc.MakeTabFile();												// Create TSV file
@@ -1044,7 +1034,9 @@ class App  {
 
 		$("#deleteCourseBut").on("click", ()=> { 											// ON DELETE COURSE		
 			ConfirmBox("Are you sure?","This will remove the entire course!", ()=> {		// If sure
-				app.InitCourse();															// Init	
+				let t=app.doc.courseId;														// Save current id
+				app.InitCourse(null);														// Init	
+				app.doc.courseId=t;															// Restore old id
 				app.doc.AddNewLob("", 1, "Course name");									// Add course				
 				app.Draw();
 			});

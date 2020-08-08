@@ -579,7 +579,7 @@
 			trace(ifr)
 			for (i=0;i<ifr.length;++i) {											// For each one
 				r=math.evaluate(ifr[i].substr(2,ifr[i].length-3));					// Evaluate expression
-				txt=txt.replace(/\$\[.*\]/,r);										// Replace tag with calulated number
+				txt=txt.replace(/\$\[.*?\]/,r);										// Replace tag with calulated number
 				}
 			}
 		return txt;																	// Return prompt
