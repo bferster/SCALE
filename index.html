@@ -152,6 +152,7 @@
 
 var app=null;															// Holds app
 var isMobile=false;														// Flag for mobile devices
+startingLob=null;														// Starting lob
 
 $(window).resize(function() {                                         	// ON WINDOW RESIZE
 	if (app && app.allowResize)												// If app loaded and allowing resizing
@@ -162,6 +163,10 @@ $(document).ready(function() {								           	// ON PAGE LOADED
 	var url=window.location.search.substring(1);						   	// Get query string
 	if (!url || url.match(/elearningindustry.com/i))						// No id set
 		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
+	if (url && url.match(/p=/i)) {											// If an id spec'd via &p=
+		startingLob=url.match(/\&p=(.*)/i)[1];								// Extract id
+		url=url.replace(/\&p=.*/i,"");										// Remove id fron url
+		}
 	if (url.match(/gid%3D/i)) {												// If params have a 'gid=' tag
 		url=url.split("%26")[0].substr(6);									// First is id
 		}

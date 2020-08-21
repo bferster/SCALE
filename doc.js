@@ -439,7 +439,11 @@ class Doc {
 		if (!this.lobs.length)																						// No lobs defined
 			this.lobs=[ { name:"Course name", id:1, status:0, body:"", children:[], kids:[]}];						// Add start Lob
 		this.AddChildList();																						// Add children	
-		app.Draw();																									// Redraw
+		if (startingLob) {																							// Send to specific lob, if set						
+			let l=app.doc.FindLobIndexById(startingLob);															// Get lob index
+			if (l >= 0)		app.Draw(app.doc.FindLobIndexById(startingLob)-0);										// Draw if valid								
+			}
+		else app.Draw();																							// Redraw
 
 		if (app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
 							app.userName=s;																			// Set name
