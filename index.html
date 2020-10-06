@@ -10,6 +10,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>	
 	<script src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=AM_CHTML"></script>
 	<script src="lib/jquery.ui.touch-punch.min.js"></script>
+	<script src="custom.js"></script>
 	<script src="doc.js"></script>
 	<script src="content.js"></script>
 	<script src="messaging.js"></script>
@@ -154,6 +155,7 @@
 var app=null;															// Holds app
 var isMobile=false;														// Flag for mobile devices
 startingLob=null;														// Starting lob
+var sharedObject=sharedObject || {};									// Shared object
 
 $(window).resize(function() {                                         	// ON WINDOW RESIZE
 	if (app && app.allowResize)												// If app loaded and allowing resizing
