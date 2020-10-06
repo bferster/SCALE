@@ -139,7 +139,7 @@
 			<div id="navDiv" class="wm-navigation"></div>
 	</div>
 	<div id="splashDiv" class="wm-splash">
-		<img src="img/scalelogo.png" alt=""><br><br>
+		<img src="img/scaleLogo.png" alt=""><br><br>
 		<h1 style="font-size:18pt;font-family:trebuchet ms,sans-serif">S C A L E<br><br>Student-Centered Adaptive Learning Environment</h1>
 		<br><p style="color:#000;font-size:14px"><em>A platform to guide learning- not just deliver it.</em></p>
 	</div>
@@ -329,7 +329,7 @@ class App  {																								 // APP
 	{
 		$("#alertBoxDiv").remove();											// Remove any old ones
 		$("body").append("<div id='alertBoxDiv'></div>");														
-		var str="<p><img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		var str="<p><img src='img/scaleLogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span id='gtBoxTi'style='font-size:18px'><b>"+title+"</b></span><p>";
 		str+="<div style='font-size:12px;margin:14px'>"+content;
 		str+="<p><input class='wm-is' style='width:75%' type='text' id='gtBoxTt' value='"+def+"'></p>";
@@ -356,7 +356,7 @@ class App  {																								 // APP
 		Sound("ding");																		// Ding sound
 		$("#confirmBoxDiv").remove();														// Remove 
 		$("body").append("<div class='wm-confirm' id='confirmBoxDiv'></div>");														
-		var str="<img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		var str="<img src='img/scaleLogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span style='font-size:18px; color:#666'><b>"+title+"</b></span><br>";
 		str+="<p>"+content+"<p>";
 		str+="<div style='float:right'><div id='confirmOK' class='wm-bs'>OK</div>";
