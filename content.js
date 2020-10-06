@@ -73,6 +73,7 @@ class Content  {
 			$("#mainDiv").height($(window).height());																// Set main
 			});
 
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);																	// Refresh mathjax
 		let d=new Date();	d.setTime(d.getTime()+365*24*60*60*1000);	d=d.toUTCString()							// Cookie expires after a year
 		if (app.doc.curPos) {																						// If at startup
 			document.cookie=`${app.doc.courseId}_Last_${app.userName}=${app.doc.curPos}; expires=${d};`;			// Set cookie to this id with last stop		

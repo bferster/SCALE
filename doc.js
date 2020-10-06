@@ -518,6 +518,7 @@ class Doc {
 	{
 		var _this=this;																								// Save context
 		var str="https://spreadsheets.google.com/feeds/cells/"+id+"/1/public/values?alt=json";						// Make url
+		trace(str)
 		$.ajax( { url:str, dataType:'jsonp' }).done((data)=> {														// Get date				
 			_this.InitFromJSON(data.feed.entry);										
 		}).fail((msg)=> { Sound("delete");																			// Delete sound
