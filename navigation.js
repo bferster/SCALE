@@ -202,6 +202,7 @@ class Navigation {
 		str+="<span style='color:#009900'>Done</span> | "
 		str+=" # is value</div>";																					// Number
 		$("#contentDiv").html(str);																					// Set tree menu
+		$("#contentIFWidget").hide();																				// Hide iframe, if open
 		new Tree(app.doc.curLobId);																					// Populate tree
 	}
 } // Nav class closure
