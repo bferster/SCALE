@@ -73,6 +73,7 @@ class Content  {
 			$("#mainDiv").height($(window).height());																// Set main
 			});
 
+		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);																	// Refresh mathjax
 		let d=new Date();	d.setTime(d.getTime()+365*24*60*60*1000);	d=d.toUTCString()							// Cookie expires after a year
 		if (app.doc.curPos) {																						// If at startup
 			document.cookie=`${app.doc.courseId}_Last_${app.userName}=${app.doc.curPos}; expires=${d};`;			// Set cookie to this id with last stop		
@@ -145,6 +146,12 @@ class Content  {
 					str=str.replace(/do\(.+?\)/i,d);																// Replace tag
 					}
 				}
+			if ((ifr=str.match(/panetitle\(.+?\)/ig))) {															// If a panetitle() tag
+				str=str.replace(/panetitle\(.+?\)/i,"");															// Hide tag
+				let r=new RegExp("wm-pageTitle'>"+l.name);															// Create regex
+				ifr[0]=(""+ifr[0]).substring(10,ifr[0].length-1);													// Carve out new title
+				str=str.replace(r,"wm-pageTitle'>"+ifr[0]);															// Replace title
+				}
 			if ((ifr=str.match(/textbox\(.+?\)/ig))) {																// If a textbox() tag
 				var i,t;	
 				for (i=0;i<ifr.length;++i) {																		// For each do() macro
@@ -213,7 +220,9 @@ class Content  {
 */
 			$("#contentDiv").append(str+"</div>");																	// Set content
 			$("#contentDiv").css("max-width",app.fullScreen ? "calc(100% - 16px)" : "950px" )						// Reset width
-		
+
+			
+
 			if (widgetSrc) {																						// If a widget
 				widgetSrc=widgetSrc.replace(/&amp;/g,"&");															// Change &amp; -> &
 				if (!$("#contentIFWidget").length) {																// If not made yet

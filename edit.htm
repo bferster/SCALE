@@ -111,7 +111,7 @@
 		</div>
 	</div>
 	<div id='splashDiv' class='wm-splash'>
-		<img src='img/scalelogo.png' alt=""><br><br>
+		<img src='img/scaleLogo.png' alt=""><br><br>
 		<h1 style='font-size:18pt;font-family:trebuchet ms,sans-serif'>S C A L E Editor<br><br>Student-Centered Adaptive Learning Environment</h1>
 		<p style='font-weight:bold;font-size:48px'><b>Course editor</b></p>
 	</div>
@@ -123,6 +123,8 @@ if ((location.protocol != 'https:') && (window.location.host != "localhost")) lo
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // APP
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	let startingLob="";
 
 class App  {																
 
@@ -429,7 +431,7 @@ class App  {
 				$("#editorDiv").hide();														// Hide editor
 			if (type == "splash") {															// Draw splash
 				str+="<div style='text-align:center;color:#000'><br><br><br><br><br>";
-				str+="<img src='img/scalelogo.png'><br>";
+				str+="<img src='img/scaleLogo.png'><br>";
 				str+="<h1 style='font-size:24pt;font-family:trebuchet ms,sans-serif'><p></p>S C A L E</h1>";
 				$("#contentDiv").html(str);													// Add splash
 				}
@@ -492,7 +494,7 @@ class App  {
 		$("#playEditorDiv").remove();														
 //		$("#addMacroBut")[0].selectedIndex=0;												// Clear selection
 		var str="<div id='macroEditorDiv' class='wm-macroEditor'>";
-		str+="<img src='img/scalelogo.png' style='vertical-align:-12px;margin-right:16px' width='32'><span style='font-size:16px'><b>"+which+" Editor</b></span><br><p><hr></p>";	
+		str+="<img src='img/scaleLogo.png' style='vertical-align:-12px;margin-right:16px' width='32'><span style='font-size:16px'><b>"+which+" Editor</b></span><br><p><hr></p>";	
 		if (which == "Assessment") {														// Add/edit assessment
 			if (tag=body.match(/assess\((.*?)\)/i)) 										// If an assess() tag
 				items=tag[1].split("|");													// Get items
@@ -731,7 +733,7 @@ class App  {
 	{
 		var i,j;
 		var str="<div id='amsEditorDiv' class='wm-stepEditor'>";
-			str+="<img src='img/scalelogo.png' style='vertical-align:-4px;margin-right:20px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
+			str+="<img src='img/scaleLogo.png' style='vertical-align:-4px;margin-right:20px' width='32'><span style='font-size:30px'><b>Active Media Editor</b></span><br><p><hr></p>";	
 			str+="<div id='amsItemsDiv' style='overflow-x:hidden;width:100%;height:120px;white-space:nowrap;'>";
 		var o=skin.items;																	// Point at items
 		for (i=0;i<o.length;++i) 															// For each item in skin
@@ -948,7 +950,7 @@ class App  {
 		var i,ids=[];
 		var str="<div class='wm-stepEditor'>";
 		str+="<table>";
-		str+="<tr><td><img src='img/scalelogo.png' style='vertical-align:-20px' width='32'></td><td><span style='font-size:30px'><b>Rule Editor</b></span><br><b</td></tr>";	
+		str+="<tr><td><img src='img/scaleLogo.png' style='vertical-align:-20px' width='32'></td><td><span style='font-size:30px'><b>Rule Editor</b></span><br><b</td></tr>";	
 		str+="<tr><td colspan='2'><br></td></tr>";	
 		str+="<tr><td><b>IF</b></td><td><input class='wm-is' type='text' id='ruleSub' value='"+(r.subject ? r.subject :'')+"'></td></tr>";	
 		str+="<tr><td><b>IS</b></td><td>"+MakeSelect("ruleVerb",false,["Equal","Not equal","Similar","Less than","Less than or equal","Greater than","Greater than or equal","RegEx"],r.verb,"",["EQ","NE","LK","LT","LE","GT","GE","RE"])+"</td></tr>";	
@@ -1009,7 +1011,7 @@ class App  {
 	SettingsEditor()																	// SETTINGS EDITOR
 	{
 		var str="<div class='wm-stepEditor'>";
-		str+="<img src='img/scalelogo.png' style='vertical-align:-6px' width='32'><span style='font-size:30px;margin-left:16px'><b>Settings</b></span><br><br>";	
+		str+="<img src='img/scaleLogo.png' style='vertical-align:-6px' width='32'><span style='font-size:30px;margin-left:16px'><b>Settings</b></span><br><br>";	
 		str+="<table>";
 		str+="<tr><td>Mark done if visited</td><td><input type='checkbox' "+(app.setDone ? "checked" : "")+" id='setDone'></td></tr>";	
 		str+="<tr><td>Skip if visited</td><td><input  type='checkbox' "+(app.skipDone ? "checked" : "")+" id='setSkip'></td></tr>";	
@@ -1069,7 +1071,7 @@ class App  {
 		var o=$.parseJSON(ask.step);													// Convert to obj
 		var _this=this;																	// Save context		
 		var str="<div class='wm-stepEditor'><table style='font-size:12px'>";
-		str+="<tr><td><img src='img/scalelogo.png' width='32'></td><td><span style='font-size:30px'><b>Question Editor</b></span><br><br><b</td></tr>";	
+		str+="<tr><td><img src='img/scaleLogo.png' width='32'></td><td><span style='font-size:30px'><b>Question Editor</b></span><br><br><b</td></tr>";	
 		str+="<tr><td><b>Question&nbsp;name</b></td><td><input class='wm-is' type='text' id='askName' value='"+(ask.name ? ask.name :'')+"'></td></tr>";	// Get setting
 		str+="<tr><td><b>Type</b></td><td>"+MakeSelect("optionType",false,["radio","checkbox","cloze","slider","write","match","sort"],o.optionType,"width:100px")
 		str+="&nbsp;&nbsp;<b>Code</b>&nbsp;&nbsp;<input class='wm-is' type='text' style='width:150px' id='askCode' value='"+(o.code ? o.code :'')+"'></td></tr>";
@@ -1376,7 +1378,7 @@ function GetSpreadsheet(allFiles, callback)													// RUN GDRIVE PICKER
 		Sound("ding");																		// Ding sound
 		$("#confirmBoxDiv").remove();														// Remove 
 		$("body").append("<div class='wm-confirm' id='confirmBoxDiv'></div>");														
-		var str="<img src='img/scalelogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		var str="<img src='img/scaleLogo.png' width='32' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span style='font-size:18px; color:#666'><b>"+title+"</b></span><br>";
 		str+="<p>"+content+"<p>";
 		str+="<div style='float:right'><div id='confirmOK' class='wm-bs'>OK</div>";

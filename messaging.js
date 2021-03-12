@@ -144,10 +144,12 @@ class Messaging {
 			let nam=app.reportLink.match(/entry.[0-9]*=name/i)[0].split("=");										// Extract name
 			let dat=app.reportLink.match(/entry.[0-9]*=data/i)[0].split("=");										// Extract data
 			let sta=app.reportLink.match(/entry.[0-9]*=status/i)[0].split("=");										// Extract status
+			let reqData={ url: url, data: d,  type: "POST",  dataType: "xml" };										// Request
 			d[nam[0]]=(app.namePrefix ? app.namePrefix+':' : "") + app.userName;									// Use username from login																	
 			d[dat[0]]=data;																							// Set data
 			d[sta[0]]=app.doc.GetStatusArray().join(",");															// Set status
-			$.ajax({ url: url, data: d,  type: "POST",  dataType: "xml" });											// Will generate CORS error, but posts anyway
+			if (sharedObject && sharedObject.token) reqData.headers={ authorization: "Bearer " + sharedObject.token	};	// Add headers
+			else $.ajax(reqData);																					// May generate CORS error, but posts anyway
 		}
 
 }	// Messaging CLASS CLOSURE

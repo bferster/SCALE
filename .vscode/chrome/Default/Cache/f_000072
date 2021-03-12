@@ -20,7 +20,7 @@ class Doc {
 		this.statusThreshold=10;																					// Threshold for mastery
 
 		if (id == "preview") {																						// Preview instructions
-			var str="<br><br><p style='text-align:center'><img src='img/scalelogo.png'>";
+			var str="<br><br><p style='text-align:center'><img src='img/scaleLogo.png'>";
 			str+="<br>This tab will show previews of your course.";
 			str+="<br>Return on the <b> SCALE Course Editor tab</b> to begin editing</p>";
 			this.lobs[0].name="Preview";
