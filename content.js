@@ -74,12 +74,15 @@ class Content  {
 			});
 
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);																	// Refresh mathjax
+		if (app.doc.curPos) this.SaveStudentStatus()																// If at startup, load student status
+	}
+
+	SaveStudentStatus()																							// SAVE STATUS FROM COOKIE
+	{
 		let d=new Date();	d.setTime(d.getTime()+365*24*60*60*1000);	d=d.toUTCString()							// Cookie expires after a year
-		if (app.doc.curPos) {																						// If at startup
-			document.cookie=`${app.doc.courseId}_Last_${app.userName}=${app.doc.curPos}; expires=${d};`;			// Set cookie to this id with last stop		
-			document.cookie=`${app.doc.courseId}_Status_${app.userName}=${app.doc.GetStatusArray().join(",")}; expires=${d};`;		// Set status	
-			}
-		}
+		document.cookie=`${app.doc.courseId}_Last_${app.userName}=${app.doc.curPos}; expires=${d};`;				// Set cookie to this id with last stop		
+		document.cookie=`${app.doc.courseId}_Status_${app.userName}=${app.doc.GetStatusArray().join(",")}; expires=${d};`;		// Set status	
+	}
 
 	GetContentBody(id)																							// ADD LOB CONTENT
 	{	

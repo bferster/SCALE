@@ -393,14 +393,18 @@ class Doc {
 		this.trans=[];																								// Init transcripts
 		app.rul.rules=[];																							// Init rules
 		app.ams.skins=[];																							// Init skins
-		for (i=0;i<cells.length;++i) {																				// For each cell
-			o=cells[i];																								// Point at it
-			col=o.gs$cell.col-1; 	row=o.gs$cell.row-1;															// Get cell coords
-			con=o.content.$t;																						// Get content
-			if (!con) 				continue;																		// Skip blank cells
-			if (!s[row])			s[row]=["","","","",""];														// Add new row if not there already
-			if (col < 5)			s[row][col]=con;																// Add cell to array
+		if (cells && cells[0] && cells[0].hasOwnProperty('gs$cell')) {												// If a Google doc
+			for (i=0;i<cells.length;++i) {																			// For each cell
+				o=cells[i];																							// Point at it
+				col=o.gs$cell.col-1; 	row=o.gs$cell.row-1;														// Get cell coords
+				con=o.content.$t;																					// Get content
+				if (!con) 				continue;																	// Skip blank cells
+				if (!s[row])			s[row]=["","","","",""];													// Add new row if not there already
+				if (col < 5)			s[row][col]=con;															// Add cell to array
+				}
 			}
+   	 	else s=cells;																								// Use array directly
+
 		for (i=1;i<s.length;++i) {																					// For each line
 			v=s[i];																									// Point atfields
 			if (!v) continue;																						// Skip blank lines
@@ -446,13 +450,18 @@ class Doc {
 		else app.Draw();																							// Redraw
 
 		if (app.login)	GetTextBox("Please log in","Type your user name:","",function(s) { 							// Login
-							app.userName=s;																			// Set name
-							let i=GetCookie(app.doc.courseId+"_Last_"+s)											// Get last stop cookie
-							if ((i > 0) && (i < app.doc.lobs.length))	app.doc.curPos=i;							// If valid start start there
-							i=GetCookie(app.doc.courseId+"_Status_"+s)												// Get status cookie
-							app.doc.SetStatusArray(i.split(","));													// Set status	
-							app.Draw();																				// Redraw																		
-							}); 		
+			this.LoadStudentStatus();																				// Load student starus
+			}); 		
+		}
+
+		LoadStudentStatus(s)																					// LOAD STATUS FROM COOKIE
+		{
+			app.userName=s;																							// Set name
+			let i=GetCookie(app.doc.courseId+"_Last_"+s)															// Get last stop cookie
+			if ((i > 0) && (i < app.doc.lobs.length))	app.doc.curPos=i;											// If valid start start there
+			i=GetCookie(app.doc.courseId+"_Status_"+s)																// Get status cookie
+			app.doc.SetStatusArray(i.split(","));																	// Set status	
+			app.Draw();																								// Redraw																		
 		}
 
 		InitFromTSV(tsv)																							// INIT APP DATA FROM TSV FILE
@@ -518,7 +527,6 @@ class Doc {
 	{
 		var _this=this;																								// Save context
 		var str="https://spreadsheets.google.com/feeds/cells/"+id+"/1/public/values?alt=json";						// Make url
-		trace(str)
 		$.ajax( { url:str, dataType:'jsonp' }).done((data)=> {														// Get date				
 			_this.InitFromJSON(data.feed.entry);										
 		}).fail((msg)=> { Sound("delete");																			// Delete sound
@@ -526,21 +534,8 @@ class Doc {
 						});		
 	}
 		
-		/*	
-		var str="https://docs.google.com/spreadsheets/d/"+id+"/export?format=tsv";									// Access tto
-		var xhr=new XMLHttpRequest();																				// Ajax
-		xhr.open("GET",str);																						// Set open url
-		xhr.onload=function() { _this.InitFromTSV(xhr.responseText); };												// On successful load, init app from TSV file
-		xhr.send();																									// Do it
-		
-		xhr.onreadystatechange=function(e) { 																		// ON AJAX STATE CHANGE
-			if ((xhr.readyState === 4) && (xhr.status !== 200)) {  													// Ready, but no load
-				Sound("delete");																					// Delete sound
-				PopUp("<p style='color:#990000'><b>Couldn't load Google Doc!</b></p>Make sure that <i>anyone</i><br>can view it in Google",5000); // Popup warning
-				}
-			};		
-*/
-	}																												// CLASS CLOSURE
+
+}																												// CLASS CLOSURE
 	
 	
 
