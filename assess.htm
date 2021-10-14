@@ -167,11 +167,14 @@
 /////////////////////////////////////////////////////////////////	
 
 		});
+
+
 		
 	function ScaleEventHandler(e)											// ON SCALE EVENT
 	{
 		var v=e.data.split("|");												// Split into parts													
 		if (v[0] == "ScaleAct=data") {											// If a data 
+			v[1]=v[1].replace(/""/g,"\"");										// Remove double quotes
 			aData=$.parseJSON(v[1]);											// Convert to obj
 			Draw(0,false);														// Draw page
 			}												

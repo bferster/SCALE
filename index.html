@@ -163,8 +163,7 @@ $(window).resize(function() {                                         	// ON WIN
 			
 $(document).ready(function() {								           	// ON PAGE LOADED
 	var url=window.location.search.substring(1);						   	// Get query string
-	if (!url || url.match(/elearningindustry.com/i))						// No id set
-		url="1LSnAM3A62AQipZfqxDtlOjt4MWJ0fBP22cdyqJqEj5M";					// Use this one
+	if (!url)	url="projects/scaledemo.csv";								// Default project
 	if (url && url.match(/p=/i)) {											// If an id spec'd via &p=
 		startingLob=url.match(/\&p=(.*)/i)[1];								// Extract id
 		url=url.replace(/\&p=.*/i,"");										// Remove id fron url
