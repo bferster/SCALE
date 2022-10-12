@@ -99,7 +99,7 @@ class Messaging {
 				}
 			}
 		else if (msg.match(/ScalePreview/)) {																		// Preview call
-			app.doc.InitFromTSV(msg.substr(13));																	// Init show
+			app.doc.InitFromTSV(msg.substring(13));																	// Init show
 			app.Draw();																								// Redraw
 			}														
 		else if (msg.match(/ActiveMediaSkin/)) {																	// AMS

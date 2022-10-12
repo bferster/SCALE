@@ -412,6 +412,57 @@ class Doc {
 			}
 		}
 
+		InitFromTSV(tsv)																							// INIT APP DATA FROM TSV FILE
+		{
+			var i,v;
+			this.lobs=[];																								// Init lobs
+			this.asks=[];																								// Init assessment
+			this.trans=[];																								// Init transcripts
+			app.rul.rules=[];																							// Init rules
+			app.ams.skins=[];																							// Init skins
+			tsv=tsv.replace(/\\r/,"");																					// Remove CRs
+			tsv=tsv.split("\n");																						// Split into lines
+			for (i=1;i<tsv.length;++i) {																				// For each line
+				v=tsv[i].split("\t");																					// Split into fields
+				if (v[0] == "lob") 																						// A lob
+					this.lobs.push({ name:v[2], id:v[1], parent:v[3], body:v[4], status:0 });							// Add learning object
+				else if (v[0] == "ask")																					// An assessment step
+					this.asks.push({ id:v[1], name:v[2], step:v[4]});													// Add ask
+				else if (v[0] == "ams")																					// An active media skin
+					app.ams.AddSkin(v[1],v[2],v[4]);																	// Add skin
+				else if (v[0] == "tra")																					// A transcript
+					this.trans.push({ id:v[1], name:v[2], text:v[4]});													// Add transcript
+				else if (v[0] == "rul")	{																				// A Rule
+					var o={id:v[1], name:v[2] };																		// Base
+					v[4]=v[4].replace(/ +/g," ");																		// Single space
+					v=v[4].split(" ");																					// Split by space														
+					if (v.length < 6)	continue;																		// Skip if now well formed
+					o.subject=v[1];		o.verb=v[2];  	o.trigger=v[3];													// Left
+					o.do=v[5];			o.object=v[6];																	// Right
+					app.rul.rules.push(o);																				// Add step
+					}
+				else if (v[0] == "set")	{																				// A Setting
+					if (v[4] && v[4].match(/login/i))			app.login=true;											// Force login
+					if (v[4] && v[4].match(/setDone/i))			app.setDone=false;										// No status set
+					if (v[4] && v[4].match(/skipDone/i))		app.skipDone=true;										// Skip if done
+					if (v[4] && v[4].match(/hideHeader/i))		app.hideHeader=true;									// Hide header area
+					if (v[4] && v[4].match(/toneJS/i))			app.toneJS=true;										// Init tone JS
+					if (v[4] && v[4].match(/fullScreen/i))		app.fullScreen=true;									// Init full screen
+					if (v[4] && v[4].match(/assessLevel=/i))	app.assessLevel=v[4].match(/assessLevel=(\.*\d+)/i)[1];	// Assessment pass level
+					if (v[4] && v[4].match(/reportLevel=/i))	app.reportLevel=v[4].match(/reportLevel=(\.*\d+)/i)[1];	// Assessment reporting level
+					if (v[4] && v[4].match(/reportLink=/i))		app.reportLink=v[4].match(/reportLink=(\.*\S+)/i)[1];	// Assessment reporting link
+					if (v[4] && v[4].match(/namePrefix=/i))		app.namePrefix=v[4].match(/namePrefix=(\.*\S+)/i)[1];	// User name prefix
+					if (v[4] && v[4].match(/margin=/i))			app.defMargin=v[4].match(/margin=(\.*\d+)/i)[1];		// Default margin
+					if (v[4] && v[4].match(/discussion=/i))		app.discussion=v[4].match(/discussion=(\.*\S+)/i)[1];	// Discussion link
+					}
+				}
+			if (!this.lobs.length)																						// No lobs defined
+				this.lobs=[ { name:"Course name", id:1, status:0, body:"", children:[], kids:[]}];						// Add start Lob
+			this.AddChildList();																						// Add children	
+			app.Draw();																									// Reset data positions
+			if (app.login)	GetTextBox("Please log in","Type your user name","",function(s) { app.userName=s} ); 		// Login
+		}
+	
 		InitFromJSON(s)																							// INIT APP DATA FROM JSON
 		{
 			let i,o,v
